@@ -1,42 +1,80 @@
 #root {
-  max-width: 1280px;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.full-container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 220px;
+  height: 70vh;
+  position: sticky;
+  background-color: #0783ff;
+  /* padding: 20px;
+  margin: 20px; */
+  border: 1px solid;
+}
+
+/* ImgSlide styles */
+.img-slide-container {
+  width: 100%;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.img-slide-frame {
+  width: 100%;
+  height: 85vh;
+  /* Chiều cao cố định */
+  overflow: hidden;
+  border-radius: 8px;
+  position: relative;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.img-slide-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.img-slide-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Đảm bảo hình ảnh fit đầy khung */
+  transition: transform 0.6s ease;
+  opacity: 0;
 }
 
-.card {
-  padding: 2em;
+.img-slide-image.active {
+  opacity: 1;
 }
 
-.read-the-docs {
-  color: #888;
+/* Disable button styles when animating */
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.footer-poster {
+  width: 100%;
+  height: 40vh;
+  background-image: url('https://www.shutterstock.com/image-vector/white-plane-blue-sky-flying-260nw-2338724223.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center 70%;
+}
+
+.info {
+  position: absolute;
+  top: 14%;
+  left: 10%;
 }
