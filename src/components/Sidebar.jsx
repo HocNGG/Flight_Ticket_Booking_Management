@@ -6,8 +6,8 @@ const Sidebar = ({ selectedOption, setSelectedOption }) => {
 
     const menuItems = [
         { id: "1", label: "Trang chủ", path: "/home" },
-        { id: "2", label: "Chuyến Bay", path: "/flight" },
-        { id: "3", label: "Vé Chuyến Bay", path: "/ticket" },
+        { id: "2", label: "Chuyến Bay", path: "/flights" },
+        { id: "3", label: "Vé Chuyến Bay", path: "/tickets" },
         { id: "4", label: "Sân Bay", path: "/airport" },
         { id: "5", label: "Hạng Vé", path: "/class" },
         { id: "6", label: "Doanh Thu", path: "/revenue" }

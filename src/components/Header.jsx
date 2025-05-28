@@ -25,8 +25,8 @@ const Header = () => {
                     <Navbar.Toggle aria-controls="main-navbar" />
                     <Navbar.Collapse id="main-navbar">
                         <Nav className="d-flex justify-content-between mx-auto fs-5 w-100">
-                            <Nav.Link href="/ticket">Vé Chuyến Bay</Nav.Link>
-                            <Nav.Link href="/flight">Chuyến Bay</Nav.Link>
+                            <Nav.Link href="/tickets">Vé Chuyến Bay</Nav.Link>
+                            <Nav.Link href="/flights">Chuyến Bay</Nav.Link>
                             <Nav.Link href="/airport">Sân Bay</Nav.Link>
                             <Nav.Link href="/class">Hạng Vé</Nav.Link>
                             <Nav.Link href="/home">Quy Định</Nav.Link>

@@ -55,13 +55,13 @@ const FlightCard = ({ flight }) => {
                         <div className="fw-semibold text-primary fs-5">Số hiệu chuyến bay: #{`${flight.Ma_chuyen_bay}`}</div>
                         <div className="small text-dark mt-2">Thời gian bay {Math.floor(flight.Thoi_gian_bay / 60)}h {flight.Thoi_gian_bay % 60} phút</div>
                         <div className="mt-2 fs-5 d-flex">
-                            <div className='d-block'>
+                            <div className='d-block me-5'>
                                 <span className='fw-bold'>{flight.Ma_san_bay_di}</span>
                                 <br />
                                 <span>{formatHHMM(flight.gio_khoi_hanh)}</span>
                             </div>
-                            <span className="mx-auto fs-2">→</span>
-                            <div>
+                            <span className="mx-auto fs-1">→</span>
+                            <div className='ms-5'>
                                 <span className='fw-bold'>{flight.Ma_san_bay_den}</span>
                                 <br />
                                 <span>{arrivalTime}</span>
@@ -73,26 +73,53 @@ const FlightCard = ({ flight }) => {
 
                 {/* Giá và nút */}
                 <div className="d-flex align-items-center">
-                    <button className="btn btn-warning text-center px-5 py-4 text-dark rounded-3 me-3 " style={{ width: '100%'}}>
-                        <div className="fw-semibold">GIÁ CHỈ TỪ </div>
+                    <button
+                        className="btn btn-warning text-center text-dark rounded-3 me-3 d-flex flex-column justify-content-center align-items-center p-4"
+                        style={{
+                            minWidth: '150px',
+                            width: '100%',
+                            maxWidth: '200px',
+                            minHeight: '120px',
+                            height: '100%',
+                        }}
+                    >
+                        <div className="fw-semibold text-uppercase">Giá chỉ<br />Từ</div>
                         <div className="fw-bold fs-5">{flight.gia_ve.toLocaleString()} VND</div>
                     </button>
-                    <button
-                        className="btn btn-success px-3 py-2 fw-bold"
-                        onClick={() => navigate(`/create-ticket`, {
-                            state: {
-                                flightId: flight.Ma_chuyen_bay,
-                                price: detail.chitiet_hangve.gia_ve
-                            }
-                        })}
-                    >
-                        Create<br />Ticket
-                    </button>
+                    <div>
+                        {/* <button
+                            type="button"
+                            className="btn btn-warning px-3 py-2 fw-bold"
+                            onClick={(e) => {
+                                navigate(`/update-ticket`, {
+                                    state: {
+                                        flightId: flight.Ma_chuyen_bay
+                                    }
+                                });
+                            }}
+                        >
+                            Cập Nhật Chuyến Bay
+                        </button> */}
+                        <button
+                            type="button"
+                            className="btn btn-success px-3 py-2 fw-bold"
+                            onClick={(e) => {
+                                navigate(`/create-ticket`, {
+                                    state: {
+                                        flightId: flight.Ma_chuyen_bay
+                                    }
+                                });
+                            }}
+                        >
+                            Tạo Vé
+                        </button>
+                    </div>
+
                 </div>
             </div>
 
             {show && detail && (
-                <div className="modal show fade d-block" tabIndex="-1">
+                <div className="modal show fade d-block align-items-center">
                     <div className="modal-dialog modal-lg">
                         <div className="modal-content">
                             <div className="modal-header">

@@ -1,14 +1,21 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import ToastMessage from '../components/ToastMessage';
 
-const Ticket = () => {
+const CreateTicket = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [form, setForm] = useState({
         flightId: location.state?.flightId || '',
         classId: '', name: '', identity: '', phone: '', gene: '', seat: '',
-        price: location.state?.price || ''
+        price: ''
     })
+    const [toast, setToast] = useState({
+        show: false,
+        message: '',
+        variant: 'success'
+    });
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -33,10 +40,10 @@ const Ticket = () => {
             const data = await res.json();
 
             if (res.ok) {
-                alert('Tạo vé thành công!');
-                navigate('/flight');
+                setToast({ show: true, message: 'Tạo vé thành công!', variant: 'success' });
+                setTimeout(() => navigate('/flights'), 1000);
             } else {
-                console.log(`Lỗi: ${data.message || 'Không thể tạo vé'}`);
+                setToast({ show: true, message: 'Chuyến bay đã khởi hành!', variant: 'danger' });
             }
         } catch (err) {
             console.error(err);
@@ -109,13 +116,13 @@ const Ticket = () => {
                                 value={form.seat}
                                 onChange={(e) => setForm({ ...form, seat: e.target.value })} required />
                         </div>
-                        <div className='col-md-6 mb-3'>
+                        {/* <div className='col-md-6 mb-3'>
                             <label htmlFor="price" className="form-label">Giá vé:</label>
                             <input type="text" className="form-control" id="price" placeholder="Nhập giá vé"
                                 value={form.price}
                                 onChange={(e) => setForm({ ...form, price: e.target.value })} required />
                                 {}
-                        </div>
+                        </div> */}
                     </div>
 
                     <div className="text-end">
@@ -123,8 +130,16 @@ const Ticket = () => {
                     </div>
                 </form>
             </div>
+
+            {/* Hiển thị Toast */}
+            <ToastMessage
+                show={toast.show}
+                onClose={() => setToast({ ...toast, show: false })}
+                message={toast.message}
+                variant={toast.variant}
+            />
         </div>
 
     )
 }
-export default Ticket;
+export default CreateTicket;
