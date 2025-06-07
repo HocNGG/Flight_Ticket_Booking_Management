@@ -37,46 +37,88 @@ const TicketCard = ({ ticket }) => {
     };
 
     if (!detail) {
-        return <div className="text-center text-muted">Vui lòng chờ trong giây lát...</div>;
+        return;
     }
 
     const arrivalTime = calculateArrivalTime(detail.gio_khoi_hanh, detail.Thoi_gian_bay);
 
     return (
-        <div className="d-flex rounded-4 shadow-sm mb-3 p-3 align-items-center justify-content-between border" style={{ minHeight: '100px', backgroundColor: '#E6F6F3'}}>
-            <div className="d-flex align-items-center flex-grow-1">
+        <div
+            className="d-flex rounded-4 shadow-sm mb-3 p-4 align-items-stretch border"
+            style={{
+                minHeight: '150px',
+                backgroundColor: '#E6F6F3',
+                position: 'relative',
+            }}
+        >
+            {/* Cột: Logo */}
+            <div
+                style={{ width: '15%', minWidth: '120px', marginRight: '90px' }}
+                className="d-flex align-items-center justify-content-center"
+            >
                 <img
                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Blue-Air_logo-01.svg/1200px-Blue-Air_logo-01.svg.png"
                     alt="airline"
-                    style={{ width: '20%', height: '100%', objectFit: 'contain' }}
-                    className="me-5"
+                    className="img-fluid"
+                    style={{ height: '100%', objectFit: 'contain' }}
                 />
-                <div className='ms-5'>
-                    <div className="fw-semibold text-primary fs-5">Số hiệu chuyến bay: #{ticket.Ma_chuyen_bay}</div>
-                    <div className="small text-dark mt-2">Thời gian bay {Math.floor(detail.Thoi_gian_bay / 60)}h {detail.Thoi_gian_bay % 60} phút</div>
-                    <div className="mt-2 fs-5 d-flex">
-                        <div className='d-block me-5'>
-                            <span className='fw-bold'>{detail.Ma_san_bay_di}</span>
-                            <br />
-                            <span>{formatHHMM(detail.gio_khoi_hanh)}</span>
+            </div>
+
+            {/* Cột: Thông tin chuyến bay + Mã vé */}
+            <div className="d-flex flex-grow-1 px-4 align-items-center justify-content-start">
+                {/* Thông tin chuyến bay */}
+                <div className="me-5" style={{ minWidth: '280px' }}>
+                    <div className="fw-semibold text-primary fs-5 mb-1">
+                        Số hiệu chuyến bay: #{ticket.Ma_chuyen_bay}
+                    </div>
+                    <div className="small text-dark mb-1">
+                        Thời gian bay {Math.floor(detail.Thoi_gian_bay / 60)}h {detail.Thoi_gian_bay % 60} phút
+                    </div>
+                    <div className="fs-5 d-flex align-items-center mb-1">
+                        <div className="me-4 text-nowrap text-center">
+                            <div className="fw-bold">{detail.Ma_san_bay_di}</div>
+                            <div>{formatHHMM(detail.gio_khoi_hanh)}</div>
                         </div>
-                        <span className="mx-auto fs-1">→</span>
-                        <div className='ms-5 me-4'>
-                            <span className='fw-bold'>{detail.Ma_san_bay_den}</span>
-                            <br />
-                            <span>{arrivalTime}</span>
+                        <div className="fs-1 mx-2">→</div>
+                        <div className="ms-4 text-nowrap text-center">
+                            <div className="fw-bold">{detail.Ma_san_bay_den}</div>
+                            <div>{arrivalTime}</div>
                         </div>
                     </div>
-                    <div className="text-muted small mt-1">{detail.ngay_khoi_hanh}</div>
+                    <div className="text-muted small">{detail.ngay_khoi_hanh}</div>
                 </div>
-                <div className="text-start mt-3 mt-md-0 border-start ps-4">
+                {/* Mã vé */}
+                <div className="text-nowrap">
                     <div>Mã Vé: {ticket.Ma_ve}</div>
-                    <div>Mã Hành Khách: {ticket.id_hanhkhach}</div>
+                    <div>Mã Hành Khách: {ticket.Ma_hanh_khach}</div>
                     <div>Hạng vé: {ticket.Ma_hang_ve}</div>
                     <div>Vị trí ghế: {ticket.vi_tri}</div>
                 </div>
             </div>
+
+            {/* Cột: Giá vé */}
+            <div
+                className="d-flex align-items-center justify-content-end"
+                style={{ minWidth: '150px' }}
+            >
+                <button
+                    className="btn btn-warning text-dark rounded-3 d-flex flex-column justify-content-center align-items-center p-4"
+                    style={{
+                        minWidth: '150px',
+                        width: '100%',
+                        maxWidth: '200px',
+                        minHeight: '120px',
+                        height: '100%',
+                    }}
+                >
+                    <div className="fw-semibold text-uppercase text-center">Giá Vé</div>
+                    <div className="fw-bold fs-5">{ticket.Tien_ve.toLocaleString()} <br /> VND</div>
+                </button>
+            </div>
         </div>
+
+
+
     );
 };
 

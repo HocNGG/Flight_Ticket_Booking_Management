@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import FlightCard from '../components/FlightCard';
-
+import ToastMessage from '../components/ToastMessage';
 
 const Flights = () => {
     const [selectedOption, setSelectedOption] = useState("2");
@@ -18,13 +18,42 @@ const Flights = () => {
             const url = `http://localhost:5000/api/chuyenbay/search?start_time=${startDate}T00:00:00&end_time=${arriveDate}T23:59:59&sanbay_di=${from}&sanbay_den=${to}`;
             const res = await fetch(url);
             const data = await res.json();
-            setFlights(data.data);
-            // Biến kiểm tra thao tác Tìm chuyến
+            if (res.ok && Array.isArray(data.data) && data.data.length > 0) {
+                setFlights(data.data);
+            } else {
+                // Nếu không có chuyến bay nào
+                setFlights([]);
+            }
             setSearched(true);
         } catch (err) {
             console.error(err);
         }
     };
+
+    const handleDelete = (flightId) => {
+    setFlights((prev) => prev.filter((f) => f.Ma_chuyen_bay !== flightId));
+  };
+
+    useEffect(() => {
+        const fetchFlights = async () => {
+            try {
+                const res = await fetch(`http://localhost:5000/api/chuyenbay/get/all`, {
+                    method: 'GET',
+                });
+                const data = await res.json();
+                if (res.ok && Array.isArray(data.message) && data.message.length > 0) {
+                    setFlights(data.message);
+                } else {
+                    console.warn("Dữ liệu chuyến bay không hợp lệ hoặc không phải mảng:", data);
+                    setFlights([]); // Gán mảng rỗng để tránh lỗi .length
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        };
+        fetchFlights();
+        console.log("Dữ liệu flights:", flights);
+    }, []);
     return (
         <div className='full-container d-flex'>
             <div>
@@ -37,40 +66,44 @@ const Flights = () => {
                 <h2>CHUYẾN BAY</h2>
                 <form onSubmit={handleSearch} className="d-flex my-3 justify-content-between align-items-center">
                     <div>
-                        <label htmlFor="from">Từ</label>
+                        <label htmlFor="from" className='mb-2 fs-5'>Từ</label>
                         <input type="text" className="form-control fs-5" placeholder="Nhập điểm khởi hành" value={form.from} onChange={(e) => setForm({ ...form, from: e.target.value })} required />
                     </div>
                     <div>
-                        <label htmlFor="to">Đến</label>
+                        <label htmlFor="to" className='mb-2 fs-5'>Đến</label>
                         <input type="text" className="form-control fs-5" placeholder="Nhập điểm đến" value={form.to} onChange={(e) => setForm({ ...form, to: e.target.value })} required />
                     </div>
                     <div>
-                        <label htmlFor="startDate">Ngày khởi hành</label>
+                        <label htmlFor="startDate" className='mb-2 fs-5'>Ngày khởi hành</label>
                         <input type="date" className="form-control fs-5" placeholder="Ngày đi" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} required />
                     </div>
                     <div>
-                        <label htmlFor="arriveDate">Ngày đến</label>
+                        <label htmlFor="arriveDate" className='mb-2 fs-5'>Ngày đến</label>
                         <input type="date" className="form-control fs-5" placeholder="Ngày đến" value={form.arriveDate} onChange={(e) => setForm({ ...form, arriveDate: e.target.value })} required />
                     </div>
-                    <button type="submit" className="btn btn-primary mt-4 fs-5">Tìm</button>
+                    <button type="submit" className="btn btn-primary mt-5 fs-5">Tìm</button>
                 </form>
-                <div className='flight-list'>
+                <div className='flight-list rounded-3 p-2'>
                     {flights.length > 0 ? (
-                        flights.map(flight => (
-                            <FlightCard
-                                key={flight.Ma_chuyen_bay}
-                                flight={flight}
-                                detail={detail}
-                                setDetail={setDetail}
-                                show={show}
-                                setShow={setShow}
-                            />
-                        ))
-                    ) : searched ? (
-                        <p className="text-center mt-4 text-dark fw-bold">Không tìm thấy chuyến bay phù hợp</p>
-                    ) : (
-                        <p className='text-center mt-4 text-dark fw-bold'>Vui lòng nhập thông tin chuyến bay muốn tìm</p>
-                    )}
+                        flights
+                            // Chỉ hiển thị các chuyến bay chưa bay
+                            // .filter(flight => {
+                            //     const today = new Date();
+                            //     const flightDate = new Date(flight.ngay_khoi_hanh);
+                            //     return flightDate >= today;
+                            // })
+                            .map(flight => (
+                                <FlightCard
+                                    key={flight.Ma_chuyen_bay}
+                                    flight={flight}
+                                    detail={detail}
+                                    setDetail={setDetail}
+                                    show={show}
+                                    setShow={setShow}
+                                    onDelete={handleDelete}
+                                />
+                            ))
+                    ) : null}
                 </div>
             </div>
         </div>

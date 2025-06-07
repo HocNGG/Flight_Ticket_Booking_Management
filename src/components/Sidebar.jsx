@@ -18,7 +18,7 @@ const Sidebar = ({ selectedOption, setSelectedOption }) => {
             <div className='container ms-3'>
                 {/* Hiển thị role ở đây */}
                 <div className='role mt-3'>
-                    <h2>STAFF</h2>
+                    <h2>ADMIN</h2>
                 </div>
 
                 <div className="sidebar rounded-4 mt-3 p-2">
