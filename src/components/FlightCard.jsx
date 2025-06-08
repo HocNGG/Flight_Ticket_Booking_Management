@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ToastMessage from './ToastMessage';
-const FlightCard = ({ flight, onDelete }) => {
+const FlightCard = ({ flight, onDelete, onEdit }) => {
     const navigate = useNavigate();
     const [detail, setDetail] = useState(null);
     const [show, setShow] = useState(false);
@@ -141,24 +141,27 @@ const FlightCard = ({ flight, onDelete }) => {
 
 
                     <div className='d-flex mt-1 ' style={{ position: 'absolute', top: '5%', right: '1%' }}>
-                        <button
-                            type="button"
-                            className="btn btn-warning fw-bold me-2 ms-2"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                navigate(`/update-ticket`, {
-                                    state: {
-                                        flightId: flight.Ma_chuyen_bay
-                                    }
-                                });
-                            }}
-                        >
-                            Edit
-                        </button>
-                        <button className='btn btn-danger fs-4 p-0 px-2' onClick={(e) => {
-                            e.stopPropagation(); // tránh trigger modal
-                            handleDeleteFlight(e);
-                        }}>🗑︎</button>
+                        <div className="btn-group">
+                            <button
+                                type="button"
+                                className="btn btn-warning fw-bold me-2"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onEdit(flight);
+                                }}
+                            >
+                                Cập nhật
+                            </button>
+                            <button 
+                                className='btn btn-danger fs-4 p-0 px-2' 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteFlight(e);
+                                }}
+                            >
+                                🗑︎
+                            </button>
+                        </div>
                     </div>
 
                     <button
@@ -205,8 +208,8 @@ const FlightCard = ({ flight, onDelete }) => {
 
                                 {detail.chitiet_sanbay_trung_gian?.map((tg, idx) => (
                                     <div key={idx}>
-                                        <p><strong>Mã sân bay trung gian:</strong> {tg.Ma_san_bay || 'Không có'}</p>
-                                        <p><strong>Thời gian dừng:</strong> {tg.Thoi_gian_dung || '0'} phút &nbsp;&nbsp;&nbsp; <strong>Ghi chú:</strong> {tg.Ghi_chu || 'Không có'}</p>
+                                        <p><strong>Mã sân bay trung gian:</strong> {tg.ma_san_bay_trung_gian || 'Không có'}</p>
+                                        <p><strong>Thời gian dừng:</strong> {tg.thoi_gian_dung || '0'} phút &nbsp;&nbsp;&nbsp; <strong>Ghi chú:</strong> {tg.ghi_chu || 'Không có'}</p>
                                         <hr />
                                     </div>
                                 ))}
