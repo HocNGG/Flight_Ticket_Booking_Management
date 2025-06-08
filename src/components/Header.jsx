@@ -1,7 +1,7 @@
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-
+import '../App.css';
 const Header = () => {
     return (
         <>
@@ -24,14 +24,26 @@ const Header = () => {
                 <Container>
                     <Navbar.Toggle aria-controls="main-navbar" />
                     <Navbar.Collapse id="main-navbar">
-                        <Nav className="d-flex justify-content-between mx-auto fs-5 w-100">
-                            <Nav.Link href="/tickets">Vé Chuyến Bay</Nav.Link>
-                            <Nav.Link href="/flights">Chuyến Bay</Nav.Link>
-                            <Nav.Link href="/airport">Sân Bay</Nav.Link>
-                            <Nav.Link href="/class">Hạng Vé</Nav.Link>
-                            <Nav.Link href="/home">Quy Định</Nav.Link>
-                            <Nav.Link href="/revenue">Doanh Thu</Nav.Link>
-                        </Nav>
+                        <div className="nav-buttons-container">
+                            <Nav.Link href="/tickets" className="nav-button">
+                                <span className="button-text">Vé Chuyến Bay</span>
+                            </Nav.Link>
+                            <Nav.Link href="/flights" className="nav-button">
+                                <span className="button-text">Chuyến Bay</span>
+                            </Nav.Link>
+                            <Nav.Link href="/airport" className="nav-button">
+                                <span className="button-text">Sân Bay</span>
+                            </Nav.Link>
+                            <Nav.Link href="/class" className="nav-button">
+                                <span className="button-text">Hạng Vé</span>
+                            </Nav.Link>
+                            <Nav.Link href="/home" className="nav-button">
+                                <span className="button-text">Quy Định</span>
+                            </Nav.Link>
+                            <Nav.Link href="/revenue" className="nav-button">
+                                <span className="button-text">Doanh Thu</span>
+                            </Nav.Link>
+                        </div>
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
