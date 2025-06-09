@@ -6,12 +6,18 @@ import Footer from '../components/Footer';
 
 const Home = () => {
     const images = [
-        "https://cf.creatrip.com/original/blog/938/eqfc6p34iow3jra3nwii4vnkwayo8zkw.png",
-        "https://static2.gensler.com/uploads/hero_element/84/thumb_desktop/thumbs/project_incheon-airport_01_1024x576.jpg",
-        "https://static2.gensler.com/uploads/image/63374/Incheon_08_2000x1125_1521215401.jpg"
+        "https://images.pexels.com/photos/1115358/pexels-photo-1115358.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        "https://images.pexels.com/photos/730778/pexels-photo-730778.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        "https://images.pexels.com/photos/2026324/pexels-photo-2026324.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
     ]
     return (
-        <div className='full-container d-block'>
+        <div className='full-container d-block' style={{
+            backgroundImage: 'url("https://images.pexels.com/photos/19670/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2")',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundAttachment: 'fixed',
+            minHeight: '100vh'
+        }}>
             <div>
 
             </div>

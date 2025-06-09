@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ToastMessage from './ToastMessage';
-const FlightCard = ({ flight, onDelete }) => {
+const FlightCard = ({ flight, onDelete, onEdit }) => {
     const navigate = useNavigate();
     const [detail, setDetail] = useState(null);
     const [show, setShow] = useState(false);
@@ -142,47 +142,28 @@ const FlightCard = ({ flight, onDelete }) => {
 
 
 
-                    <div className='d-flex mt-1 ' style={{ position: 'absolute', top: '6%', right: '2%' }}>
-                        <button
-                            type="button"
-                            className="btn btn-warning fw-bold me-2 ms-2"
-                            onClick={ async (e) => {
-                                e.stopPropagation();
-
-                                try {
-                                    const url = `http://localhost:5000/api/chuyenbay/get/${flight.Ma_chuyen_bay}`;
-                                    const res = await fetch(url);
-                                    const data = await res.json();
-
-                                    if (res.ok) {
-                                        const detailData = data.data;
-                                        navigate(`/update-flight`, {
-                                            state: {
-                                                flightId: flight.Ma_chuyen_bay,
-                                                date: flight.ngay_khoi_hanh,
-                                                duration: flight.Thoi_gian_bay,
-                                                time: flight.gio_khoi_hanh,
-                                                price: flight.gia_ve,
-                                                srcAirport: flight.Ma_san_bay_di,
-                                                desAirport: flight.Ma_san_bay_den,
-                                                class: detailData.chitiet_hangve,
-                                                detail: detailData.chitiet_sanbay_trung_gian,
-                                            }
-                                        });
-                                    } else {
-                                        console.log("Lỗi khi tải chi tiết chuyến bay");
-                                    }
-                                } catch (err) {
-                                    console.error("Lỗi gọi API:", err);
-                                }
-                            }}
-                        >
-                            Edit
-                        </button>
-                        <button className='btn btn-danger fs-4 p-0 px-2' onClick={(e) => {
-                            e.stopPropagation(); // tránh trigger modal
-                            handleDeleteFlight(e);
-                        }}>🗑︎</button>
+                    <div className='d-flex mt-1 ' style={{ position: 'absolute', top: '5%', right: '1%' }}>
+                        <div className="btn-group">
+                            <button
+                                type="button"
+                                className="btn btn-warning fw-bold me-2"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onEdit(flight);
+                                }}
+                            >
+                                Cập nhật
+                            </button>
+                            <button 
+                                className='btn btn-danger fs-4 p-0 px-2' 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteFlight(e);
+                                }}
+                            >
+                                🗑︎
+                            </button>
+                        </div>
                     </div>
 
                     <button
@@ -229,8 +210,8 @@ const FlightCard = ({ flight, onDelete }) => {
 
                                 {detail.chitiet_sanbay_trung_gian?.map((tg, idx) => (
                                     <div key={idx}>
-                                        <p><strong>Mã sân bay trung gian:</strong> {tg.ma_san_bay_trung_gian || ''}</p>
-                                        <p><strong>Thời gian dừng:</strong> {tg.thoi_gian_dung || '0'} phút &nbsp;&nbsp;&nbsp; <strong>Ghi chú:</strong> {tg.ghi_chu || ''}</p>
+                                        <p><strong>Mã sân bay trung gian:</strong> {tg.ma_san_bay_trung_gian || 'Không có'}</p>
+                                        <p><strong>Thời gian dừng:</strong> {tg.thoi_gian_dung || '0'} phút &nbsp;&nbsp;&nbsp; <strong>Ghi chú:</strong> {tg.ghi_chu || 'Không có'}</p>
                                         <hr />
                                     </div>
                                 ))}
