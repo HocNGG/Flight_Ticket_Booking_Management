@@ -1,15 +1,20 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ToastMessage from './ToastMessage';
+// import ToastMessage from './ToastMessage';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
+
 const FlightCard = ({ flight, onDelete, onEdit }) => {
     const navigate = useNavigate();
     const [detail, setDetail] = useState(null);
     const [show, setShow] = useState(false);
-    const [toast, setToast] = useState({
-        show: false,
-        message: '',
-        variant: 'success'
-    });
+    // const [toast, setToast] = useState({
+    //     show: false,
+    //     message: '',
+    //     variant: 'success'
+    // });
     // Chuyển sang định dạng 00:00 để hiển thị ngắn gọn hơn
     const formatHHMM = (timeString) => {
         const [hh, mm] = timeString.split(':');
@@ -50,22 +55,70 @@ const FlightCard = ({ flight, onDelete, onEdit }) => {
         e.stopPropagation();
 
         try {
+            // SweetAlert2 confirm
+            const result = await MySwal.fire({
+                title: 'Bạn có chắc chắn muốn xóa chuyến bay này?',
+                text: `Số hiệu chuyến bay: #${flight.Ma_chuyen_bay}`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Xóa',
+                cancelButtonText: 'Hủy',
+                reverseButtons: true
+            });
+
+            if (!result.isConfirmed) {
+                return;
+            }
+
+            // Hiển thị loading
+            MySwal.fire({
+                title: 'Đang xóa...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    MySwal.showLoading();
+                }
+            });
+
             const url = `http://localhost:5000/api/chuyenbay/delete/${flight.Ma_chuyen_bay}`;
             const res = await fetch(url, {
                 method: 'DELETE'
             });
             const data = await res.json();
 
-            if (res.ok) {
+            // Đóng loading
+            await MySwal.close();
+
+            if (res.ok && data.status === 'success') {
                 setShow(false);
-                onDelete?.(flight.Ma_chuyen_bay); // Gọi callback để xóa trong state cha
-                setToast({ show: true, message: 'Chuyến bay đã được xoá!', variant: 'success' });
+                onDelete?.(flight.Ma_chuyen_bay);
+                
+                // Hiển thị thông báo thành công
+                await MySwal.fire({
+                    title: 'Thành công!',
+                    text: 'Chuyến bay đã được xóa thành công!',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
             } else {
-                console.log(`Lỗi: ${data.message}`);
-                setToast({ show: true, message: 'Không thể xoá chuyến bay có vé đã đặt!', variant: 'danger' });
+                // Hiển thị thông báo lỗi
+                await MySwal.fire({
+                    title: 'Lỗi!',
+                    text: data.message || 'Không thể xóa chuyến bay!',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
             }
-        } catch (err) {
-            console.error(err);
+        } catch (error) {
+            console.error('Error deleting flight:', error);
+            // Hiển thị thông báo lỗi
+            await MySwal.fire({
+                title: 'Lỗi!',
+                text: 'Có lỗi xảy ra khi xóa chuyến bay!',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
         }
     };
     return (
@@ -183,12 +236,6 @@ const FlightCard = ({ flight, onDelete, onEdit }) => {
                     </button>
                 </div>
             </div>
-            <ToastMessage
-                show={toast.show}
-                onClose={() => setToast({ ...toast, show: false })}
-                message={toast.message}
-                variant={toast.variant}
-            />
             {show && detail && (
                 <div className="modal show fade d-block align-items-center">
                     <div className="modal-dialog modal-lg">

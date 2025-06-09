@@ -349,7 +349,11 @@ const Flights = () => {
     };
 
     return (
-        <div className='full-container d-flex'>
+        <div className='full-container d-flex' style={{ backgroundImage: `url(https://images.unsplash.com/photo-1535557597501-0fee0a500c57?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)`,
+            backgroundAttachment: 'fixed',
+            backgroundSize: 'cover',
+            backgroundPosition: 'top'
+        }}>
             <div>
                 <Sidebar
                     selectedOption={selectedOption}
@@ -359,13 +363,16 @@ const Flights = () => {
             <div className="mt-5 p-4 w-100">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h2>CHUYẾN BAY</h2>
-                    <Button 
-                        variant="success" 
-                        size="lg"
-                        onClick={() => setShowCreateModal(true)}
-                    >
-                        +Thêm chuyến bay
-                    </Button>
+                    <div>
+                        <Button 
+                            variant="success" 
+                            size="lg"
+                            className="me-2"
+                            onClick={() => setShowCreateModal(true)}
+                        >
+                            +Thêm chuyến bay
+                        </Button>
+                    </div>
                 </div>
                 <div className="d-flex flex-column my-3">
                     <form onSubmit={handleSearchById} className="d-flex justify-content-between align-items-center mb-3">
@@ -385,23 +392,33 @@ const Flights = () => {
                     <form onSubmit={handleSearchByCriteria} className="d-flex justify-content-between align-items-center">
                         <div>
                             <label htmlFor="from" className='mb-2 fs-5'>Từ</label>
-                            <input 
-                                type="text" 
-                                className="form-control fs-5" 
-                                placeholder="Nhập điểm khởi hành" 
-                                value={form.from} 
-                                onChange={(e) => setForm({ ...form, from: e.target.value })} 
-                            />
+                            <select
+                                className="form-control fs-5"
+                                value={form.from}
+                                onChange={(e) => setForm({ ...form, from: e.target.value })}
+                            >
+                                <option value="">Chọn sân bay đi</option>
+                                {airports.map(airport => (
+                                    <option key={airport.Ma_san_bay} value={airport.Ma_san_bay}>
+                                        {airport.Ten_san_bay} ({airport.Ma_san_bay})
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                         <div>
                             <label htmlFor="to" className='mb-2 fs-5'>Đến</label>
-                            <input 
-                                type="text" 
-                                className="form-control fs-5" 
-                                placeholder="Nhập điểm đến" 
-                                value={form.to} 
-                                onChange={(e) => setForm({ ...form, to: e.target.value })} 
-                            />
+                            <select
+                                className="form-control fs-5"
+                                value={form.to}
+                                onChange={(e) => setForm({ ...form, to: e.target.value })}
+                            >
+                                <option value="">Chọn sân bay đến</option>
+                                {airports.map(airport => (
+                                    <option key={airport.Ma_san_bay} value={airport.Ma_san_bay}>
+                                        {airport.Ten_san_bay} ({airport.Ma_san_bay})
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                         <div>
                             <label htmlFor="startDate" className='mb-2 fs-5'>Ngày khởi hành</label>
@@ -641,6 +658,88 @@ const Flights = () => {
                                 </Form.Group>
                             </Col>
                         </Row>
+
+                        <h5 className="mt-4">Hạng Vé</h5>
+                        {createForm.hangve.map((item, index) => (
+                            <Row key={index} className="mb-3">
+                                <Col md={6}>
+                                    <Form.Group>
+                                        <Form.Label>Hạng Vé</Form.Label>
+                                        <Form.Control
+                                            type="number"
+                                            value={item.Ma_hang_ve}
+                                            onChange={(e) => {
+                                                const newHangve = [...createForm.hangve];
+                                                newHangve[index].Ma_hang_ve = parseInt(e.target.value);
+                                                setCreateForm({
+                                                    ...createForm,
+                                                    hangve: newHangve
+                                                });
+                                            }}
+                                            required
+                                            min="1"
+                                            placeholder="Nhập mã hạng vé"
+                                        />
+                                    </Form.Group>
+                                </Col>
+                                <Col md={5}>
+                                    <Form.Group>
+                                        <Form.Label>Số Ghế Trống</Form.Label>
+                                        <Form.Control
+                                            type="number"
+                                            value={item.So_ghe_trong_hang}
+                                            onChange={(e) => {
+                                                const newHangve = [...createForm.hangve];
+                                                newHangve[index].So_ghe_trong_hang = parseInt(e.target.value);
+                                                setCreateForm({
+                                                    ...createForm,
+                                                    hangve: newHangve
+                                                });
+                                            }}
+                                            required
+                                            min="1"
+                                            placeholder="Nhập số ghế trống"
+                                        />
+                                    </Form.Group>
+                                </Col>
+                                <Col md={1} className="d-flex align-items-end">
+                                    {index > 0 && (
+                                        <Button
+                                            variant="danger"
+                                            size="sm"
+                                            onClick={() => {
+                                                const newHangve = createForm.hangve.filter((_, i) => i !== index);
+                                                setCreateForm({
+                                                    ...createForm,
+                                                    hangve: newHangve
+                                                });
+                                            }}
+                                        >
+                                            <i className="fas fa-times">XÓA</i>
+                                        </Button>
+                                    )}
+                                </Col>
+                            </Row>
+                        ))}
+                        <Button
+                            variant="outline-primary"
+                            size="sm"
+                            onClick={() => {
+                                setCreateForm({
+                                    ...createForm,
+                                    hangve: [
+                                        ...createForm.hangve,
+                                        {
+                                            Ma_hang_ve: 1,
+                                            So_ghe_trong_hang: 50
+                                        }
+                                    ]
+                                });
+                            }}
+                            className="mb-3"
+                        >
+                            <i className="fas fa-plus"></i> Thêm Hạng Vé
+                        </Button>
 
                         <h5 className="mt-4">Sân Bay Trung Gian</h5>
                         {createForm.chitiet.map((item, index) => (
