@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import FlightCard from '../components/FlightCard';
-import ToastMessage from '../components/ToastMessage';
-
+import Footer from '../components/Footer';
+import { useNavigate } from 'react-router-dom';
 const Flights = () => {
     const [selectedOption, setSelectedOption] = useState("2");
     const [form, setForm] = useState({ from: '', to: '', startDate: '', arriveDate: '' });
@@ -10,7 +10,7 @@ const Flights = () => {
     const [searched, setSearched] = useState(false);
     const [detail, setDetail] = useState(null);
     const [show, setShow] = useState(false);
-
+    const navigate = useNavigate();
     const handleSearch = async (e) => {
         e.preventDefault();
         try {
@@ -55,6 +55,7 @@ const Flights = () => {
         console.log("Dữ liệu flights:", flights);
     }, []);
     return (
+        <>
         <div className='full-container d-flex'>
             <div>
                 <Sidebar
@@ -63,7 +64,13 @@ const Flights = () => {
                 />
             </div>
             <div className="mt-5 p-4 w-100">
-                <h2>CHUYẾN BAY</h2>
+                <div className='d-flex justify-content-between'>
+                    <h2>CHUYẾN BAY</h2>
+                    <button className='btn btn-success' onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/create-flight`);
+                    }}> + Tạo Chuyến Bay</button>
+                </div>
                 <form onSubmit={handleSearch} className="d-flex my-3 justify-content-between align-items-center">
                     <div>
                         <label htmlFor="from" className='mb-2 fs-5'>Từ</label>
@@ -107,7 +114,8 @@ const Flights = () => {
                 </div>
             </div>
         </div>
-
+        <Footer></Footer>
+        </>
     )
 }
 export default Flights;

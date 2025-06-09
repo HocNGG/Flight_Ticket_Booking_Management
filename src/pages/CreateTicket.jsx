@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ToastMessage from '../components/ToastMessage';
 
@@ -103,7 +103,7 @@ const CreateTicket = () => {
                     } else {
                         navigate('/flights');
                     }
-                }, 1000);
+                }, 2000);
             } else {
                 setToast({ show: true, message: 'Chuyến bay đã khởi hành!', variant: 'danger' });
             }
@@ -206,7 +206,6 @@ const CreateTicket = () => {
                 variant={toast.variant}
             />
         </div>
-
     )
 }
 export default CreateTicket;

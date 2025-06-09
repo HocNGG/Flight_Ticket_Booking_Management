@@ -5,6 +5,8 @@ import Flights from './pages/Flights';
 import Home from './pages/Home';
 import CreateTicket from './pages/CreateTicket';
 import Tickets from './pages/Tickets';
+import CreateFlight from './pages/CreateFlight';
+import UpdateFlight from './pages/UpdateFlight';
 function App() {
   return (
     <Router>
@@ -14,8 +16,8 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/create-ticket" element={<CreateTicket />} />
         <Route path="/tickets" element={<Tickets />} />
-        {/* <Route path="/class" element={<Class />} />
-        <Route path="/revenue" element={<Revenue />} /> */}
+        <Route path="/create-flight" element={<CreateFlight />} />
+        <Route path="/update-flight" element={<UpdateFlight />} />
       </Routes>
     </Router>
   )

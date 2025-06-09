@@ -8,7 +8,7 @@ const FlightCard = ({ flight, onDelete }) => {
     const [toast, setToast] = useState({
         show: false,
         message: '',
-        variant: 'success'
+        variant: ''
     });
     // Chuyển sang định dạng 00:00 để hiển thị ngắn gọn hơn
     const formatHHMM = (timeString) => {
@@ -57,9 +57,11 @@ const FlightCard = ({ flight, onDelete }) => {
             const data = await res.json();
 
             if (res.ok) {
-                setShow(false);
-                onDelete?.(flight.Ma_chuyen_bay); // Gọi callback để xóa trong state cha
-                setToast({ show: true, message: 'Chuyến bay đã được xoá!', variant: 'success' });
+                setToast({ show: true, message: 'Xoá chuyến bay thành công!', variant: 'success' });
+                setTimeout(() => {
+                    setShow(false);
+                    onDelete?.(flight.Ma_chuyen_bay);
+                }, 2000);
             } else {
                 console.log(`Lỗi: ${data.message}`);
                 setToast({ show: true, message: 'Không thể xoá chuyến bay có vé đã đặt!', variant: 'danger' });
@@ -140,17 +142,39 @@ const FlightCard = ({ flight, onDelete }) => {
 
 
 
-                    <div className='d-flex mt-1 ' style={{ position: 'absolute', top: '5%', right: '1%' }}>
+                    <div className='d-flex mt-1 ' style={{ position: 'absolute', top: '6%', right: '2%' }}>
                         <button
                             type="button"
                             className="btn btn-warning fw-bold me-2 ms-2"
-                            onClick={(e) => {
+                            onClick={ async (e) => {
                                 e.stopPropagation();
-                                navigate(`/update-ticket`, {
-                                    state: {
-                                        flightId: flight.Ma_chuyen_bay
+
+                                try {
+                                    const url = `http://localhost:5000/api/chuyenbay/get/${flight.Ma_chuyen_bay}`;
+                                    const res = await fetch(url);
+                                    const data = await res.json();
+
+                                    if (res.ok) {
+                                        const detailData = data.data;
+                                        navigate(`/update-flight`, {
+                                            state: {
+                                                flightId: flight.Ma_chuyen_bay,
+                                                date: flight.ngay_khoi_hanh,
+                                                duration: flight.Thoi_gian_bay,
+                                                time: flight.gio_khoi_hanh,
+                                                price: flight.gia_ve,
+                                                srcAirport: flight.Ma_san_bay_di,
+                                                desAirport: flight.Ma_san_bay_den,
+                                                class: detailData.chitiet_hangve,
+                                                detail: detailData.chitiet_sanbay_trung_gian,
+                                            }
+                                        });
+                                    } else {
+                                        console.log("Lỗi khi tải chi tiết chuyến bay");
                                     }
-                                });
+                                } catch (err) {
+                                    console.error("Lỗi gọi API:", err);
+                                }
                             }}
                         >
                             Edit
@@ -174,7 +198,7 @@ const FlightCard = ({ flight, onDelete }) => {
                                 }
                             });
                         }}
-                        style={{whiteSpace: 'nowrap'}}
+                        style={{ whiteSpace: 'nowrap' }}
                     >
                         Tạo Vé
                     </button>
@@ -205,8 +229,8 @@ const FlightCard = ({ flight, onDelete }) => {
 
                                 {detail.chitiet_sanbay_trung_gian?.map((tg, idx) => (
                                     <div key={idx}>
-                                        <p><strong>Mã sân bay trung gian:</strong> {tg.Ma_san_bay || 'Không có'}</p>
-                                        <p><strong>Thời gian dừng:</strong> {tg.Thoi_gian_dung || '0'} phút &nbsp;&nbsp;&nbsp; <strong>Ghi chú:</strong> {tg.Ghi_chu || 'Không có'}</p>
+                                        <p><strong>Mã sân bay trung gian:</strong> {tg.ma_san_bay_trung_gian || ''}</p>
+                                        <p><strong>Thời gian dừng:</strong> {tg.thoi_gian_dung || '0'} phút &nbsp;&nbsp;&nbsp; <strong>Ghi chú:</strong> {tg.ghi_chu || ''}</p>
                                         <hr />
                                     </div>
                                 ))}
