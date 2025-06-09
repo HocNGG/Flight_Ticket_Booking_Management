@@ -158,23 +158,12 @@ const Tickets = () => {
         }
     };
 
+    // Khi chuyển tab hoặc rời khỏi trang, làm sạch vé
     useEffect(() => {
-        const fetchTickets = async () => {
-            try {
-                const res = await fetch(`http://localhost:5000/api/vechuyenbay/get/DatHomNay`);
-                const data = await res.json();
-                if (res.ok && Array.isArray(data.data)) {
-                    setTickets(data.data);
-                } else {
-                    console.error('Invalid data format:', data);
-                    setTickets([]);
-                }
-            } catch (err) {
-                console.error('Error fetching tickets:', err);
-                setTickets([]);
-            }
+        return () => {
+            setTickets([]);
+            setSearched(false);
         };
-        fetchTickets();
     }, []);
 
     return (
@@ -213,7 +202,6 @@ const Tickets = () => {
                                     >
                                         <option value="cmnd">CMND/CCCD</option>
                                         <option value="flightId">Mã chuyến bay</option>
-                                        <option value="passengerId">Mã hành khách</option>
                                         <option value="date">Vé đặt hôm nay</option>
                                     </Form.Select>
                                 </div>
@@ -259,11 +247,7 @@ const Tickets = () => {
                         <div className="text-center p-4 bg-white rounded-3 shadow-sm">
                             <h4>Không tìm thấy vé chuyến bay</h4>
                         </div>
-                    ) : (
-                        <div className="text-center p-4 bg-white rounded-3 shadow-sm">
-                            <h4>Vui lòng nhập thông tin tìm kiếm</h4>
-                        </div>
-                    )}
+                    ) : null}
                 </div>
             </div>
 

@@ -103,7 +103,6 @@ const TicketCard = ({ ticket, onUpdateSeat, onCancelTicket }) => {
                     {/* Mã vé */}
                     <div className="text-nowrap">
                         <div>Mã Vé: {ticket.Ma_ve}</div>
-                        <div>Mã Hành Khách: {ticket.Ma_hanh_khach}</div>
                         <div>Hạng vé: {ticket.Ma_hang_ve}</div>
                         <div>Vị trí ghế: {ticket.vi_tri}</div>
                     </div>
@@ -166,7 +165,6 @@ const TicketCard = ({ ticket, onUpdateSeat, onCancelTicket }) => {
                             <h5>Thông tin vé</h5>
                             <p><strong>Mã vé:</strong> {ticket.Ma_ve}</p>
                             <p><strong>Mã chuyến bay:</strong> {ticket.Ma_chuyen_bay}</p>
-                            <p><strong>Mã hành khách:</strong> {ticket.Ma_hanh_khach}</p>
                             <p><strong>Hạng vé:</strong> {ticket.Ma_hang_ve}</p>
                             <p><strong>Vị trí ghế:</strong> {ticket.vi_tri}</p>
                             <p><strong>Giá vé:</strong> {ticket.Tien_ve.toLocaleString()} VND</p>
