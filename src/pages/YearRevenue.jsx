@@ -63,7 +63,7 @@ const YearRevenue = () => {
                         setData([]);
                         setError(res.data.message);
                     }
-                } catch (err) {
+                } catch {
                     setData([]);
                     setError("Lỗi kết nối tới server.");
                 }
@@ -73,6 +73,12 @@ const YearRevenue = () => {
     }, [time.year]);
 
     return (
+        <div className='full-container d-flex' style={{ 
+            backgroundImage: `url(https://images.unsplash.com/photo-1535557597501-0fee0a500c57?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)`,
+            backgroundAttachment: 'fixed',
+            backgroundSize: 'cover',
+            backgroundPosition: 'top'
+        }}>
         <div className="full-container d-flex">
             <div>
                 <Sidebar
@@ -84,7 +90,7 @@ const YearRevenue = () => {
             <div className="mt-5 p-4 w-100">
                 <div className="d-flex justify-content-between">
                     <h2>Doanh Thu</h2>
-                    <button className="btn btn-success fs-5 rounded-5" onClick={() => {
+                    <button className="btn btn-success fs-5" onClick={() => {
                         navigate(`/detail-revenue`);
                     }}>Xem Chi Tiết</button>
                 </div>
@@ -106,18 +112,19 @@ const YearRevenue = () => {
                     </div>
                 </div>
                 {yearRevenueData.length > 0 && (
-                    <div style={{ width: "100%", height: 400 }} className="mt-5">
-                        <h3 className="text-center">Tỉ lệ doanh thu theo tháng trong năm {time.year}</h3>
-                        <ResponsiveContainer width="100%" height={300} >
-                            <BarChart data={chartData}>
-                                <CartesianGrid strokeDasharray="2 2" />
-                                <XAxis dataKey="name" />
-                                <YAxis tickFormatter={(value) => value.toLocaleString() + " VND"} />
-                                {/* <Tooltip formatter={(value) => [`${value.toLocaleString()} VND`, "Tổng doanh thu"]}
-                                    labelFormatter={(label) => `Tháng: ${label}`} /> */}
-                                <Bar dataKey="Tong_doanh_thu" fill="#4da6ff" />
-                            </BarChart>
-                        </ResponsiveContainer>
+                    <div style={{ width: "100%", height: 420 }} className="mt-5">
+                        <h3 className="text-center" style={{ color: '#111' }}>Tỉ lệ doanh thu theo tháng trong năm {time.year}</h3>
+                        <div style={{ borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.07)' }}>
+                            <ResponsiveContainer width="100%" height={320}>
+                                <BarChart data={chartData} margin={{ top: 20, right: 40, left: 60, bottom: 40 }}>
+                                    <CartesianGrid strokeDasharray="2 2" />
+                                    <XAxis dataKey="name" tick={{ fill: '#111', fontWeight: 600, fontSize: 16 }} />
+                                    <YAxis tickFormatter={(value) => value.toLocaleString() + " VND"} tick={{ fill: '#111', fontWeight: 600, fontSize: 16 }} />
+                                    <Tooltip formatter={(value) => [`${value.toLocaleString()} VND`, "Tổng doanh thu"]} labelFormatter={(label) => `Tháng: ${label}`} contentStyle={{ color: '#111', fontWeight: 600, fontSize: 16 }} />
+                                    <Bar dataKey="Tong_doanh_thu" fill="#1B2432" barSize={40} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
                     </div>
                 )}
                 {data.length > 0 && (
@@ -150,6 +157,8 @@ const YearRevenue = () => {
                 )}
             </div>
         </div>
+        </div>
     )
+
 }
 export default YearRevenue;

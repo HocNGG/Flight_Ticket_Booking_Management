@@ -183,7 +183,7 @@ const Tickets = () => {
                 <div className='d-flex justify-content-between align-items-center mb-4'>
                     <h2>QUẢN LÝ VÉ CHUYẾN BAY</h2>
                     <button 
-                        className='btn btn-success' 
+                        className='btn btn-success fs-5' 
                         onClick={() => navigate('/create-ticket', { state: { fromPage: 'tickets' } })}
                     >
                         + Tạo Vé

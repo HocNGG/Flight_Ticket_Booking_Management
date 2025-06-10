@@ -22,9 +22,11 @@ const MonthRevenue = () => {
         })
     ];
     const COLORS = [
-        "#0088FE", "#00C49F", "#FFBB28", "#FF8042",
-        "#845EC2", "#D65DB1", "#FF6F91", "#FFC75F",
-        "#F9F871", "#2C73D2", "#0081CF", "#B39CD0"
+     "#8B0000", "#FF4500", "#FFD400", "#006400", "#D90368", "#2F4F4F", "#4B0082", "#483D8B", "#000", "#800000", "#008080", "#E71D36"
+
+
+
+
     ];
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -50,7 +52,7 @@ const MonthRevenue = () => {
                         setData([]);
                         setError(res.data.message);
                     }
-                } catch (err) {
+                } catch {
                     setData([]);
                     setError("Lỗi kết nối tới server.");
                 }
@@ -82,6 +84,12 @@ const MonthRevenue = () => {
         fetchMonthRevenueData();
     }, [time.year]);
     return (
+        <div className='full-container d-flex' style={{ 
+            backgroundImage: `url(https://images.unsplash.com/photo-1535557597501-0fee0a500c57?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)`,
+            backgroundAttachment: 'fixed',
+            backgroundSize: 'cover',
+            backgroundPosition: 'top'
+        }}>
         <div className="full-container d-flex">
             <div>
                 <Sidebar
@@ -130,7 +138,7 @@ const MonthRevenue = () => {
                 </div>
                 {monthRevenueData.length > 0 && (
                     <div style={{ width: "100%", height: 450, marginBottom: '100px' }} className="mt-5">
-                        <h3 className="text-center">Tỉ lệ doanh thu các tháng trong năm {time.year}</h3>
+                        <h3 className="text-center" style={{ color: '#111' }}>Tỉ lệ doanh thu các tháng trong năm {time.year}</h3>
                         <ResponsiveContainer>
                             <PieChart>
                                 <Pie
@@ -140,15 +148,16 @@ const MonthRevenue = () => {
                                     cx="50%"
                                     cy="50%"
                                     outerRadius={150}
-                                    label={({ percent }) => `${(percent * 100).toFixed(1)}%`} // chỉ hiển thị phần trăm
-                                    fill="#8884d8"
+                                    label={({ percent }) => `${(percent * 100).toFixed(1)}%`}
+                                    fill="#1B2432"
+                                    labelLine={false}
                                 >
                                     {monthRevenueData.map((_, index) => (
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
                                 </Pie>
-                                {/* <Tooltip formatter={(value, name, props) => [`${value.toLocaleString()} VND`, props.payload.name]} /> */}
-                                <Legend />
+                                <Tooltip contentStyle={{ color: '#111', fontWeight: 600, fontSize: 16, background: '#fff' }} />
+                                <Legend wrapperStyle={{ color: '#111', fontWeight: 600, fontSize: 16 }} />
                             </PieChart>
                         </ResponsiveContainer>
                     </div>
@@ -180,6 +189,7 @@ const MonthRevenue = () => {
                     <p className="fw-bold d-flex justify-content-center">Không có chuyến bay nào trong tháng này.</p>
                 )}
             </div>
+        </div>
         </div>
     )
 }

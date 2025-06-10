@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
 import ToastMessage from '../components/ToastMessage';
 
 const CreateTicket = () => {
+    const [selectedOption, setSelectedOption] = useState("3");
     const navigate = useNavigate();
     const location = useLocation();
     const fromPage = location.state?.fromPage || '';
@@ -146,154 +148,164 @@ const CreateTicket = () => {
     }
 
     return (
-        <div className="p-4 w-100">
-            <h2>Tạo Vé Chuyến Bay</h2>
-            <div className=' mt-5 h-75 rounded-2 p-3 border w-75 mx-auto' style={{ backgroundColor: '#E6F6F3' }}>
-                <form onSubmit={handleSubmit} className="my-3 p-4">
-                    <div className='d-flex'>
-                        <div className='info p-3 border rounded-2 '>
-                            <div className='row mt-2'>
-                                <div className='col-md-6 mb-3'>
-                                    <label htmlFor="flightId" className="form-label">Mã chuyến bay:</label>
-                                    <input 
-                                        type="text" 
-                                        className="form-control" 
-                                        id="flightId" 
-                                        placeholder="Nhập mã chuyến bay"
-                                        value={form.flightId}
-                                        onChange={handleFlightIdChange}
-                                        onBlur={handleFlightIdBlur}
-                                        required 
-                                    />
-                                </div>
-                                <div className='col-md-6 mb-3'>
-                                    <label htmlFor="seat" className="form-label">Vị trí ghế:</label>
-                                    <input 
-                                        type="text" 
-                                        className="form-control" 
-                                        id="seat" 
-                                        placeholder="Nhập vị trí ghế"
-                                        value={form.seat}
-                                        onChange={(e) => setForm({ ...form, seat: e.target.value })} 
-                                        required 
-                                    />
-                                </div>
-                            </div>
-
-                            <div className='row'>
-                                <div className='col-md-6 mb-3'>
-                                    <label htmlFor="name" className="form-label">Họ tên:</label>
-                                    <input 
-                                        type="text" 
-                                        className="form-control" 
-                                        id="name" 
-                                        placeholder="Nhập họ và tên"
-                                        value={form.name}
-                                        onChange={(e) => setForm({ ...form, name: e.target.value })} 
-                                        required 
-                                    />
-                                </div>
-                                <div className='col-md-6 mb-3'>
-                                    <label htmlFor="identity" className="form-label">Số CCCD:</label>
-                                    <input 
-                                        type="text" 
-                                        className="form-control" 
-                                        id="identity" 
-                                        placeholder="Nhập số CCCD"
-                                        value={form.identity}
-                                        onChange={(e) => setForm({ ...form, identity: e.target.value })} 
-                                        required 
-                                    />
-                                </div>
-                            </div>
-
-                            <div className='row'>
-                                <div className='col-md-6 mb-3'>
-                                    <label htmlFor="phone" className="form-label">Số điện thoại:</label>
-                                    <input 
-                                        type="text" 
-                                        className="form-control" 
-                                        id="phone" 
-                                        placeholder="Nhập số điện thoại"
-                                        value={form.phone}
-                                        onChange={(e) => setForm({ ...form, phone: e.target.value })} 
-                                        required 
-                                    />
-                                </div>
-                                <div className='col-md-6 mb-3'>
-                                    <label htmlFor="gene" className="form-label">Giới tính:</label>
-                                    <select 
-                                        className="form-select" 
-                                        id="gene"
-                                        value={form.gene}
-                                        onChange={(e) => setForm({ ...form, gene: e.target.value })} 
-                                        required
-                                    >
-                                        <option value="">Chọn giới tính</option>
-                                        <option value="Nam">Nam</option>
-                                        <option value="Nữ">Nữ</option>
-                                        <option value="Khác">Khác</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className='ticket-price p-3 border rounded-2 d-flex justify-content-center'>
-                            <div className='w-75' style={{ maxWidth: '400px' }}>
-                                <div className='mb-3'>
-                                    <label htmlFor="classId" className="form-label">Hạng vé:</label>
-                                    <select 
-                                        className="form-select" 
-                                        id="classId"
-                                        value={form.classId}
-                                        onChange={handleClassChange} 
-                                        required
-                                        disabled={loading || availableClasses.length === 0}
-                                    >
-                                        <option value="">Chọn hạng vé</option>
-                                        {availableClasses.map((classInfo) => (
-                                            <option key={classInfo.Ma_hang_ve} value={classInfo.Ma_hang_ve}>
-                                                {classInfo.Ten_hang_ve} (Còn {classInfo.so_ghe_con} ghế)
-                                            </option>
-                                        ))}
-                                    </select>
-                                    {loading && <div className="text-muted small mt-1">Đang tải thông tin...</div>}
-                                    {!loading && availableClasses.length === 0 && form.flightId && (
-                                        <div className="text-danger small mt-1">Không còn ghế trống cho chuyến bay này</div>
-                                    )}
-                                </div>
-                                <div className='mb-3'>
-                                    <label htmlFor="price" className="form-label">Giá vé:</label>
-                                    <input 
-                                        type="text" 
-                                        className="form-control" 
-                                        id="price" 
-                                        value={form.price.toLocaleString()} 
-                                        readOnly 
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="text-end mt-5">
-                        <button 
-                            type="submit" 
-                            className="btn btn-success p-3 me-4"
-                            disabled={loading || availableClasses.length === 0}
-                        >
-                            Tạo Vé
-                        </button>
-                    </div>
-                </form>
+        <div className='full-container d-flex' style={{ 
+            backgroundImage: `url(https://images.unsplash.com/photo-1535557597501-0fee0a500c57?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)`,
+            backgroundAttachment: 'fixed',
+            backgroundSize: 'cover',
+            backgroundPosition: 'top'
+        }}>
+            <div>
+                <Sidebar
+                    selectedOption={selectedOption}
+                    setSelectedOption={setSelectedOption}
+                />
             </div>
-
-            <ToastMessage
-                show={toast.show}
-                onClose={() => setToast({ ...toast, show: false })}
-                message={toast.message}
-                variant={toast.variant}
-            />
+            <div className="p-4 w-100">
+                <h2 className="mb-4">TẠO VÉ CHUYẾN BAY</h2>
+                <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '70vh' }}>
+                    <div className="card p-4" style={{ width: '100%', minWidth: 700, maxWidth: 1200, background: '#fff', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.07)' }}>
+                        <form onSubmit={handleSubmit} className="my-3 p-2">
+                            <div className='d-flex flex-column flex-md-row'>
+                                <div className='info p-3 border rounded-2 flex-fill me-md-3 mb-3 mb-md-0' style={{ background: '#f8f9fa' }}>
+                                    <div className='row mt-2'>
+                                        <div className='col-md-6 mb-3'>
+                                            <label htmlFor="flightId" className="form-label">Mã chuyến bay:</label>
+                                            <input 
+                                                type="text" 
+                                                className="form-control" 
+                                                id="flightId" 
+                                                placeholder="Nhập mã chuyến bay"
+                                                value={form.flightId}
+                                                onChange={handleFlightIdChange}
+                                                onBlur={handleFlightIdBlur}
+                                                required 
+                                            />
+                                        </div>
+                                        <div className='col-md-6 mb-3'>
+                                            <label htmlFor="seat" className="form-label">Vị trí ghế:</label>
+                                            <input 
+                                                type="text" 
+                                                className="form-control" 
+                                                id="seat" 
+                                                placeholder="Nhập vị trí ghế"
+                                                value={form.seat}
+                                                onChange={(e) => setForm({ ...form, seat: e.target.value })} 
+                                                required 
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className='row'>
+                                        <div className='col-md-6 mb-3'>
+                                            <label htmlFor="name" className="form-label">Họ tên:</label>
+                                            <input 
+                                                type="text" 
+                                                className="form-control" 
+                                                id="name" 
+                                                placeholder="Nhập họ và tên"
+                                                value={form.name}
+                                                onChange={(e) => setForm({ ...form, name: e.target.value })} 
+                                                required 
+                                            />
+                                        </div>
+                                        <div className='col-md-6 mb-3'>
+                                            <label htmlFor="identity" className="form-label">Số CCCD:</label>
+                                            <input 
+                                                type="text" 
+                                                className="form-control" 
+                                                id="identity" 
+                                                placeholder="Nhập số CCCD"
+                                                value={form.identity}
+                                                onChange={(e) => setForm({ ...form, identity: e.target.value })} 
+                                                required 
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className='row'>
+                                        <div className='col-md-6 mb-3'>
+                                            <label htmlFor="phone" className="form-label">Số điện thoại:</label>
+                                            <input 
+                                                type="text" 
+                                                className="form-control" 
+                                                id="phone" 
+                                                placeholder="Nhập số điện thoại"
+                                                value={form.phone}
+                                                onChange={(e) => setForm({ ...form, phone: e.target.value })} 
+                                                required 
+                                            />
+                                        </div>
+                                        <div className='col-md-6 mb-3'>
+                                            <label htmlFor="gene" className="form-label">Giới tính:</label>
+                                            <select 
+                                                className="form-select" 
+                                                id="gene"
+                                                value={form.gene}
+                                                onChange={(e) => setForm({ ...form, gene: e.target.value })} 
+                                                required
+                                            >
+                                                <option value="">Chọn giới tính</option>
+                                                <option value="Nam">Nam</option>
+                                                <option value="Nữ">Nữ</option>
+                                                <option value="Khác">Khác</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='ticket-price p-3 border rounded-2 d-flex justify-content-center flex-fill' style={{ background: '#f8f9fa' }}>
+                                    <div className='w-100' style={{ maxWidth: '400px' }}>
+                                        <div className='mb-3'>
+                                            <label htmlFor="classId" className="form-label">Hạng vé:</label>
+                                            <select 
+                                                className="form-select" 
+                                                id="classId"
+                                                value={form.classId}
+                                                onChange={handleClassChange} 
+                                                required
+                                                disabled={loading || availableClasses.length === 0}
+                                            >
+                                                <option value="">Chọn hạng vé</option>
+                                                {availableClasses.map((classInfo) => (
+                                                    <option key={classInfo.Ma_hang_ve} value={classInfo.Ma_hang_ve}>
+                                                        {classInfo.Ten_hang_ve} (Còn {classInfo.so_ghe_con} ghế)
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            {loading && <div className="text-muted small mt-1">Đang tải thông tin...</div>}
+                                            {!loading && availableClasses.length === 0 && form.flightId && (
+                                                <div className="text-danger small mt-1">Không còn ghế trống cho chuyến bay này</div>
+                                            )}
+                                        </div>
+                                        <div className='mb-3'>
+                                            <label htmlFor="price" className="form-label">Giá vé:</label>
+                                            <input 
+                                                type="text" 
+                                                className="form-control" 
+                                                id="price" 
+                                                value={form.price.toLocaleString()} 
+                                                readOnly 
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="text-end mt-4">
+                                <button 
+                                    type="submit" 
+                                    className="btn btn-success px-4 py-2"
+                                    disabled={loading || availableClasses.length === 0}
+                                >
+                                    Tạo Vé
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <ToastMessage
+                    show={toast.show}
+                    onClose={() => setToast({ ...toast, show: false })}
+                    message={toast.message}
+                    variant={toast.variant}
+                />
+            </div>
         </div>
     )
 }

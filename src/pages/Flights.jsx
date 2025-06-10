@@ -30,6 +30,7 @@ const Flights = () => {
         message: '',
         variant: 'success'
     });
+    const [airports, setAirports] = useState([]);
     const navigate = useNavigate();
 
     const handleSearchById = async (e) => {
@@ -196,6 +197,19 @@ const Flights = () => {
             }
         };
         fetchFlights();
+        // Fetch danh sách sân bay
+        const fetchAirports = async () => {
+            try {
+                const res = await fetch('http://localhost:5000/api/sanbay/get');
+                const data = await res.json();
+                if (data.status === 'success') {
+                    setAirports(data.message);
+                }
+            } catch (err) {
+                console.error('Lỗi lấy danh sách sân bay:', err);
+            }
+        };
+        fetchAirports();
     }, []);
 
     return (
@@ -216,11 +230,10 @@ const Flights = () => {
                     <h2>CHUYẾN BAY</h2>
                     <div>
                         <Button 
-                            variant="success" 
-                            size="lg"
+                            className='btn btn-success fs-5'
                             onClick={() => navigate('/create-flight')}
                         >
-                            +Thêm chuyến bay
+                            + Thêm chuyến bay
                         </Button>
                     </div>
                 </div>
@@ -242,23 +255,35 @@ const Flights = () => {
                     <form onSubmit={handleSearchByCriteria} className="d-flex justify-content-between align-items-center">
                         <div>
                             <label htmlFor="from" className='mb-2 fs-5'>Từ</label>
-                            <input
-                                type="text"
+                            <Form.Select
                                 className="form-control fs-5"
                                 value={form.from}
                                 onChange={(e) => setForm({ ...form, from: e.target.value })}
-                                placeholder="Nhập mã sân bay đi"
-                            />
+                                required
+                            >
+                                <option value="">Chọn sân bay đi</option>
+                                {airports.map((airport) => (
+                                    <option key={airport.Ma_san_bay} value={airport.Ma_san_bay}>
+                                        {airport.Ten_san_bay} ({airport.Ma_san_bay})
+                                    </option>
+                                ))}
+                            </Form.Select>
                         </div>
                         <div>
                             <label htmlFor="to" className='mb-2 fs-5'>Đến</label>
-                            <input
-                                type="text"
+                            <Form.Select
                                 className="form-control fs-5"
                                 value={form.to}
                                 onChange={(e) => setForm({ ...form, to: e.target.value })}
-                                placeholder="Nhập mã sân bay đến"
-                            />
+                                required
+                            >
+                                <option value="">Chọn sân bay đến</option>
+                                {airports.map((airport) => (
+                                    <option key={airport.Ma_san_bay} value={airport.Ma_san_bay}>
+                                        {airport.Ten_san_bay} ({airport.Ma_san_bay})
+                                    </option>
+                                ))}
+                            </Form.Select>
                         </div>
                         <div>
                             <label htmlFor="startDate" className='mb-2 fs-5'>Ngày khởi hành</label>

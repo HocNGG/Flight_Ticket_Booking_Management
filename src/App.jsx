@@ -8,7 +8,10 @@ import CreateFlight from './pages/CreateFlight';
 import UpdateFlight from './pages/UpdateFlight';
 import MonthRevenue from './pages/MonthRevenue';
 import YearRevenue from './pages/YearRevenue';
+import Airports from './pages/Airports';
+import CreateAirport from './pages/CreateAirport';
 import './App.css';
+
 function App() {
   return (
     <Router>
@@ -21,10 +24,12 @@ function App() {
         <Route path="/tickets" element={<Tickets />} />
         {/* <Route path="/class" element={<Class />} />
         <Route path="/revenue" element={<Revenue />} /> */}
-                <Route path="/create-flight" element={<CreateFlight />} />
+        <Route path="/create-flight" element={<CreateFlight />} />
         <Route path="/update-flight" element={<UpdateFlight />} />
         <Route path="/detail-revenue" element={<MonthRevenue />} />
         <Route path="/overall-revenue" element={<YearRevenue />} />
+        <Route path="/airport" element={<Airports />} />
+        <Route path="/create-airport" element={<CreateAirport />} />
       </Routes>
     </Router>
   );

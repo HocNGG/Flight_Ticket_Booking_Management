@@ -40,7 +40,7 @@ const Header = () => {
                             <Nav.Link href="/home" className="nav-button">
                                 <span className="button-text">Quy Định</span>
                             </Nav.Link>
-                            <Nav.Link href="/revenue" className="nav-button">
+                            <Nav.Link href="/overall-revenue" className="nav-button">
                                 <span className="button-text">Doanh Thu</span>
                             </Nav.Link>
                         </div>
