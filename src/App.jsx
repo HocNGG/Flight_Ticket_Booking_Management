@@ -10,6 +10,8 @@ import MonthRevenue from './pages/MonthRevenue';
 import YearRevenue from './pages/YearRevenue';
 import Airports from './pages/Airports';
 import CreateAirport from './pages/CreateAirport';
+import TicketClasses from './pages/TicketClasses';
+import CreateTicketClass from './pages/CreateTicketClass';
 import './App.css';
 
 function App() {
@@ -30,6 +32,8 @@ function App() {
         <Route path="/overall-revenue" element={<YearRevenue />} />
         <Route path="/airport" element={<Airports />} />
         <Route path="/create-airport" element={<CreateAirport />} />
+        <Route path="/class" element={<TicketClasses />} />
+        <Route path="/create-ticket-class" element={<CreateTicketClass />} />
       </Routes>
     </Router>
   );

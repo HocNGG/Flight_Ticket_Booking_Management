@@ -101,7 +101,7 @@ const MonthRevenue = () => {
             <div className="mt-5 p-4 w-100">
                 <div className="d-flex justify-content-between">
                     <h2>Doanh Thu</h2>
-                    <button className="btn btn-success fs-5 rounded-5" onClick={() => {
+                    <button className="btn btn-success fs-5" onClick={() => {
                         navigate(`/overall-revenue`);
                     }}>Tổng Quan</button>
                 </div>

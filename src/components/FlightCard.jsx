@@ -193,7 +193,7 @@ const FlightCard = ({ flight, onDelete, onEdit }) => {
 
 
 
-                    <div className='d-flex mt-1 ' style={{ position: 'absolute', top: '5%', right: '1%' }}>
+                    <div className='d-flex mt-1 ' style={{ position: 'absolute', top: '7%', right: '1%' }}>
                         <div className="btn-group">
                             <button
                                 type="button"

@@ -11,10 +11,6 @@ const Header = () => {
                     <Navbar.Brand href="/home" className='fs-3'>SE104-Group 21</Navbar.Brand>
                     <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                     <Navbar.Collapse id="responsive-navbar-nav">
-                        <Nav className='ms-auto'>
-                            <Nav.Link href="/login">Đăng nhập</Nav.Link>
-                            <Nav.Link href="/signup">Đăng ký</Nav.Link>
-                        </Nav>
                     </Navbar.Collapse>
                 </Container>
             </Navbar>

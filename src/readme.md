@@ -1,93 +1,108 @@
-B. Sân bay
+A. Hạng vé
 
-
-1. Thêm sân bay mới
-# http://localhost:5000/api/sanbay/add
-method = POST
- 
-body = {
-        "Ma_san_bay": "HNOI",
-        "Ten_san_bay": "Ha noi"
+1. Tạo hạng vé
+# link api: http://localhost:5000/api/hangve/add 
+body={
+        "Ten_hang_ve": "Hang 1",
+        "Ti_le_don_gia": 1.05
     }
 
-dữ liệu trả về:
+method = POST
 
+dữ liệu trả về:
 - {
-    "message": "Sân bay đã được thêm thành công!",
+    "message": "Thêm hạng vé thành công!",
     "status": "success"
 }
-
-
 - {
     "message": "{Lỗi}",
     "status": "fail"
 }
 
 
-2. Xem tất cả các sân bay
-# link api: http://localhost:5000/api/sanbay/get
+
+2. Xem tất cả hạng vé
+# link api: http://localhost:5000/api/hangve/get
 method = GET
 
 dữ liệu trả về:
-
 - {
     "message": [
         {
-            "Ma_san_bay": "DNANG",
-            "Ten_san_bay": "Da Nang"
+            "Ten_hang_ve": "Hang 1",
+            "Ti_le_don_gia": 1.1,
+            "id": 1
         },
         {
-            "Ma_san_bay": "HNOI",
-            "Ten_san_bay": "Ha noi"
+            "Ten_hang_ve": "Hang 2",
+            "Ti_le_don_gia": 1.0,
+            "id": 2
         },
         {
-            "Ma_san_bay": "VINH",
-            "Ten_san_bay": "Nghe An"
-        },
-        {
-            "Ma_san_bay": "SGON",
-            "Ten_san_bay": "Sai Gon"
+            "Ten_hang_ve": "Hang 3",
+            "Ti_le_don_gia": 1.05,
+            "id": 3
         }
     ],
     "status": "success"
 }
 
+- {
+    "message": "{Lỗi}",
+    "status": "fail"
+}
 
+3. Cập nhật hạng vé
+
+# link api: http://localhost:5000/api/hangve/update/<id>
+method = PUT
+
+ví dụ: 
+# http://localhost:5000/api/hangve/update/1
+
+body = {
+        "Ten_hang_ve": "Hang 1",
+        "Ti_le_don_gia": 1.1
+    }
+
+NOTE:  dữ liệu nào thay đổi thì gửi lên server. Có thể gửi thế này :
+
+    body = {
+        "Ten_hang_ve": "Hang 1"
+    }
+    
+    hoặc
+
+    body = {
+        "Ti_le_don_gia": 1.1
+    }
+
+
+
+dữ liệu trả về:
+
+- {
+    "message": "Cập nhật hạng vé thành công",
+    "status": "success"
+}
 - {
     "message": "{Lỗi}",
     "status": "fail"
 }
 
 
-3. Cập nhật tên sân bay
-# link api: http://localhost:5000/api/sanbay/update/<id>
-methods = PUT
-
-ví dụ: http://localhost:5000/api/sanbay/update/UK
-
-Dữ liệu trả về: 
-- {
-    "message": "Sân bay đã được cập nhật thành công!",
-    "status": "success"
-}
--{
-    "message": "Sân bay không tồn tại",
-    "status": "fail"
-}
-
-
-4. Xóa sân bay
-# link api: http://localhost:5000/api/sanbay/delete/<id>
+4. Xóa hạng vé
+# link api: http://localhost:5000/api/hangve/delete/<id>
 methods = DELETE
 
-ví dụ: http://localhost:5000/api/sanbay/delete/UK
+vi dụ: http://localhost:5000/api/hangve/delete/2
 
-Dữ liệu trả về: 
+dữ liệu trả về:
 - {
-    "message": "Sân bay đã ngừng hoạt động!",
+    "message": "Xóa hạng vé thành công",
     "status": "success"
 }
 - {
-    "message": "Sân bay không tồn tại",
+    "message": "Không tìm thấy hạng vé",
     "status": "fail"
 }
