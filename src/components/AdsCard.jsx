@@ -5,7 +5,7 @@ const AdsCard = () => {
     return (
         <div className='d-flex justify-content-around'>
             <Card className="feature-card">
-                <Card.Img variant="top" src="https://images.pexels.com/photos/1260991/pexels-photo-1260991.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" className="card-image" />
+                <Card.Img variant="top" src="https://images.pexels.com/photos/1591252/pexels-photo-1591252.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" className="card-image" />
                 <Card.Body className="card-content">
                     <Card.Title>🛫 Giao Diện Trực Quan</Card.Title>
                     <Card.Text className="card-description">
@@ -14,7 +14,7 @@ const AdsCard = () => {
                 </Card.Body>
             </Card>
             <Card className="feature-card">
-                <Card.Img variant="top" src="https://images.pexels.com/photos/1510492/pexels-photo-1510492.jpeg?auto=compress&cs=tinysrgb&w=600" className="card-image" />
+                <Card.Img variant="top" src="https://images.pexels.com/photos/2622179/pexels-photo-2622179.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" className="card-image" />
                 <Card.Body className="card-content">
                     <Card.Title>⏱ Cập Nhật Thời Gian Thực</Card.Title>
                     <Card.Text className="card-description">
@@ -23,7 +23,7 @@ const AdsCard = () => {
                 </Card.Body>
             </Card>
             <Card className="feature-card">
-                <Card.Img variant="top" src="https://images.pexels.com/photos/726233/pexels-photo-726233.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" className="card-image" />
+                <Card.Img variant="top" src="https://images.pexels.com/photos/1157255/pexels-photo-1157255.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" className="card-image" />
                 <Card.Body className="card-content">
                     <Card.Title>📋 Quản Lý Dữ Liệu Tập Trung</Card.Title>
                     <Card.Text className="card-description">
@@ -32,7 +32,7 @@ const AdsCard = () => {
                 </Card.Body>
             </Card>
             <Card className="feature-card">
-                <Card.Img variant="top" src="https://images.pexels.com/photos/1010079/pexels-photo-1010079.jpeg?auto=compress&cs=tinysrgb&w=600" className="card-image" />
+                <Card.Img variant="top" src="https://images.pexels.com/photos/1196824/pexels-photo-1196824.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" className="card-image" />
                 <Card.Body className="card-content">
                     <Card.Title>🔐 Bảo Mật & Phân Quyền</Card.Title>
                     <Card.Text className="card-description">
