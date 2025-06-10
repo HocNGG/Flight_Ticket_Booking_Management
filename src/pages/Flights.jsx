@@ -48,7 +48,7 @@ const Flights = () => {
             const url = `http://localhost:5000/api/chuyenbay/get/${flightId}`;
             const res = await fetch(url);
             const data = await res.json();
-            
+
             if (res.ok && data.data) {
                 setFlights([data.data]);
                 setToast({
@@ -91,7 +91,7 @@ const Flights = () => {
             const url = `http://localhost:5000/api/chuyenbay/search?start_time=${startDate}T00:00:00&end_time=${arriveDate}T23:59:59&sanbay_di=${from}&sanbay_den=${to}`;
             const res = await fetch(url);
             const data = await res.json();
-            
+
             if (res.ok && Array.isArray(data.data) && data.data.length > 0) {
                 setFlights(data.data);
                 setToast({
@@ -150,8 +150,8 @@ const Flights = () => {
 
             if (res.ok) {
                 // Cập nhật lại danh sách chuyến bay
-                setFlights(prevFlights => 
-                    prevFlights.map(flight => 
+                setFlights(prevFlights =>
+                    prevFlights.map(flight =>
                         flight.Ma_chuyen_bay === updateForm.Ma_chuyen_bay ? updateForm : flight
                     )
                 );
@@ -284,27 +284,27 @@ const Flights = () => {
                     </form>
                 </div>
 
-                <div className='flight-list rounded-3 p-2'>
-                    {flights.length > 0 ? (
-                        flights.map(flight => (
-                            <FlightCard
-                                key={flight.Ma_chuyen_bay}
-                                flight={flight}
-                                detail={detail}
-                                setDetail={setDetail}
-                                show={show}
-                                setShow={setShow}
-                                onDelete={handleDelete}
-                                onEdit={handleEditClick}
-                            />
-                        ))
-                    ) : searched ? (
-                        <div className="text-center p-4">
-                            <h4>Không tìm thấy chuyến bay phù hợp</h4>
-                        </div>
-                    ) : null}
+                    <div className='flight-list rounded-3 p-2'>
+                        {flights.length > 0 ? (
+                            flights.map(flight => (
+                                <FlightCard
+                                    key={flight.Ma_chuyen_bay}
+                                    flight={flight}
+                                    detail={detail}
+                                    setDetail={setDetail}
+                                    show={show}
+                                    setShow={setShow}
+                                    onDelete={handleDelete}
+                                    onEdit={handleEditClick}
+                                />
+                            ))
+                        ) : searched ? (
+                            <div className="text-center p-4">
+                                <h4>Không tìm thấy chuyến bay phù hợp</h4>
+                            </div>
+                        ) : null}
+                    </div>
                 </div>
-            </div>
 
             {/* Modal cập nhật chuyến bay */}
             <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)} size="lg">

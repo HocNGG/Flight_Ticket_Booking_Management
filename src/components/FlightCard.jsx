@@ -230,7 +230,7 @@ const FlightCard = ({ flight, onDelete, onEdit }) => {
                                 }
                             });
                         }}
-                        style={{whiteSpace: 'nowrap'}}
+                        style={{ whiteSpace: 'nowrap' }}
                     >
                         Tạo Vé
                     </button>

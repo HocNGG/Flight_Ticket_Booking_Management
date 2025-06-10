@@ -127,7 +127,7 @@ const CreateTicket = () => {
                     } else {
                         navigate('/flights');
                     }
-                }, 1000);
+                }, 2000);
             } else {
                 setToast({ 
                     show: true, 
