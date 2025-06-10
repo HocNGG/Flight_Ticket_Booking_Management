@@ -5,8 +5,7 @@ import ToastMessage from '../components/ToastMessage';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import { useNavigate } from 'react-router-dom';
 
 const Flights = () => {
     const [selectedOption, setSelectedOption] = useState("2");
@@ -31,34 +30,7 @@ const Flights = () => {
         message: '',
         variant: 'success'
     });
-    const [showCreateModal, setShowCreateModal] = useState(false);
-    const [airports, setAirports] = useState([]);
-    const [createForm, setCreateForm] = useState({
-        Ma_chuyen_bay: '',
-        Ma_san_bay_di: '',
-        Ma_san_bay_den: '',
-        ngay_khoi_hanh: '',
-        gio_khoi_hanh: '',
-        thoi_gian_bay: '',
-        gia_ve: '',
-        chitiet: [
-            {
-                Ma_san_bay_trung_gian: '',
-                thoigian_dung: '',
-                ghichu: ''
-            }
-        ],
-        hangve: [
-            {
-                Ma_hang_ve: 1,
-                So_ghe_trong_hang: 50
-            },
-            {
-                Ma_hang_ve: 2,
-                So_ghe_trong_hang: 50
-            }
-        ]
-    });
+    const navigate = useNavigate();
 
     const handleSearchById = async (e) => {
         e.preventDefault();
@@ -151,7 +123,6 @@ const Flights = () => {
     };
 
     const handleEditClick = (flight) => {
-        setSelectedFlight(flight);
         setUpdateForm({
             Ma_chuyen_bay: flight.Ma_chuyen_bay,
             Ma_san_bay_di: flight.Ma_san_bay_di,
@@ -227,129 +198,9 @@ const Flights = () => {
         fetchFlights();
     }, []);
 
-    useEffect(() => {
-        const fetchAirports = async () => {
-            try {
-                const res = await fetch('http://localhost:5000/api/sanbay/get');
-                const data = await res.json();
-                if (data.status === 'success' && Array.isArray(data.message)) {
-                    setAirports(data.message);
-                } else {
-                    console.error('Error fetching airports:', data.message);
-                }
-            } catch (err) {
-                console.error('Error fetching airports:', err);
-            }
-        };
-        fetchAirports();
-    }, []);
-
-    const handleCreateSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            // Validate form
-            if (!createForm.Ma_chuyen_bay || !createForm.Ma_san_bay_di || !createForm.Ma_san_bay_den || 
-                !createForm.ngay_khoi_hanh || !createForm.gio_khoi_hanh || !createForm.thoi_gian_bay || 
-                !createForm.gia_ve) {
-                setToast({
-                    show: true,
-                    message: 'Vui lòng điền đầy đủ thông tin bắt buộc',
-                    variant: 'warning'
-                });
-                return;
-            }
-
-            // Format time to include seconds
-            const formattedTime = createForm.gio_khoi_hanh + ':00';
-
-            // Prepare data according to API requirements
-            const formData = {
-                Ma_chuyen_bay: parseInt(createForm.Ma_chuyen_bay),
-                Ma_san_bay_di: createForm.Ma_san_bay_di,
-                Ma_san_bay_den: createForm.Ma_san_bay_den,
-                ngay_khoi_hanh: createForm.ngay_khoi_hanh,
-                gio_khoi_hanh: formattedTime,
-                thoi_gian_bay: parseInt(createForm.thoi_gian_bay),
-                gia_ve: parseInt(createForm.gia_ve),
-                chitiet: createForm.chitiet
-                    .filter(item => item.Ma_san_bay_trung_gian) // Only include items with airport selected
-                    .map(item => ({
-                        Ma_san_bay_trung_gian: item.Ma_san_bay_trung_gian,
-                        thoigian_dung: parseInt(item.thoigian_dung) || 0,
-                        ghichu: item.ghichu || ''
-                    })),
-                hangve: createForm.hangve
-            };
-
-            const res = await fetch('http://localhost:5000/api/chuyenbay/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData)
-            });
-
-            const data = await res.json();
-
-            if (data.status === 'success') {
-                // Refresh flight list
-                const allFlightsRes = await fetch('http://localhost:5000/api/chuyenbay/get/all');
-                const allFlightsData = await allFlightsRes.json();
-                if (allFlightsRes.ok && Array.isArray(allFlightsData.message)) {
-                    setFlights(allFlightsData.message);
-                }
-
-                setShowCreateModal(false);
-                setCreateForm({
-                    Ma_chuyen_bay: '',
-                    Ma_san_bay_di: '',
-                    Ma_san_bay_den: '',
-                    ngay_khoi_hanh: '',
-                    gio_khoi_hanh: '',
-                    thoi_gian_bay: '',
-                    gia_ve: '',
-                    chitiet: [
-                        {
-                            Ma_san_bay_trung_gian: '',
-                            thoigian_dung: '',
-                            ghichu: ''
-                        }
-                    ],
-                    hangve: [
-                        {
-                            Ma_hang_ve: 1,
-                            So_ghe_trong_hang: 50
-                        },
-                        {
-                            Ma_hang_ve: 2,
-                            So_ghe_trong_hang: 50
-                        }
-                    ]
-                });
-                setToast({
-                    show: true,
-                    message: data.message,
-                    variant: 'success'
-                });
-            } else {
-                setToast({
-                    show: true,
-                    message: data.message,
-                    variant: 'danger'
-                });
-            }
-        } catch (err) {
-            console.error('Error creating flight:', err);
-            setToast({
-                show: true,
-                message: 'Có lỗi xảy ra khi thêm chuyến bay',
-                variant: 'danger'
-            });
-        }
-    };
-
     return (
-        <div className='full-container d-flex' style={{ backgroundImage: `url(https://images.unsplash.com/photo-1535557597501-0fee0a500c57?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)`,
+        <div className='full-container d-flex' style={{ 
+            backgroundImage: `url(https://images.unsplash.com/photo-1535557597501-0fee0a500c57?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)`,
             backgroundAttachment: 'fixed',
             backgroundSize: 'cover',
             backgroundPosition: 'top'
@@ -367,8 +218,7 @@ const Flights = () => {
                         <Button 
                             variant="success" 
                             size="lg"
-                            className="me-2"
-                            onClick={() => setShowCreateModal(true)}
+                            onClick={() => navigate('/create-flight')}
                         >
                             +Thêm chuyến bay
                         </Button>
@@ -392,33 +242,23 @@ const Flights = () => {
                     <form onSubmit={handleSearchByCriteria} className="d-flex justify-content-between align-items-center">
                         <div>
                             <label htmlFor="from" className='mb-2 fs-5'>Từ</label>
-                            <select
+                            <input
+                                type="text"
                                 className="form-control fs-5"
                                 value={form.from}
                                 onChange={(e) => setForm({ ...form, from: e.target.value })}
-                            >
-                                <option value="">Chọn sân bay đi</option>
-                                {airports.map(airport => (
-                                    <option key={airport.Ma_san_bay} value={airport.Ma_san_bay}>
-                                        {airport.Ten_san_bay} ({airport.Ma_san_bay})
-                                    </option>
-                                ))}
-                            </select>
+                                placeholder="Nhập mã sân bay đi"
+                            />
                         </div>
                         <div>
                             <label htmlFor="to" className='mb-2 fs-5'>Đến</label>
-                            <select
+                            <input
+                                type="text"
                                 className="form-control fs-5"
                                 value={form.to}
                                 onChange={(e) => setForm({ ...form, to: e.target.value })}
-                            >
-                                <option value="">Chọn sân bay đến</option>
-                                {airports.map(airport => (
-                                    <option key={airport.Ma_san_bay} value={airport.Ma_san_bay}>
-                                        {airport.Ten_san_bay} ({airport.Ma_san_bay})
-                                    </option>
-                                ))}
-                            </select>
+                                placeholder="Nhập mã sân bay đến"
+                            />
                         </div>
                         <div>
                             <label htmlFor="startDate" className='mb-2 fs-5'>Ngày khởi hành</label>
@@ -533,324 +373,6 @@ const Flights = () => {
                 </Modal.Body>
             </Modal>
 
-            {/* Create Flight Modal */}
-            <Modal show={showCreateModal} onHide={() => setShowCreateModal(false)} size="lg">
-                <Modal.Header closeButton>
-                    <Modal.Title>Thêm Chuyến Bay Mới</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={handleCreateSubmit}>
-                        <Row>
-                            <Col md={6}>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Mã Chuyến Bay</Form.Label>
-                                    <Form.Control
-                                        type="number"
-                                        value={createForm.Ma_chuyen_bay}
-                                        onChange={(e) => setCreateForm({
-                                            ...createForm,
-                                            Ma_chuyen_bay: e.target.value
-                                        })}
-                                        required
-                                    />
-                                </Form.Group>
-                            </Col>
-                            <Col md={6}>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Sân Bay Đi</Form.Label>
-                                    <Form.Select
-                                        value={createForm.Ma_san_bay_di}
-                                        onChange={(e) => setCreateForm({
-                                            ...createForm,
-                                            Ma_san_bay_di: e.target.value
-                                        })}
-                                        required
-                                    >
-                                        <option value="">Chọn sân bay đi</option>
-                                        {airports.map(airport => (
-                                            <option key={airport.Ma_san_bay} value={airport.Ma_san_bay}>
-                                                {airport.Ten_san_bay} ({airport.Ma_san_bay})
-                                            </option>
-                                        ))}
-                                    </Form.Select>
-                                </Form.Group>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col md={6}>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Sân Bay Đến</Form.Label>
-                                    <Form.Select
-                                        value={createForm.Ma_san_bay_den}
-                                        onChange={(e) => setCreateForm({
-                                            ...createForm,
-                                            Ma_san_bay_den: e.target.value
-                                        })}
-                                        required
-                                    >
-                                        <option value="">Chọn sân bay đến</option>
-                                        {airports.map(airport => (
-                                            <option key={airport.Ma_san_bay} value={airport.Ma_san_bay}>
-                                                {airport.Ten_san_bay} ({airport.Ma_san_bay})
-                                            </option>
-                                        ))}
-                                    </Form.Select>
-                                </Form.Group>
-                            </Col>
-                            <Col md={6}>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Ngày Khởi Hành</Form.Label>
-                                    <Form.Control
-                                        type="date"
-                                        value={createForm.ngay_khoi_hanh}
-                                        onChange={(e) => setCreateForm({
-                                            ...createForm,
-                                            ngay_khoi_hanh: e.target.value
-                                        })}
-                                        required
-                                    />
-                                </Form.Group>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col md={6}>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Giờ Khởi Hành</Form.Label>
-                                    <Form.Control
-                                        type="time"
-                                        value={createForm.gio_khoi_hanh}
-                                        onChange={(e) => setCreateForm({
-                                            ...createForm,
-                                            gio_khoi_hanh: e.target.value
-                                        })}
-                                        required
-                                    />
-                                </Form.Group>
-                            </Col>
-                            <Col md={6}>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Thời Gian Bay (phút)</Form.Label>
-                                    <Form.Control
-                                        type="number"
-                                        value={createForm.thoi_gian_bay}
-                                        onChange={(e) => setCreateForm({
-                                            ...createForm,
-                                            thoi_gian_bay: e.target.value
-                                        })}
-                                        required
-                                    />
-                                </Form.Group>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col md={6}>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Giá Vé (VNĐ)</Form.Label>
-                                    <Form.Control
-                                        type="number"
-                                        value={createForm.gia_ve}
-                                        onChange={(e) => setCreateForm({
-                                            ...createForm,
-                                            gia_ve: e.target.value
-                                        })}
-                                        required
-                                    />
-                                </Form.Group>
-                            </Col>
-                        </Row>
-
-                        <h5 className="mt-4">Hạng Vé</h5>
-                        {createForm.hangve.map((item, index) => (
-                            <Row key={index} className="mb-3">
-                                <Col md={6}>
-                                    <Form.Group>
-                                        <Form.Label>Hạng Vé</Form.Label>
-                                        <Form.Control
-                                            type="number"
-                                            value={item.Ma_hang_ve}
-                                            onChange={(e) => {
-                                                const newHangve = [...createForm.hangve];
-                                                newHangve[index].Ma_hang_ve = parseInt(e.target.value);
-                                                setCreateForm({
-                                                    ...createForm,
-                                                    hangve: newHangve
-                                                });
-                                            }}
-                                            required
-                                            min="1"
-                                            placeholder="Nhập mã hạng vé"
-                                        />
-                                    </Form.Group>
-                                </Col>
-                                <Col md={5}>
-                                    <Form.Group>
-                                        <Form.Label>Số Ghế Trống</Form.Label>
-                                        <Form.Control
-                                            type="number"
-                                            value={item.So_ghe_trong_hang}
-                                            onChange={(e) => {
-                                                const newHangve = [...createForm.hangve];
-                                                newHangve[index].So_ghe_trong_hang = parseInt(e.target.value);
-                                                setCreateForm({
-                                                    ...createForm,
-                                                    hangve: newHangve
-                                                });
-                                            }}
-                                            required
-                                            min="1"
-                                            placeholder="Nhập số ghế trống"
-                                        />
-                                    </Form.Group>
-                                </Col>
-                                <Col md={1} className="d-flex align-items-end">
-                                    {index > 0 && (
-                                        <Button
-                                            variant="danger"
-                                            size="sm"
-                                            onClick={() => {
-                                                const newHangve = createForm.hangve.filter((_, i) => i !== index);
-                                                setCreateForm({
-                                                    ...createForm,
-                                                    hangve: newHangve
-                                                });
-                                            }}
-                                        >
-                                            <i className="fas fa-times">XÓA</i>
-                                        </Button>
-                                    )}
-                                </Col>
-                            </Row>
-                        ))}
-                        <Button
-                            variant="outline-primary"
-                            size="sm"
-                            onClick={() => {
-                                setCreateForm({
-                                    ...createForm,
-                                    hangve: [
-                                        ...createForm.hangve,
-                                        {
-                                            Ma_hang_ve: 1,
-                                            So_ghe_trong_hang: 50
-                                        }
-                                    ]
-                                });
-                            }}
-                            className="mb-3"
-                        >
-                            <i className="fas fa-plus"></i> Thêm Hạng Vé
-                        </Button>
-
-                        <h5 className="mt-4">Sân Bay Trung Gian</h5>
-                        {createForm.chitiet.map((item, index) => (
-                            <Row key={index} className="mb-3">
-                                <Col md={4}>
-                                    <Form.Group>
-                                        <Form.Label>Sân Bay</Form.Label>
-                                        <Form.Select
-                                            value={item.Ma_san_bay_trung_gian}
-                                            onChange={(e) => {
-                                                const newChitiet = [...createForm.chitiet];
-                                                newChitiet[index].Ma_san_bay_trung_gian = e.target.value;
-                                                setCreateForm({
-                                                    ...createForm,
-                                                    chitiet: newChitiet
-                                                });
-                                            }}
-                                        >
-                                            <option value="">Chọn sân bay trung gian</option>
-                                            {airports.map(airport => (
-                                                <option key={airport.Ma_san_bay} value={airport.Ma_san_bay}>
-                                                    {airport.Ten_san_bay} ({airport.Ma_san_bay})
-                                                </option>
-                                            ))}
-                                        </Form.Select>
-                                    </Form.Group>
-                                </Col>
-                                <Col md={3}>
-                                    <Form.Group>
-                                        <Form.Label>Thời Gian Dừng (phút)</Form.Label>
-                                        <Form.Control
-                                            type="number"
-                                            value={item.thoigian_dung}
-                                            onChange={(e) => {
-                                                const newChitiet = [...createForm.chitiet];
-                                                newChitiet[index].thoigian_dung = e.target.value;
-                                                setCreateForm({
-                                                    ...createForm,
-                                                    chitiet: newChitiet
-                                                });
-                                            }}
-                                        />
-                                    </Form.Group>
-                                </Col>
-                                <Col md={4}>
-                                    <Form.Group>
-                                        <Form.Label>Ghi Chú</Form.Label>
-                                        <Form.Control
-                                            type="text"
-                                            value={item.ghichu}
-                                            onChange={(e) => {
-                                                const newChitiet = [...createForm.chitiet];
-                                                newChitiet[index].ghichu = e.target.value;
-                                                setCreateForm({
-                                                    ...createForm,
-                                                    chitiet: newChitiet
-                                                });
-                                            }}
-                                        />
-                                    </Form.Group>
-                                </Col>
-                                <Col md={1} className="d-flex align-items-end">
-                                    <Button
-                                        variant="danger"
-                                        size="sm"
-                                        onClick={() => {
-                                            const newChitiet = createForm.chitiet.filter((_, i) => i !== index);
-                                            setCreateForm({
-                                                ...createForm,
-                                                chitiet: newChitiet
-                                            });
-                                        }}
-                                    >
-                                        <i className="fas fa-times">XÓA</i>
-                                    </Button>
-                                </Col>
-                            </Row>
-                        ))}
-                        <Button
-                            variant="outline-primary"
-                            size="sm"
-                            onClick={() => {
-                                setCreateForm({
-                                    ...createForm,
-                                    chitiet: [
-                                        ...createForm.chitiet,
-                                        {
-                                            Ma_san_bay_trung_gian: '',
-                                            thoigian_dung: '',
-                                            ghichu: ''
-                                        }
-                                    ]
-                                });
-                            }}
-                            className="mb-3"
-                        >
-                            <i className="fas fa-plus"></i> Thêm Sân Bay Trung Gian
-                        </Button>
-
-                        <div className="d-flex justify-content-end">
-                            <Button variant="secondary" className="me-2" onClick={() => setShowCreateModal(false)}>
-                                Hủy
-                            </Button>
-                            <Button variant="primary" type="submit">
-                                Thêm Chuyến Bay
-                            </Button>
-                        </div>
-                    </Form>
-                </Modal.Body>
-            </Modal>
-
             <ToastMessage
                 show={toast.show}
                 onClose={() => setToast({ ...toast, show: false })}
@@ -858,7 +380,7 @@ const Flights = () => {
                 variant={toast.variant}
             />
         </div>
-    )
-}
+    );
+};
 
 export default Flights;
