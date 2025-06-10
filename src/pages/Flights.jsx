@@ -760,7 +760,8 @@ const Flights = () => {
                     variant={toast.variant}
                 />
             </div>
-            )
+        </>
+    )
 }
 
-            export default Flights;
+export default Flights;

@@ -10,7 +10,7 @@ const Sidebar = ({ selectedOption, setSelectedOption }) => {
         { id: "3", label: "Vé Chuyến Bay", path: "/tickets" },
         { id: "4", label: "Sân Bay", path: "/airport" },
         { id: "5", label: "Hạng Vé", path: "/class" },
-        { id: "6", label: "Doanh Thu", path: "/revenue" }
+        { id: "6", label: "Doanh Thu", path: "/overall-revenue" }
     ];
 
     return (
