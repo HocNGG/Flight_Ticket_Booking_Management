@@ -1,0 +1,338 @@
+.user-home-container {
+  min-height: 100vh;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+              url('https://images.pexels.com/photos/1115358/pexels-photo-1115358.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  padding: 20px;
+}
+
+.user-home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+}
+
+.user-home-header h1 {
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+    color: rgb(236, 241, 241);
+    opacity: 4;
+    z-index: 4;
+}
+
+
+.admin-login-btn {
+  padding: 10px 20px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.admin-login-btn:hover {
+  background: #0056b3;
+}
+
+.search-section {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+}
+
+.search-form {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.search-form .btn-88 {
+  margin-left: auto;
+}
+
+.search-title {
+  margin: 0 20px 0 0;
+  align-self: center;
+  white-space: nowrap;
+  font-size: 2rem;
+  font-weight: bold;
+  color: rgb(236, 241, 241);
+  text-shadow: 1px 1px 8px #fff;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+  color: #333;
+  font-weight: bold;
+}
+
+.form-group select,
+.form-group input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;  
+}
+
+.form-group select {
+  width: 300px;
+}
+.form-group select:hover {
+  background: #28a745;
+  color: white;
+}
+
+.search-btn {
+  padding: 10px 20px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-size: 16px;
+}
+
+.search-btn:hover {
+  background: #218838;
+}
+
+.flights-section {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.flights-section p{
+    color: rgb(236, 241, 241);
+    opacity: 4;
+    zIndex: 4;
+    textShadow: '1px 1px 8px #fff';
+}
+
+.error-message {
+  color: #dc3545;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.flights-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.flight-card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.flight-info h3 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.flight-info p {
+  color: #666;
+  margin: 5px 0;
+}
+
+.book-btn {
+  padding: 10px 20px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-top: 15px;
+}
+
+.book-btn:hover {
+  background: #0056b3;
+}
+
+.no-flights {
+  text-align: center;
+  color: #666;
+  font-size: 18px;
+  padding: 20px;
+}
+.btn-95,
+.btn-95 *,
+.btn-95 :after,
+.btn-95 :before,
+.btn-95:after,
+.btn-95:before {
+  border: 0 solid;
+  box-sizing: border-box;
+}
+.btn-95 {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: button;
+  background-color: #000;
+  background-image: none;
+  color: #fff;
+  cursor: pointer;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif,
+    Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  font-size: 100%;
+  font-weight: 900;
+  line-height: 1.5;
+  margin: 0;
+  -webkit-mask-image: -webkit-radial-gradient(#000, #fff);
+  text-transform: uppercase;
+}
+.btn-95:disabled {
+  cursor: default;
+}
+.btn-95:-moz-focusring {
+  outline: auto;
+}
+.btn-95 svg {
+  vertical-align: middle;
+}
+.btn-95 [hidden] {
+  display: none;
+}
+.btn-95 {
+  background: rgb(234,88,12,0.6);
+  background-clip: content-box;
+  border-radius: 50%;
+  box-sizing: border-box;
+  display: block;
+  height: 80px;
+  -webkit-mask-image: none;
+  padding: 0;
+  position: relative;
+  transition: 0.2s;
+  width: 80px;
+}
+.btn-95:hover {
+  background: #fff;
+}
+.btn-95 svg {
+  --size: 40px;
+  fill: #fff;
+  display: block;
+  height: var(--size);
+  left: calc(50% - var(--size) / 2);
+  position: absolute;
+  top: calc(50% - var(--size) / 2);
+  width: var(--size);
+}
+.btn-95:hover svg {
+  fill: #000;
+}
+.btn-95:before {
+  border: 5px solid #fff;
+  border-radius: 50%;
+  content: "";
+  inset: 1px;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  transform: scale(2);
+  transition: 0.2s;
+}
+.btn-95:hover:before {
+  opacity: 1;
+  transform: scale(1);
+}
+.btn-88,
+.btn-88 *,
+.btn-88 :after,
+.btn-88 :before,
+.btn-88:after,
+.btn-88:before {
+  border: 0 solid;
+  box-sizing: border-box;
+}
+.btn-88 {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: button;
+  background-color: #000;
+  background-image: none;
+  color: #fff;
+  cursor: pointer;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif,
+    Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  font-size: 100%;
+  font-weight: 900;
+  line-height: 1.5;
+  margin: 0;
+  -webkit-mask-image: -webkit-radial-gradient(#000, #ef0f0f);
+  padding: 0;
+}
+.btn-88:disabled {
+  cursor: default;
+}
+.btn-88:-moz-focusring {
+  outline: auto;
+}
+.btn-88 svg {
+  display: block;
+  vertical-align: middle;
+}
+.btn-88 [hidden] {
+  display: none;
+}
+.btn-88 {
+  background:#218838 ;
+
+  border-radius: 50%;
+  box-sizing: border-box;
+  display: block;
+  height: 80px;
+  -webkit-mask-image: none;
+  padding: 15px;
+  position: relative;
+  text-transform: uppercase;
+  width: 80px;
+}
+.btn-88 svg {
+  fill: #fff;
+  position: relative;
+  z-index: 1;
+}
+.btn-88:hover svg {
+  fill: #fff;
+}
+.btn-88:before {
+  background: #218838;
+  border-radius: 50%;
+  content: "";
+  inset: 4px;
+  opacity: 1;
+  pointer-events: none;
+  position: absolute;
+  transform: scale(1);
+  transition: 0.5s;
+}
+.btn-88:hover:before {
+  opacity: 0;
+  transform: scale(4);
+}

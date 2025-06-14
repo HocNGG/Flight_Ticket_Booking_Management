@@ -4,7 +4,7 @@ import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recha
 import Sidebar from "../components/Sidebar";
 const MonthRevenue = () => {
     const navigate = useNavigate();
-    const [selectedOption, setSelectedOption] = useState("6");
+    const [selectedOption, setSelectedOption] = useState("7");
     const [data, setData] = useState([]);
     const [error, setError] = useState("");
     const [totalRevenue, setToTalRevenue] = useState("");
@@ -143,6 +143,8 @@ const MonthRevenue = () => {
                             <PieChart>
                                 <Pie
                                     data={monthRevenueData}
+                                    fontSize={16}
+                                    fontWeight="bold"
                                     dataKey="value"
                                     nameKey="name"
                                     cx="50%"

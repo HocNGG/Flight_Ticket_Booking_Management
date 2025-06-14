@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import ToastMessage from '../components/ToastMessage';
@@ -24,25 +24,21 @@ const CreateTicket = () => {
         variant: 'success'
     });
 
-    const handleFlightIdChange = (e) => {
-        setForm({ ...form, flightId: e.target.value });
-    };
+    useEffect(() => {
+        if (location.state?.flightId) {
+            fetchFlightInfo(location.state.flightId);
+        }
+        // eslint-disable-next-line
+    }, []);
 
-    const handleFlightIdBlur = async (e) => {
-        const flightId = e.target.value;
+    const fetchFlightInfo = async (flightId) => {
         if (!flightId) return;
-
         setLoading(true);
         try {
-            // Lấy thông tin chuyến bay
             const flightRes = await fetch(`http://localhost:5000/api/chuyenbay/get/${flightId}`);
             const flightData = await flightRes.json();
-            console.log('Flight data:', flightData);
-
             if (flightRes.ok && flightData.data) {
                 setBasePrice(flightData.data.gia_ve || 0);
-
-                // Lấy thông tin hạng vé từ chitiet_hangve
                 if (flightData.data.chitiet_hangve && flightData.data.chitiet_hangve.length > 0) {
                     const availableClasses = flightData.data.chitiet_hangve
                         .filter(classInfo => classInfo.So_ve_trong > 0)
@@ -52,10 +48,9 @@ const CreateTicket = () => {
                             he_so_gia: classInfo.Gia_ve / flightData.data.gia_ve,
                             so_ghe_con: classInfo.So_ve_trong
                         }));
-
-                    console.log('Available classes:', availableClasses);
                     setAvailableClasses(availableClasses);
                 } else {
+                    setAvailableClasses([]);
                     setToast({
                         show: true,
                         message: 'Không có thông tin hạng vé cho chuyến bay này',
@@ -63,17 +58,17 @@ const CreateTicket = () => {
                     });
                 }
             } else {
-                console.error('Không tìm thấy thông tin chuyến bay:', flightData);
                 setBasePrice(0);
+                setAvailableClasses([]);
                 setToast({
                     show: true,
                     message: 'Không tìm thấy thông tin chuyến bay',
                     variant: 'warning'
                 });
             }
-        } catch (error) {
-            console.error("Lỗi khi lấy thông tin chuyến bay:", error);
+        } catch {
             setBasePrice(0);
+            setAvailableClasses([]);
             setToast({
                 show: true,
                 message: 'Có lỗi xảy ra khi lấy thông tin chuyến bay',
@@ -82,6 +77,14 @@ const CreateTicket = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleFlightIdChange = (e) => {
+        setForm({ ...form, flightId: e.target.value });
+    };
+
+    const handleFlightIdBlur = (e) => {
+        fetchFlightInfo(e.target.value);
     };
 
     const handleClassChange = (e) => {

@@ -5,7 +5,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import Sidebar from "../components/Sidebar";
 const YearRevenue = () => {
     const navigate = useNavigate();
-    const [selectedOption, setSelectedOption] = useState("6");
+    const [selectedOption, setSelectedOption] = useState("7");
     const [data, setData] = useState([]);
     const [error, setError] = useState("");
     const [totalRevenue, setToTalRevenue] = useState("");

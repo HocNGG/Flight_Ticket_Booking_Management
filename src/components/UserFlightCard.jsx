@@ -1,20 +1,16 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import ToastMessage from './ToastMessage';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import './UserFlightCard.css';
 
 const MySwal = withReactContent(Swal);
 
-const FlightCard = ({ flight, onDelete, onEdit }) => {
+const UserFlightCard = ({ flight }) => {
     const navigate = useNavigate();
     const [detail, setDetail] = useState(null);
     const [show, setShow] = useState(false);
-    // const [toast, setToast] = useState({
-    //     show: false,
-    //     message: '',
-    //     variant: 'success'
-    // });
+
     // Chuyển sang định dạng 00:00 để hiển thị ngắn gọn hơn
     const formatHHMM = (timeString) => {
         const [hh, mm] = timeString.split(':');
@@ -32,7 +28,9 @@ const FlightCard = ({ flight, onDelete, onEdit }) => {
 
         return `${arrivalHours}:${arrivalMinutes}`;
     };
+
     const arrivalTime = calculateArrivalTime(flight.gio_khoi_hanh, flight.Thoi_gian_bay);
+
     const handleDetailClick = async (e) => {
         e.preventDefault();
         try {
@@ -44,83 +42,24 @@ const FlightCard = ({ flight, onDelete, onEdit }) => {
                 setDetail(data.data);
                 setShow(true);
             } else {
-                console.log(`Lỗi: ${data.message || 'Không thể xem chuyến bay'}`);
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }
-    const handleDeleteFlight = async (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        try {
-            // SweetAlert2 confirm
-            const result = await MySwal.fire({
-                title: 'Bạn có chắc chắn muốn xóa chuyến bay này?',
-                text: `Số hiệu chuyến bay: #${flight.Ma_chuyen_bay}`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Xóa',
-                cancelButtonText: 'Hủy',
-                reverseButtons: true
-            });
-
-            if (!result.isConfirmed) {
-                return;
-            }
-
-            // Hiển thị loading
-            MySwal.fire({
-                title: 'Đang xóa...',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    MySwal.showLoading();
-                }
-            });
-
-            const url = `http://localhost:5000/api/chuyenbay/delete/${flight.Ma_chuyen_bay}`;
-            const res = await fetch(url, {
-                method: 'DELETE'
-            });
-            const data = await res.json();
-
-            // Đóng loading
-            await MySwal.close();
-
-            if (res.ok && data.status === 'success') {
-                setShow(false);
-                onDelete?.(flight.Ma_chuyen_bay);
-                
-                // Hiển thị thông báo thành công
-                await MySwal.fire({
-                    title: 'Thành công!',
-                    text: 'Chuyến bay đã được xóa thành công!',
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                });
-            } else {
-                // Hiển thị thông báo lỗi
                 await MySwal.fire({
                     title: 'Lỗi!',
-                    text: data.message || 'Không thể xóa chuyến bay!',
+                    text: data.message || 'Không thể xem chuyến bay',
                     icon: 'error',
                     confirmButtonText: 'OK'
                 });
             }
-        } catch (error) {
-            console.error('Error deleting flight:', error);
-            // Hiển thị thông báo lỗi
+        } catch (err) {
+            console.error(err);
             await MySwal.fire({
                 title: 'Lỗi!',
-                text: 'Có lỗi xảy ra khi xóa chuyến bay!',
+                text: 'Có lỗi xảy ra khi xem chi tiết chuyến bay',
                 icon: 'error',
                 confirmButtonText: 'OK'
             });
         }
     };
+
     return (
         <>
             <div
@@ -175,7 +114,6 @@ const FlightCard = ({ flight, onDelete, onEdit }) => {
                     className="d-flex align-items-center justify-content-between"
                     style={{ minWidth: '150px' }}
                 >
-
                     <div
                         className="btn btn-warning text-dark rounded-3 p-4 me-5"
                         style={{
@@ -187,37 +125,8 @@ const FlightCard = ({ flight, onDelete, onEdit }) => {
                             backgroundColor: '#F2BB05',
                         }}
                     >
-                        <div className="fw-semibold text-uppercase text-center">Giá chỉ  từ</div>
+                        <div className="fw-semibold text-uppercase text-center">Giá chỉ từ</div>
                         <div className="fw-bold fs-5">{Number(flight.gia_ve).toLocaleString()} <br /> VND</div>
-                    </div>
-
-
-
-                    <div className='d-flex mt-1 ' style={{ position: 'absolute', top: '7%', right: '1%' }}>
-                        <div className="btn-group">
-                            <button
-                                type="button"
-                                className="btn btn-warning fw-bold me-2"
-                                style={{
-                                    backgroundColor: '#E58507',
-                                }}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onEdit(flight);
-                                }}
-                            >
-                                Cập nhật
-                            </button>
-                            <button 
-                                className='btn btn-danger fs-4 p-0 px-2' 
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteFlight(e);
-                                }}
-                            >
-                                🗑︎
-                            </button>
-                        </div>
                     </div>
 
                     <button
@@ -225,20 +134,21 @@ const FlightCard = ({ flight, onDelete, onEdit }) => {
                         className="btn btn-success px-3 py-2 fw-bold ms-5"
                         onClick={(e) => {
                             e.stopPropagation();
-                            navigate(`/create-ticket`, {
+                            navigate(`/book-ticket/${flight.Ma_chuyen_bay}`, {
                                 state: {
                                     flightId: flight.Ma_chuyen_bay,
-                                    price: flight.gia_ve,
-                                    fromPage: 'flights'
+                                    price: flight.gia_ve
                                 }
                             });
                         }}
                         style={{ whiteSpace: 'nowrap' }}
                     >
-                        Tạo Vé
+                        Đặt Vé
                     </button>
                 </div>
             </div>
+
+            {/* Modal chi tiết chuyến bay */}
             {show && detail && (
                 <div className="modal show fade d-block align-items-center">
                     <div className="modal-dialog modal-lg">
@@ -270,7 +180,6 @@ const FlightCard = ({ flight, onDelete, onEdit }) => {
             )}
         </>
     );
-
 };
 
-export default FlightCard;
+export default UserFlightCard; 

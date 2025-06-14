@@ -21,11 +21,11 @@ const Header = () => {
                     <Navbar.Toggle aria-controls="main-navbar" />
                     <Navbar.Collapse id="main-navbar">
                         <div className="nav-buttons-container">
-                            <Nav.Link href="/tickets" className="nav-button">
-                                <span className="button-text">Vé Chuyến Bay</span>
-                            </Nav.Link>
                             <Nav.Link href="/flights" className="nav-button">
                                 <span className="button-text">Chuyến Bay</span>
+                            </Nav.Link>
+                            <Nav.Link href="/tickets" className="nav-button">
+                                <span className="button-text">Vé Chuyến Bay</span>
                             </Nav.Link>
                             <Nav.Link href="/airport" className="nav-button">
                                 <span className="button-text">Sân Bay</span>
@@ -33,7 +33,7 @@ const Header = () => {
                             <Nav.Link href="/class" className="nav-button">
                                 <span className="button-text">Hạng Vé</span>
                             </Nav.Link>
-                            <Nav.Link href="/home" className="nav-button">
+                            <Nav.Link href="/regulations" className="nav-button">
                                 <span className="button-text">Quy Định</span>
                             </Nav.Link>
                             <Nav.Link href="/overall-revenue" className="nav-button">
