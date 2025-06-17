@@ -131,6 +131,7 @@ const FlightCard = ({ flight, onDelete, onEdit }) => {
                     backgroundColor: '#E6F6F3',
                     cursor: 'pointer',
                     position: 'relative',
+                    fontFamily: 'Inter, sans-serif'
                 }}
             >
                 {/* Cột: Logo */}

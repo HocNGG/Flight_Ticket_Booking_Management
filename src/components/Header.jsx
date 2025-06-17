@@ -4,11 +4,11 @@ import Navbar from 'react-bootstrap/Navbar';
 import '../App.css';
 const Header = () => {
     return (
-        <>
+        <div style={{fontFamily: 'Inter, sans-serif'}}>
             {/* Navbar trên - tên,logo web và phần đăng nhập đăng ký */}
             <Navbar expand="lg" className="bg-body-white">
                 <Container>
-                    <Navbar.Brand href="/home" className='fs-3'>SE104-Group 21</Navbar.Brand>
+                    <Navbar.Brand href="/home" className='fs-3' style={{fontWeight: 'bold'}}>SE104-Group 21</Navbar.Brand>
                     <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                     <Navbar.Collapse id="responsive-navbar-nav">
                     </Navbar.Collapse>
@@ -43,7 +43,7 @@ const Header = () => {
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
-        </>
+        </div>
     );
 }
 

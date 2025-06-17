@@ -3,7 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import ToastMessage from '../components/ToastMessage';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 const CreateAirport = () => {
     const [selectedOption, setSelectedOption] = useState("4");
@@ -22,24 +25,44 @@ const CreateAirport = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            MySwal.fire({
+                title: 'Đang thêm sân bay...',
+                allowOutsideClick: false,
+                didOpen: () => { MySwal.showLoading(); }
+            });
             const res = await fetch('http://localhost:5000/api/sanbay/add', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(form)
             });
             const data = await res.json();
+            await MySwal.close();
             if (data.status === 'success') {
-                setToast({ show: true, message: data.message, variant: 'success' });
+                await MySwal.fire({
+                    icon: 'success',
+                    title: 'Thêm sân bay thành công!',
+                    text: data.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
                 setTimeout(() => {
                     navigate('/airport');
-                }, 2000);
+                }, 1000);
             } else {
-                setToast({ show: true, message: data.message, variant: 'danger' });
+                await MySwal.fire({
+                    icon: 'error',
+                    title: 'Thêm sân bay thất bại!',
+                    text: data.message,
+                    showConfirmButton: true
+                });
             }
         } catch (error) {
-            setToast({ show: true, message: 'Có lỗi xảy ra khi thêm sân bay', variant: 'danger' });
+            await MySwal.close();
+            await MySwal.fire({
+                icon: 'error',
+                title: 'Có lỗi xảy ra khi thêm sân bay!',
+                showConfirmButton: true
+            });
         }
     };
 
@@ -48,7 +71,8 @@ const CreateAirport = () => {
             backgroundImage: `url(https://images.unsplash.com/photo-1535557597501-0fee0a500c57?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)`,
             backgroundAttachment: 'fixed',
             backgroundSize: 'cover',
-            backgroundPosition: 'top'
+            backgroundPosition: 'top',
+            fontFamily: 'Inter, sans-serif'
         }}>
             <div>
                 <Sidebar
@@ -104,13 +128,6 @@ const CreateAirport = () => {
                         </div>
                     </Form>
                 </div>
-
-                <ToastMessage
-                    show={toast.show}
-                    onClose={() => setToast({ ...toast, show: false })}
-                    message={toast.message}
-                    variant={toast.variant}
-                />
             </div>
         </div>
     );

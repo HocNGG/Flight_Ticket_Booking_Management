@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UserFlightCard from '../components/UserFlightCard';
 import './UserHome.css';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 const UserHome = () => {
   const [flights, setFlights] = useState([]);
@@ -13,6 +17,7 @@ const UserHome = () => {
   });
   const [airports, setAirports] = useState([]);
   const [error, setError] = useState('');
+  const [searching, setSearching] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,11 +29,30 @@ const UserHome = () => {
         if (data.status === 'success') {
           setAirports(data.message);
         }
-      } catch (err) {
-        console.error('Lỗi lấy danh sách sân bay:', err);
+      } catch {
+        console.error('Lỗi lấy danh sách sân bay');
       }
     };
     fetchAirports();
+
+    // Fetch tất cả chuyến bay khi vào trang
+    const fetchAllFlights = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/chuyenbay/get/all');
+        const data = await res.json();
+        if (res.ok && Array.isArray(data.message)) {
+          setFlights(data.message);
+          setError('');
+        } else {
+          setFlights([]);
+          setError('Không tìm thấy chuyến bay');
+        }
+      } catch {
+        setFlights([]);
+        setError('Có lỗi xảy ra khi tải chuyến bay');
+      }
+    };
+    fetchAllFlights();
   }, []);
 
   const handleSearch = async (e) => {
@@ -39,26 +63,46 @@ const UserHome = () => {
         setError('Vui lòng điền đầy đủ thông tin tìm kiếm');
         return;
       }
-
+      setSearching(true);
+      MySwal.fire({
+        title: 'Đang tìm kiếm chuyến bay...',
+        allowOutsideClick: false,
+        didOpen: () => { MySwal.showLoading(); }
+      });
       const url = `http://localhost:5000/api/chuyenbay/search?start_time=${startDate}T00:00:00&end_time=${arriveDate}T23:59:59&sanbay_di=${from}&sanbay_den=${to}`;
       const res = await fetch(url);
       const data = await res.json();
-
+      await MySwal.close();
       if (res.ok && Array.isArray(data.data) && data.data.length > 0) {
         setFlights(data.data);
         setError('');
+        MySwal.fire({
+          icon: 'success',
+          title: 'Tìm kiếm thành công',
+          showConfirmButton: false,
+          timer: 1200
+        });
       } else {
         setFlights([]);
         setError('Không tìm thấy chuyến bay phù hợp');
+        MySwal.fire({
+          icon: 'warning',
+          title: 'Không tìm thấy chuyến bay phù hợp',
+          showConfirmButton: false,
+          timer: 1500
+        });
       }
-    } catch (err) {
+    } catch {
       setError('Có lỗi xảy ra khi tìm kiếm');
+      MySwal.fire({
+        icon: 'error',
+        title: 'Có lỗi xảy ra khi tìm kiếm',
+        showConfirmButton: false,
+        timer: 1500
+      });
+    } finally {
+      setSearching(false);
     }
-  };
-
-  const handleBookTicket = (flightId) => {
-    // Chuyển hướng đến trang đặt vé với thông tin chuyến bay
-    navigate(`/book-ticket/${flightId}`);
   };
 
   return (
@@ -85,7 +129,10 @@ const UserHome = () => {
         ></path>
       </svg>
         </button>
-        <span>Đăng nhập</span>       
+        <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'10px'}}>
+             <span>Đăng nhập</span>
+             <span>(Chỉ admin)</span>         
+        </div>
         </div>
       </header>
       {/* Form tìm kiếm chuyến bay */}
@@ -178,11 +225,14 @@ const UserHome = () => {
           </div>
 
           <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end' }}>
-            <button type="submit" className="btn-88">
+          <div style={{ display: 'flex',flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+            <button type="submit" className="btn-88" disabled={searching}>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <path d="M10 2a8 8 0 105.29 14.29l4.7 4.7a1 1 0 001.42-1.42l-4.7-4.7A8 8 0 0010 2zm0 2a6 6 0 110 12 6 6 0 010-12z" />
               </svg>
             </button>
+            <span>Tìm kiếm</span>     
+          </div>
           </div>
         </form>
       </div>
@@ -210,7 +260,7 @@ const UserHome = () => {
             ))}
           </div>
         ) : (
-          <p className="no-flights">Vui lòng tìm kiếm chuyến bay</p>
+          <p className="no-flights">Không tìm thấy chuyến bay</p>
         )}
       </div>
     </div>

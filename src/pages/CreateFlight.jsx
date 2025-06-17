@@ -5,16 +5,14 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import ToastMessage from '../components/ToastMessage';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 const CreateFlight = () => {
     const [selectedOption, setSelectedOption] = useState("2");
     const [airports, setAirports] = useState([]);
-    const [toast, setToast] = useState({
-        show: false,
-        message: '',
-        variant: 'success'
-    });
     const navigate = useNavigate();
 
     const [form, setForm] = useState({
@@ -68,17 +66,20 @@ const CreateFlight = () => {
             if (!form.Ma_chuyen_bay || !form.Ma_san_bay_di || !form.Ma_san_bay_den || 
                 !form.ngay_khoi_hanh || !form.gio_khoi_hanh || !form.thoi_gian_bay || 
                 !form.gia_ve) {
-                setToast({
-                    show: true,
-                    message: 'Vui lòng điền đầy đủ thông tin bắt buộc',
-                    variant: 'warning'
+                await MySwal.fire({
+                    icon: 'warning',
+                    title: 'Vui lòng điền đầy đủ thông tin bắt buộc',
+                    showConfirmButton: true
                 });
                 return;
             }
-
+            MySwal.fire({
+                title: 'Đang thêm chuyến bay...',
+                allowOutsideClick: false,
+                didOpen: () => { MySwal.showLoading(); }
+            });
             // Format time to include seconds
             const formattedTime = form.gio_khoi_hanh + ':00';
-
             // Prepare data according to API requirements
             const formData = {
                 Ma_chuyen_bay: parseInt(form.Ma_chuyen_bay),
@@ -97,22 +98,20 @@ const CreateFlight = () => {
                     })),
                 hangve: form.hangve
             };
-
             const res = await fetch('http://localhost:5000/api/chuyenbay/add', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
             });
-
             const data = await res.json();
-
+            await MySwal.close();
             if (data.status === 'success') {
-                setToast({
-                    show: true,
-                    message: data.message,
-                    variant: 'success'
+                await MySwal.fire({
+                    icon: 'success',
+                    title: 'Thêm chuyến bay thành công!',
+                    text: data.message,
+                    showConfirmButton: false,
+                    timer: 1500
                 });
                 // Reset form
                 setForm({
@@ -141,23 +140,23 @@ const CreateFlight = () => {
                         }
                     ]
                 });
-                // Navigate back to flights page after 2 seconds
                 setTimeout(() => {
                     navigate('/flights');
-                }, 2000);
+                }, 1000);
             } else {
-                setToast({
-                    show: true,
-                    message: data.message,
-                    variant: 'danger'
+                await MySwal.fire({
+                    icon: 'error',
+                    title: 'Thêm chuyến bay thất bại!',
+                    text: data.message,
+                    showConfirmButton: true
                 });
             }
-        } catch (err) {
-            console.error('Error creating flight:', err);
-            setToast({
-                show: true,
-                message: 'Có lỗi xảy ra khi thêm chuyến bay',
-                variant: 'danger'
+        } catch {
+            await MySwal.close();
+            await MySwal.fire({
+                icon: 'error',
+                title: 'Có lỗi xảy ra khi thêm chuyến bay!',
+                showConfirmButton: true
             });
         }
     };
@@ -167,7 +166,8 @@ const CreateFlight = () => {
             backgroundImage: `url(https://images.unsplash.com/photo-1535557597501-0fee0a500c57?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)`,
             backgroundAttachment: 'fixed',
             backgroundSize: 'cover',
-            backgroundPosition: 'top'
+            backgroundPosition: 'top',
+            fontFamily: 'Inter, sans-serif'
         }}>
             <div>
                 <Sidebar
@@ -379,7 +379,7 @@ const CreateFlight = () => {
                                         ...form.hangve,
                                         {
                                             Ma_hang_ve: 1,
-                                            So_ghe_trong_hang: 50
+                                            So_ghe_trong_hang: 60
                                         }
                                     ]
                                 });
@@ -498,13 +498,6 @@ const CreateFlight = () => {
                     </Form>
                 </div>
             </div>
-
-            <ToastMessage
-                show={toast.show}
-                onClose={() => setToast({ ...toast, show: false })}
-                message={toast.message}
-                variant={toast.variant}
-            />
         </div>
     );
 };

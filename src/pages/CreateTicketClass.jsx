@@ -36,7 +36,7 @@ const CreateTicketClass = () => {
             if (data.status === 'success') {
                 setToast({ show: true, message: data.message, variant: 'success' });
                 setTimeout(() => {
-                    navigate('/ticket-classes');
+                    navigate('/class');
                 }, 2000);
             } else {
                 setToast({ show: true, message: data.message, variant: 'danger' });
@@ -51,7 +51,8 @@ const CreateTicketClass = () => {
             backgroundImage: `url(https://images.unsplash.com/photo-1535557597501-0fee0a500c57?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)`,
             backgroundAttachment: 'fixed',
             backgroundSize: 'cover',
-            backgroundPosition: 'top'
+            backgroundPosition: 'top',
+            fontFamily: 'Inter, sans-serif'
         }}>
             <div>
                 <Sidebar
@@ -64,7 +65,7 @@ const CreateTicketClass = () => {
                     <h2>THÊM HẠNG VÉ MỚI</h2>
                     <Button 
                         variant="secondary"
-                        onClick={() => navigate('/ticket-classes')}
+                        onClick={() => navigate('/class')}
                     >
                         Quay lại
                     </Button>

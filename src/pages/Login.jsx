@@ -57,7 +57,7 @@ const Login = () => {
   };
 
   return (
-    <div className="login">  
+    <div className="login" style={{fontFamily: 'Inter, sans-serif'}}>  
       <h1>Login</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleSubmit}>

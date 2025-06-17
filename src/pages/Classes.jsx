@@ -104,7 +104,7 @@ const Classes = () => {
     };
 
     return (
-        <div className='full-container d-flex'>
+        <div className='full-container d-flex' style={{fontFamily: 'Inter, sans-serif'}}>
             <div>
                 <Sidebar
                     selectedOption={selectedOption}

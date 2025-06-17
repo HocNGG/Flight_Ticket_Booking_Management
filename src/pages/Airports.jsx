@@ -4,6 +4,12 @@ import Sidebar from '../components/Sidebar';
 import ToastMessage from '../components/ToastMessage';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import Modal from 'react-bootstrap/Modal';
 
 const MySwal = withReactContent(Swal);
 
@@ -13,7 +19,26 @@ const Airports = () => {
     const [showEditModal, setShowEditModal] = useState(false);
     const [editAirport, setEditAirport] = useState({ Ma_san_bay: '', Ten_san_bay: '' });
     const [toast, setToast] = useState({ show: false, message: '', variant: 'success' });
+    const [selectedAirport, setSelectedAirport] = useState(null);
+    const [showImageModal, setShowImageModal] = useState(false);
     const navigate = useNavigate();
+
+    // Map mã sân bay -> mảng ảnh
+    const AIRPORT_IMAGES = {
+        'HNOI': [
+            'https://images.pexels.com/photos/163792/model-planes-airplanes-miniatur-wunderland-hamburg-163792.jpeg',
+            'https://images.pexels.com/photos/3943882/pexels-photo-3943882.jpeg',
+        ],
+        'SGON': [
+            'https://images.pexels.com/photos/2767767/pexels-photo-2767767.jpeg',
+            'https://images.pexels.com/photos/804463/pexels-photo-804463.jpeg',
+        ],
+        'DNANG': [
+            'https://images.pexels.com/photos/2523644/pexels-photo-2523644.jpeg',
+            'https://images.pexels.com/photos/2610756/pexels-photo-2610756.jpeg',
+        ],
+        // Thêm các mã khác nếu muốn
+    };
 
     // Fetch danh sách sân bay khi component mount
     useEffect(() => {
@@ -118,7 +143,8 @@ const Airports = () => {
             backgroundImage: `url(https://images.unsplash.com/photo-1535557597501-0fee0a500c57?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)`,
             backgroundAttachment: 'fixed',
             backgroundSize: 'cover',
-            backgroundPosition: 'top'
+            backgroundPosition: 'top',
+            fontFamily: 'Inter, sans-serif'
         }}>
             <div>
                 <Sidebar
@@ -128,7 +154,7 @@ const Airports = () => {
             </div>
             <div className="mt-5 p-4 w-100">
                 <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h2>SÂN BAY</h2>
+                    <h2 style={{fontWeight: 'bold'}}>🏢  SÂN BAY</h2>
                     <button 
                         className="btn btn-success fs-5"
                         onClick={() => navigate('/create-airport')}
@@ -150,8 +176,8 @@ const Airports = () => {
                         <tbody>
                             {airports.map((airport) => (
                                 <tr key={airport.Ma_san_bay}>
-                                    <td>{airport.Ma_san_bay}</td>
-                                    <td>{airport.Ten_san_bay}</td>
+                                    <td style={{cursor:'pointer',color:'#1976d2',fontWeight:'bold'}} onClick={() => { setSelectedAirport(airport); setShowImageModal(true); }}>{airport.Ma_san_bay}</td>
+                                    <td style={{cursor:'pointer',color:'#1976d2'}} onClick={() => { setSelectedAirport(airport); setShowImageModal(true); }}>{airport.Ten_san_bay}</td>
                                     <td>
                                         <button
                                             type="button"
@@ -172,6 +198,42 @@ const Airports = () => {
                         </tbody>
                     </table>
                 </div>
+
+                {/* Modal popup slider ảnh sân bay */}
+                <Modal show={showImageModal && !!selectedAirport} onHide={() => setShowImageModal(false)} size="lg" centered
+                    contentClassName="border-0 shadow-lg rounded-4 airport-image-modal-content" 
+                    dialogClassName="airport-image-modal-dialog"
+                >
+                    <Modal.Header closeButton style={{border:'none', borderRadius: '1.5rem 1.5rem 0 0', background: '#f5f7fa', padding: '1.5rem 2rem'}}>
+                        <Modal.Title as="h4" style={{width:'100%', textAlign:'center', fontWeight:700, color:'#1976d2', letterSpacing:1, fontSize: '1.5rem'}}>
+                            Hình ảnh sân bay {selectedAirport?.Ten_san_bay} ({selectedAirport?.Ma_san_bay})
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body style={{background:'#fafdff', borderRadius:'0 0 1.5rem 1.5rem', padding:'2rem 2.5rem'}}>
+                        <Swiper
+                            modules={[Navigation, Pagination, Autoplay]}
+                            spaceBetween={0}
+                            slidesPerView={1}
+                            navigation
+                            pagination={{ clickable: true }}
+                            autoplay={{ delay: 3500 }}
+                            style={{'--swiper-navigation-color': '#1976d2','--swiper-pagination-color': '#1976d2'}}
+                        >
+                            {(AIRPORT_IMAGES[selectedAirport?.Ma_san_bay] || [
+                                'https://images.pexels.com/photos/2574091/pexels-photo-2574091.jpeg',
+                                'https://images.pexels.com/photos/2073082/pexels-photo-2073082.jpeg',
+                            ]).map((img, idx) => (
+                                <SwiperSlide key={idx}>
+                                    <img 
+                                        src={img} 
+                                        alt={selectedAirport?.Ten_san_bay} 
+                                        style={{width:'100%',height:360,objectFit:'cover',borderRadius:16,boxShadow:'0 4px 24px rgba(25, 118, 210, 0.10)',margin:'0 auto'}} 
+                                    />
+                                </SwiperSlide>
+                            ))}
+                        </Swiper>
+                    </Modal.Body>
+                </Modal>
 
                 {/* Modal sửa tên sân bay */}
                 {showEditModal && (

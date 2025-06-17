@@ -41,8 +41,14 @@ const YearRevenue = () => {
         if (time.year) {
             const fetchData = async () => {
                 try {
+                    const token = localStorage.getItem('access_token');
                     const res = await fetch(
-                        `http://localhost:5000/api/ds_doanhthuthang/get?nam=${time.year}`
+                        `http://localhost:5000/api/ds_doanhthuthang/get?nam=${time.year}`,
+                        {
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        }
                     );
                     const data = await res.json();
                     if (data.status === "success") {
@@ -89,7 +95,7 @@ const YearRevenue = () => {
 
             <div className="mt-5 p-4 w-100">
                 <div className="d-flex justify-content-between">
-                    <h2>Doanh Thu</h2>
+                    <h2 style={{fontWeight: 'bold'}}>📈  Doanh Thu</h2>
                     <button className="btn btn-success fs-5" onClick={() => {
                         navigate(`/detail-revenue`);
                     }}>Xem Chi Tiết</button>

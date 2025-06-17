@@ -1,7 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
-import ToastMessage from '../components/ToastMessage';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const ROWS = 20;
+const COLS = ['A', 'B', 'C', 'D', 'E', 'F'];
+const allSeats = [];
+for (let i = 1; i <= ROWS; i++) {
+  for (let c of COLS) {
+    allSeats.push(`${i}${c}`);
+  }
+}
+
+const MySwal = withReactContent(Swal);
 
 const CreateTicket = () => {
     const [selectedOption, setSelectedOption] = useState("3");
@@ -11,6 +23,7 @@ const CreateTicket = () => {
     const [basePrice, setBasePrice] = useState(location.state?.price || 0);
     const [availableClasses, setAvailableClasses] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [bookedSeats, setBookedSeats] = useState([]);
 
     const [form, setForm] = useState({
         flightId: fromPage === 'tickets' ? '' : location.state?.flightId || '',
@@ -18,18 +31,15 @@ const CreateTicket = () => {
         price: 0
     });
 
-    const [toast, setToast] = useState({
-        show: false,
-        message: '',
-        variant: 'success'
-    });
-
     useEffect(() => {
         if (location.state?.flightId) {
             fetchFlightInfo(location.state.flightId);
         }
+        if (form.flightId) {
+            fetchBookedSeats(form.flightId);
+        }
         // eslint-disable-next-line
-    }, []);
+    }, [form.flightId]);
 
     const fetchFlightInfo = async (flightId) => {
         if (!flightId) return;
@@ -51,31 +61,30 @@ const CreateTicket = () => {
                     setAvailableClasses(availableClasses);
                 } else {
                     setAvailableClasses([]);
-                    setToast({
-                        show: true,
-                        message: 'Không có thông tin hạng vé cho chuyến bay này',
-                        variant: 'warning'
-                    });
                 }
             } else {
                 setBasePrice(0);
                 setAvailableClasses([]);
-                setToast({
-                    show: true,
-                    message: 'Không tìm thấy thông tin chuyến bay',
-                    variant: 'warning'
-                });
             }
         } catch {
             setBasePrice(0);
             setAvailableClasses([]);
-            setToast({
-                show: true,
-                message: 'Có lỗi xảy ra khi lấy thông tin chuyến bay',
-                variant: 'danger'
-            });
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchBookedSeats = async (flightId) => {
+        try {
+            const res = await fetch(`http://localhost:5000/api/vechuyenbay/search/flight/${flightId}`);
+            const data = await res.json();
+            const seats = Array.isArray(data.tickets)
+                ? data.tickets.filter(v => v.Tinh_trang !== false && v.vi_tri)
+                    .map(v => String(v.vi_tri).trim().toUpperCase())
+                : [];
+            setBookedSeats(seats);
+        } catch {
+            setBookedSeats([]);
         }
     };
 
@@ -104,6 +113,11 @@ const CreateTicket = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            MySwal.fire({
+                title: 'Đang tạo vé...',
+                allowOutsideClick: false,
+                didOpen: () => { MySwal.showLoading(); }
+            });
             const url = `http://localhost:5000/api/vechuyenbay/add`
             const body = {
                 Ma_chuyen_bay: parseInt(form.flightId),
@@ -121,31 +135,36 @@ const CreateTicket = () => {
                 },
                 body: JSON.stringify(body)
             });
-
             const data = await res.json();
-
+            await MySwal.close();
             if (res.ok) {
-                setToast({ show: true, message: 'Tạo vé thành công!', variant: 'success' });
+                await MySwal.fire({
+                    icon: 'success',
+                    title: 'Tạo vé thành công!',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
                 setTimeout(() => {
                     if (fromPage === 'tickets') {
                         navigate('/tickets');
                     } else {
                         navigate('/flights');
                     }
-                }, 2000);
+                }, 1000);
             } else {
-                setToast({ 
-                    show: true, 
-                    message: data.message || 'Không thể tạo vé. Vui lòng thử lại!', 
-                    variant: 'danger' 
+                await MySwal.fire({
+                    icon: 'error',
+                    title: 'Không thể tạo vé',
+                    text: data.message || 'Vui lòng thử lại!',
+                    showConfirmButton: true
                 });
             }
         } catch (err) {
-            console.error(err);
-            setToast({ 
-                show: true, 
-                message: 'Có lỗi xảy ra khi tạo vé. Vui lòng thử lại!', 
-                variant: 'danger' 
+            await MySwal.close();
+            await MySwal.fire({
+                icon: 'error',
+                title: 'Có lỗi xảy ra khi tạo vé!',
+                showConfirmButton: true
             });
         }
     }
@@ -155,7 +174,8 @@ const CreateTicket = () => {
             backgroundImage: `url(https://images.unsplash.com/photo-1535557597501-0fee0a500c57?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)`,
             backgroundAttachment: 'fixed',
             backgroundSize: 'cover',
-            backgroundPosition: 'top'
+            backgroundPosition: 'top',
+            fontFamily: 'Inter, sans-serif'
         }}>
             <div>
                 <Sidebar
@@ -186,15 +206,19 @@ const CreateTicket = () => {
                                         </div>
                                         <div className='col-md-6 mb-3'>
                                             <label htmlFor="seat" className="form-label">Vị trí ghế:</label>
-                                            <input 
-                                                type="text" 
-                                                className="form-control" 
-                                                id="seat" 
-                                                placeholder="Nhập vị trí ghế"
+                                            <select
+                                                className="form-select"
+                                                id="seat"
                                                 value={form.seat}
-                                                onChange={(e) => setForm({ ...form, seat: e.target.value })} 
-                                                required 
-                                            />
+                                                onChange={(e) => setForm({ ...form, seat: e.target.value })}
+                                                required
+                                                disabled={!form.flightId}
+                                            >
+                                                <option value="">Chọn vị trí ghế</option>
+                                                {allSeats.filter(seat => !bookedSeats.includes(seat)).map(seat => (
+                                                    <option key={seat} value={seat}>{seat}</option>
+                                                ))}
+                                            </select>
                                         </div>
                                     </div>
                                     <div className='row'>
@@ -302,12 +326,6 @@ const CreateTicket = () => {
                         </form>
                     </div>
                 </div>
-                <ToastMessage
-                    show={toast.show}
-                    onClose={() => setToast({ ...toast, show: false })}
-                    message={toast.message}
-                    variant={toast.variant}
-                />
             </div>
         </div>
     )

@@ -3,7 +3,7 @@ import '../App.css';
 
 const AdsCard = () => {
     return (
-        <div className='d-flex justify-content-around'>
+        <div className='d-flex justify-content-around' style={{fontFamily: 'Inter, sans-serif'}}>
             <Card className="feature-card">
                 <Card.Img variant="top" src="https://images.pexels.com/photos/1591252/pexels-photo-1591252.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" className="card-image" />
                 <Card.Body className="card-content">

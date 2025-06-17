@@ -16,7 +16,8 @@ const Home = () => {
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundAttachment: 'fixed',
-            minHeight: '100vh'
+            minHeight: '100vh',
+            fontFamily: 'Inter, sans-serif'
         }}>
             <div>
 

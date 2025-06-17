@@ -5,7 +5,8 @@ const Footer = () => {
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             minHeight: '200px',
-            padding: '2rem 0'
+            padding: '2rem 0',
+            fontFamily: 'Inter, sans-serif'
         }}>
             <div style={{
                 position: 'absolute',

@@ -62,6 +62,7 @@ const TicketCard = ({ ticket, onUpdateSeat, onCancelTicket }) => {
                     minHeight: '150px',
                     backgroundColor: '#E6F6F3',
                     position: 'relative',
+                    fontFamily: 'Inter, sans-serif'
                 }}
             >
                 {/* Cột: Logo */}

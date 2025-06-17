@@ -3,19 +3,20 @@ import { useNavigate } from 'react-router-dom';
 
 const Sidebar = ({ selectedOption, setSelectedOption }) => {
     const navigate = useNavigate();
-
     const menuItems = [
-        { id: "1", label: "Trang chủ", path: "/home" },
-        { id: "2", label: "Chuyến Bay", path: "/flights" },
-        { id: "3", label: "Vé Chuyến Bay", path: "/tickets" },
-        { id: "4", label: "Sân Bay", path: "/airport" },
-        { id: "5", label: "Hạng Vé", path: "/class" },
-        { id: "6", label: "Quy Định", path: "/regulations" },
-        { id: "7", label: "Doanh Thu", path: "/overall-revenue" }
+        { id: "1", label: <><i className="fa-solid fa-house icon-bordered"></i> Trang chủ</>, path: "/home" },
+        { id: "2", label: <><i className="fa-solid fa-plane-departure icon-bordered"></i> Chuyến Bay</>, path: "/flights" },
+        { id: "3", label: <><i className="fa-solid fa-ticket-alt icon-bordered"></i> Vé Chuyến Bay</>, path: "/tickets" },
+        { id: "4", label: <><i className="fa-solid fa-building icon-bordered"></i> Sân Bay</>, path: "/airport" },
+        { id: "5", label: <><i className="fa-solid fa-chair icon-bordered"></i> Hạng Vé</>, path: "/class" },
+        { id: "6", label: <><i className="fa-solid fa-scale-balanced icon-bordered"></i> Quy Định</>, path: "/regulations" },
+        { id: "7", label: <><i className="fa-solid fa-chart-line icon-bordered"></i> Doanh Thu</>, path: "/overall-revenue" }
     ];
 
+
+
     return (
-        <>
+        <div style={{fontFamily: 'Inter, sans-serif'}}>
             <div className='container ms-3' style={{ color: '#000', minHeight: '100vh' }}>
                 {/* Hiển thị role ở đây */}
                 <div className='role mt-3'>
@@ -50,7 +51,7 @@ const Sidebar = ({ selectedOption, setSelectedOption }) => {
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 

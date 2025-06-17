@@ -12,7 +12,7 @@ const ToastMessage = ({ show, onClose, message, variant = 'success' }) => {
     }, [show, onClose]);
 
     return (
-        <ToastContainer position="top-end" className="p-3" style={{ zIndex: 9999 }}>
+        <ToastContainer position="top-end" className="p-3" style={{ zIndex: 9999, fontFamily: 'Inter, sans-serif' }}>
             <Toast bg={variant} show={show} onClose={onClose}>
                 <Toast.Body className="text-white">{message}</Toast.Body>
             </Toast>

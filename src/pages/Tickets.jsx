@@ -8,6 +8,7 @@ import Button from 'react-bootstrap/Button';
 import ToastMessage from '../components/ToastMessage';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { authFetch } from '../utils/authFetch';
 
 const MySwal = withReactContent(Swal);
 
@@ -15,7 +16,7 @@ const Tickets = () => {
     const [selectedOption, setSelectedOption] = useState("3");
     const [form, setForm] = useState({ 
         identity: '',
-        filterType: 'cmnd' // 'cmnd', 'flightId', 'passengerId', 'date'
+        filterType: 'date' // Mặc định là 'date'
     });
     const [tickets, setTickets] = useState([]);
     const [searched, setSearched] = useState(false);
@@ -34,13 +35,15 @@ const Tickets = () => {
         try {
             const { identity, filterType } = form;
             let url = '';
+            let useAuth = false;
 
             switch (filterType) {
                 case 'cmnd':
                     url = `http://localhost:5000/api/vechuyenbay/get_by_hanhkhach/cmnd/${identity}`;
                     break;
                 case 'flightId':
-                    url = `http://localhost:5000/api/vechuyenbay/get/${identity}`;
+                    url = `http://localhost:5000/api/vechuyenbay/search/flight/${identity}`;
+                    useAuth = true;
                     break;
                 case 'passengerId':
                     url = `http://localhost:5000/api/hanhkhach/get/${identity}`;
@@ -52,30 +55,42 @@ const Tickets = () => {
                     url = `http://localhost:5000/api/vechuyenbay/get_by_hanhkhach/cmnd/${identity}`;
             }
 
-            const res = await fetch(url);
-            const data = await res.json();
-
-            if (res.ok) {
-                if (filterType === 'flightId') {
-                    const ticketData = {
-                        ...data.data,
-                        Tien_ve: data.data.Tien_ve || 0,
-                        Ma_ve: data.data.Ma_ve || data.data.Ma_chuyen_bay
-                    };
-                    setTickets([ticketData]);
-                } else if (filterType === 'date') {
-                    setTickets(data.data || []);
+            let res, data;
+            if (useAuth) {
+                res = await authFetch(url, { method: 'GET' });
+                data = await res.json();
+                if (res.ok && data.status === 'success') {
+                    setTickets((data.tickets || []).map(ticket => ({
+                        ...ticket,
+                        Ma_ve: ticket.id,
+                        Ma_chuyen_bay: identity
+                    })));
                 } else {
-                    const ticketList = Array.isArray(data.data) ? data.data : [data.data];
-                    setTickets(ticketList);
+                    setTickets([]);
+                    setToast({
+                        show: true,
+                        message: data.message || 'Không tìm thấy vé',
+                        variant: 'warning'
+                    });
                 }
             } else {
-                setTickets([]);
-                setToast({
-                    show: true,
-                    message: data.message || 'Không tìm thấy vé',
-                    variant: 'warning'
-                });
+                res = await fetch(url);
+                data = await res.json();
+                if (res.ok) {
+                    if (filterType === 'date') {
+                        setTickets(data.data || []);
+                    } else {
+                        const ticketList = Array.isArray(data.data) ? data.data : [data.data];
+                        setTickets(ticketList);
+                    }
+                } else {
+                    setTickets([]);
+                    setToast({
+                        show: true,
+                        message: data.message || 'Không tìm thấy vé',
+                        variant: 'warning'
+                    });
+                }
             }
             setSearched(true);
         } catch (err) {
@@ -160,6 +175,35 @@ const Tickets = () => {
 
     // Khi chuyển tab hoặc rời khỏi trang, làm sạch vé
     useEffect(() => {
+        // Tự động tìm vé hôm nay khi vào trang
+        const fetchTodayTickets = async () => {
+            try {
+                const url = `http://localhost:5000/api/vechuyenbay/get/DatHomNay`;
+                const res = await fetch(url);
+                const data = await res.json();
+                if (res.ok) {
+                    setTickets(data.data || []);
+                } else {
+                    setTickets([]);
+                    setToast({
+                        show: true,
+                        message: data.message || 'Không tìm thấy vé',
+                        variant: 'warning'
+                    });
+                }
+                setSearched(true);
+            } catch {
+                setTickets([]);
+                setToast({
+                    show: true,
+                    message: 'Có lỗi xảy ra khi tìm kiếm',
+                    variant: 'danger'
+                });
+            }
+        };
+        if (form.filterType === 'date') {
+            fetchTodayTickets();
+        }
         return () => {
             setTickets([]);
             setSearched(false);
@@ -181,7 +225,7 @@ const Tickets = () => {
             </div>
             <div className="mt-5 p-4 w-100">
                 <div className='d-flex justify-content-between align-items-center mb-4'>
-                    <h2>QUẢN LÝ VÉ CHUYẾN BAY</h2>
+                    <h2 style={{fontWeight: 'bold'}}>🎫    QUẢN LÝ VÉ CHUYẾN BAY</h2>
                     <button 
                         className='btn btn-success fs-5' 
                         onClick={() => navigate('/create-ticket', { state: { fromPage: 'tickets' } })}
@@ -233,7 +277,7 @@ const Tickets = () => {
                     {tickets.length > 0 ? (
                         tickets.map(ticket => (
                             <TicketCard
-                                key={ticket.Ma_ve}
+                                key={ticket.id || ticket.Ma_ve}
                                 ticket={ticket}
                                 onUpdateSeat={(ticket) => {
                                     setSelectedTicket(ticket);

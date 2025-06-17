@@ -70,6 +70,7 @@ const UserFlightCard = ({ flight }) => {
                     backgroundColor: '#E6F6F3',
                     cursor: 'pointer',
                     position: 'relative',
+                    fontFamily: 'Inter, sans-serif'
                 }}
             >
                 {/* Cột: Logo */}
@@ -134,6 +135,11 @@ const UserFlightCard = ({ flight }) => {
                         className="btn btn-success px-3 py-2 fw-bold ms-5"
                         onClick={(e) => {
                             e.stopPropagation();
+                            MySwal.fire({
+                                title: 'Đang chuyển sang trang đặt vé...',
+                                allowOutsideClick: false,
+                                didOpen: () => { MySwal.showLoading(); }
+                            });
                             navigate(`/book-ticket/${flight.Ma_chuyen_bay}`, {
                                 state: {
                                     flightId: flight.Ma_chuyen_bay,

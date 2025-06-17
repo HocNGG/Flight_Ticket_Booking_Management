@@ -246,3 +246,16 @@
 .table {
   /* height: 80% */
 }
+
+.icon-bordered {
+  color: black;              /* Màu icon */
+  background-color: white;
+  margin-right: 10px;   /* Nền trắng */  /* Viền đen */      /* Bo tròn như hình tròn */           /* Khoảng cách giữa icon và viền */
+}
+.body {
+  font-family: 'Inter', sans-serif;
+}
+.button-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: bold;
+}
