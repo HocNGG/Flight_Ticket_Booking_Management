@@ -2,16 +2,42 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import '../App.css';
+import { useNavigate } from 'react-router-dom';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 const Header = () => {
+    const navigate = useNavigate();
     return (
         <div style={{fontFamily: 'Inter, sans-serif'}}>
             {/* Navbar trên - tên,logo web và phần đăng nhập đăng ký */}
             <Navbar expand="lg" className="bg-body-white">
-                <Container>
-                    <Navbar.Brand href="/home" className='fs-3' style={{fontWeight: 'bold'}}>SE104-Group 21</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-                    <Navbar.Collapse id="responsive-navbar-nav">
-                    </Navbar.Collapse>
+                <Container style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                    <Navbar.Brand href="/home" className='fs-3' style={{fontWeight:'bold',fontSize:28,color:'#000',letterSpacing:2,textShadow:'1px 1px 8px #666'}}>SE104-Group 21</Navbar.Brand>
+                    <div style={{marginLeft:'auto'}}>
+                        <button
+                            onClick={() => {
+                                localStorage.clear(); // Xóa tất cả dữ liệu trong localStorage
+                                navigate('/');
+                            }}
+                            style={{
+                                background:'none',
+                                border:'none',
+                                color:'#e53935',
+                                fontSize:28,
+                                cursor:'pointer',
+                                padding:0,
+                                marginLeft:24,
+                                transition: 'transform 0.2s ease',
+                                transform: 'scale(1)'
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.5)'}
+                            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                            title="Logout"
+                        >
+                            <i className="fa-solid fa-right-from-bracket" style={{fontSize:28,color:'#e53935',textShadow:'1px 1px 8px #666', marginRight:8}}></i>
+                            <span style={{fontSize:16,fontWeight:'bold',color:'#e53935',textShadow:'1px 1px 8px #666'}}>Logout</span>
+                        </button>
+                    </div>
                 </Container>
             </Navbar>
 

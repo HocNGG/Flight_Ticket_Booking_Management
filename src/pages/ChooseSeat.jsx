@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useParams, useNavigate } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 const ROWS = 20;
 const COLS = ['A', 'B', 'C', 'D', 'E', 'F'];
@@ -7,7 +7,6 @@ const COLS = ['A', 'B', 'C', 'D', 'E', 'F'];
 const ChooseSeat = () => {
   const { flightId } = useParams();
   const location = useLocation();
-  const navigate = useNavigate();
   // Nhận thông tin cá nhân và vé từ state
   const { classId, price, name, gender, cmnd, phone } = location.state || {};
 
@@ -15,8 +14,6 @@ const ChooseSeat = () => {
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [paymentSuccess, setPaymentSuccess] = useState(false);
 
   // Lấy danh sách ghế đã đặt
   useEffect(() => {
@@ -66,6 +63,18 @@ const ChooseSeat = () => {
       return;
     }
     const orderId = `${flightId}-${selectedSeats[0]}-${Date.now()}`;
+    // Save booking info to localStorage for PaymentReturn
+    localStorage.setItem('pending_booking', JSON.stringify({
+      flightId,
+      classId,
+      price,
+      name,
+      gender,
+      cmnd,
+      phone,
+      seat: selectedSeats[0],
+      orderId
+    }));
     try {
       setLoading(true);
       const res = await fetch('http://localhost:5000/api/vnpay/create_payment', {
@@ -75,9 +84,7 @@ const ChooseSeat = () => {
       });
       const data = await res.json();
       if (data.payment_url) {
-        window.open(data.payment_url, '_blank');
-        // Lắng nghe kết quả thanh toán từ backend (giả sử backend redirect về /payment-result)
-        window.addEventListener('focus', checkPaymentResult, { once: true });
+        window.location.href = data.payment_url;
       } else {
         setError('Không tạo được link thanh toán!');
       }
@@ -87,55 +94,6 @@ const ChooseSeat = () => {
       setLoading(false);
     }
   };
-
-  // Hàm kiểm tra kết quả thanh toán (giả sử backend redirect về /payment-result?order_id=...&status=success)
-  const checkPaymentResult = async () => {
-    // Có thể lấy order_id từ localStorage/sessionStorage nếu cần
-    // Hoặc kiểm tra lại trạng thái đơn hàng qua API backend nếu có
-    // Ở đây demo: hỏi user đã thanh toán xong chưa
-    if (window.confirm('Bạn đã hoàn tất thanh toán thành công?')) {
-      setPaymentSuccess(true);
-    }
-  };
-
-  // Khi paymentSuccess chuyển sang true, tự động gửi API tạo vé
-  useEffect(() => {
-    if (paymentSuccess && selectedSeats.length > 0) {
-      const createTicket = async () => {
-        setError('');
-        setSuccess('');
-        setLoading(true);
-        try {
-          const body = {
-            Ma_chuyen_bay: flightId,
-            Ma_hang_ve: classId,
-            vitri: selectedSeats[0],
-            Ho_ten: name,
-            cmnd: cmnd,
-            sdt: phone,
-            gioi_tinh: gender
-          };
-          const res = await fetch('http://localhost:5000/api/vechuyenbay/add', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
-          });
-          const data = await res.json();
-          if (res.ok && data.status === 'success') {
-            setSuccess('Đặt vé thành công!');
-            setTimeout(() => navigate('/'), 1500);
-          } else {
-            setError(data.message || 'Đặt vé thất bại!');
-          }
-        } catch {
-          setError('Có lỗi xảy ra khi đặt vé!');
-        } finally {
-          setLoading(false);
-        }
-      };
-      createTicket();
-    }
-  }, [paymentSuccess, selectedSeats, flightId, classId, name, gender, cmnd, phone, navigate]);
 
   // CSS inline cho ghế
   const seatStyle = (seat) => {
@@ -167,16 +125,18 @@ const ChooseSeat = () => {
       display:'flex',
       maxWidth:1000,
       margin:'40px auto',
-      background:'#fff',
       borderRadius:'40px 40px 20px 20px', // bo tròn đầu máy bay
       boxShadow:'0 2px 8px rgba(0,0,0,0.1)',
       fontFamily: 'Inter, sans-serif',
       position:'relative',
       overflow:'hidden',
+      background:'rgba(0,0,0,0.6)',
+      color:'#fff',
+      fontColor:'#fff',
     }}>
       {/* Cột trái: Thông tin thanh toán */}
       <div style={{flex:1,padding:32,borderRight:'1px solid #eee',minWidth:320}}>
-        <h2 style={{textAlign:'center',marginBottom:24}}>Thanh toán đặt vé</h2>
+        <h2 style={{textAlign:'center',marginBottom:24, fontWeight:'bold'}}>Thanh toán đặt vé</h2>
         <div style={{marginBottom:16,fontWeight:'bold',fontSize:16}}>
           Họ tên: {name}<br/>
           Giới tính: {gender}<br/>
@@ -186,22 +146,19 @@ const ChooseSeat = () => {
           Giá vé: {price ? price.toLocaleString() + ' VND' : ''}<br/>
           Ghế chọn: {selectedSeats.join(', ') || 'Chưa chọn'}
         </div>
-        {!paymentSuccess && (
+        {!loading && (
           <button
             onClick={handlePayment}
-            disabled={selectedSeats.length === 0 || loading}
-            style={{width:'100%',padding:14,background:'#0ea5e9',color:'#fff',border:'none',borderRadius:6,fontSize:18,fontWeight:'bold',cursor:loading || selectedSeats.length === 0 ? 'not-allowed':'pointer',marginBottom:16}}
+            disabled={selectedSeats.length === 0}
+            style={{width:'100%',padding:14,background:'#0ea5e9',color:'#fff',border:'none',borderRadius:6,fontSize:18,fontWeight:'bold',cursor:selectedSeats.length === 0 ? 'not-allowed':'pointer',marginBottom:16}}
           >
             Thanh toán
           </button>
         )}
-        {paymentSuccess && (
-          <>
-            {error && <div style={{color:'red',marginBottom:12}}>{error}</div>}
-            {success && <div style={{color:'green',marginBottom:12}}>{success}</div>}
-            {loading && <div style={{color:'#0ea5e9',marginBottom:12}}>Đang đặt vé...</div>}
-          </>
+        {loading && (
+          <div style={{color:'#0ea5e9',marginBottom:12}}>Đang đặt vé...</div>
         )}
+        {error && <div style={{color:'red',marginBottom:12}}>{error}</div>}
       </div>
       {/* Cột phải: Modal chọn ghế */}
       <div style={{flex:1,maxHeight:600,overflowY:'auto',padding:32,position:'relative'}}>
@@ -218,8 +175,8 @@ const ChooseSeat = () => {
         <div style={{textAlign:'center',fontSize:15,fontWeight:'bold',color:'#888',margin:'8px 0 8px 0'}}>Cửa lên tàu bay</div>
         {/* Sơ đồ ghế */}
            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:8}}>
-          <div style={{fontSize:15,fontWeight:'bold',color:'#888',marginLeft:24}}>Cửa lên tàu bay</div>
-          <div style={{fontSize:15,fontWeight:'bold',color:'#888',marginRight:24}}>Cửa lên tàu bay</div>
+          <div style={{fontSize:15,fontWeight:'bold',color:'#FFC107',marginLeft:24}}>Cửa lên tàu bay</div>
+          <div style={{fontSize:15,fontWeight:'bold',color:'#FFC107',marginRight:24}}>Cửa lên tàu bay</div>
         </div>
         <div style={{display:'flex',flexDirection:'column',alignItems:'center',marginBottom:24,position:'relative',zIndex:3}}>
           {/* Header cột */}
@@ -267,8 +224,8 @@ const ChooseSeat = () => {
         </div>
         {/* Cửa lên tàu bay ở cuối */}
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:8}}>
-          <div style={{fontSize:15,fontWeight:'bold',color:'#888',marginLeft:24}}>Cửa lên tàu bay</div>
-          <div style={{fontSize:15,fontWeight:'bold',color:'#888',marginRight:24}}>Cửa lên tàu bay</div>
+          <div style={{fontSize:15,fontWeight:'bold',color:'#FFC107',marginLeft:24}}>Cửa lên tàu bay</div>
+          <div style={{fontSize:15,fontWeight:'bold',color:'#FFC107',marginRight:24}}>Cửa lên tàu bay</div>
         </div>
       </div>
     </div>

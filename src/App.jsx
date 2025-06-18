@@ -17,6 +17,7 @@ import Regulations from './pages/Regulations';
 import Login from './pages/Login';
 import BookTicket from './pages/BookTicket';
 import ChooseSeat from './pages/ChooseSeat';
+import PaymentReturn from './pages/PaymentReturn';
 import './App.css';
 
 // Protected Route Component
@@ -109,6 +110,7 @@ function App() {
             <Regulations />
           </ProtectedRoute>
         } />
+        <Route path="/payment_return" element={<PaymentReturn />} />
       </Routes>
     </Router>
   );

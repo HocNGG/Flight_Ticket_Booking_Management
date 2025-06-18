@@ -22,7 +22,12 @@ const Regulations = () => {
     const fetchRegulations = async () => {
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:5000/api/quydinh/get');
+            const token = localStorage.getItem('access_token');
+            const res = await fetch('http://localhost:5000/api/quydinh/get', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             const data = await res.json();
             if (data.status === 'success') {
                 setRegulations(data.data);

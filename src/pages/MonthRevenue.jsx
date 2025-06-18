@@ -64,7 +64,12 @@ const MonthRevenue = () => {
     useEffect(() => {
         const fetchMonthRevenueData = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/api/ds_doanhthuthang/get?nam=${time.year}`);
+                const token = localStorage.getItem('access_token');
+                const res = await fetch(`http://localhost:5000/api/ds_doanhthuthang/get?nam=${time.year}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
                 const result = await res.json();
                 if (result.status === "success") {
                     const formattedData = result.data.map((item) => ({
