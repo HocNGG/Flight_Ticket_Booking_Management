@@ -11,6 +11,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import Modal from 'react-bootstrap/Modal';
 import { getAuthHeader } from '../utils/authFetch';
+import { BASE_URL } from '../utils/api';
 const MySwal = withReactContent(Swal);
 
 const Airports = () => {
@@ -47,7 +48,7 @@ const Airports = () => {
 
     const fetchAirports = async () => {
         try {
-            const res = await fetch('https://se104-airport.space/api/sanbay/get', {
+            const res = await fetch(`${BASE_URL}/sanbay/get`, {
                 headers: getAuthHeader()
             });
             const data = await res.json();
@@ -69,7 +70,7 @@ const Airports = () => {
     const handleEditAirport = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch(`https://se104-airport.space/api/sanbay/update/${editAirport.Ma_san_bay}`, {
+            const res = await fetch(`${BASE_URL}/sanbay/update/${editAirport.Ma_san_bay}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
                 body: JSON.stringify({ ten_san_bay: editAirport.Ten_san_bay })
@@ -106,7 +107,7 @@ const Airports = () => {
                 allowOutsideClick: false,
                 didOpen: () => { MySwal.showLoading(); }
             });
-            const res = await fetch(`https://se104-airport.space/api/sanbay/delete/${maSanBay}`, {
+            const res = await fetch(`${BASE_URL}/sanbay/delete/${maSanBay}`, {
                 method: 'DELETE',
                     headers: getAuthHeader()
             });

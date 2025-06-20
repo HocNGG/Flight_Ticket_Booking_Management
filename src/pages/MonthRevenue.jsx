@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import Sidebar from "../components/Sidebar";
 import { getAuthHeader } from '../utils/authFetch';
+import { BASE_URL } from '../utils/api';
+
 const MonthRevenue = () => {
     const navigate = useNavigate();
     const [selectedOption, setSelectedOption] = useState("7");
@@ -40,9 +42,8 @@ const MonthRevenue = () => {
         if (time.month && time.year) {
             const fetchData = async () => {
                 try {
-                    const token = localStorage.getItem('access_token');
                     const res = await fetch(
-                        `https://se104-airport.space/api/chitietdoanhthuthang/get?thang=${time.month}&nam=${time.year}`,
+                        `${BASE_URL}/chitietdoanhthuthang/get?thang=${time.month}&nam=${time.year}`,
                         {
                             headers: getAuthHeader()
                         }
@@ -69,7 +70,7 @@ const MonthRevenue = () => {
     useEffect(() => {
         const fetchMonthRevenueData = async () => {
             try {
-                const res = await fetch(`https://se104-airport.space/api/ds_doanhthuthang/get?nam=${time.year}`, {
+                const res = await fetch(`${BASE_URL}/ds_doanhthuthang/get?nam=${time.year}`, {
                     headers: getAuthHeader()
                 });
                 const result = await res.json();

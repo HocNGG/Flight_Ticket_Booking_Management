@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -8,9 +8,6 @@ const MySwal = withReactContent(Swal);
 
 const UserFlightCard = ({ flight }) => {
     const navigate = useNavigate();
-    const [detail, setDetail] = useState(null);
-    const [show, setShow] = useState(false);
-
     // Chuyển sang định dạng 00:00 để hiển thị ngắn gọn hơn
     const formatHHMM = (timeString) => {
         const [hh, mm] = timeString.split(':');
@@ -31,34 +28,6 @@ const UserFlightCard = ({ flight }) => {
 
     const arrivalTime = calculateArrivalTime(flight.gio_khoi_hanh, flight.Thoi_gian_bay);
 
-    const handleDetailClick = async (e) => {
-        e.preventDefault();
-        try {
-            const url = `https://se104-airport.space/api/chuyenbay/get/${flight.Ma_chuyen_bay}`
-            const res = await fetch(url);
-            const data = await res.json();
-
-            if (res.ok) {
-                setDetail(data.data);
-                setShow(true);
-            } else {
-                await MySwal.fire({
-                    title: 'Lỗi!',
-                    text: data.message || 'Không thể xem chuyến bay',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-            }
-        } catch (err) {
-            console.error(err);
-            await MySwal.fire({
-                title: 'Lỗi!',
-                text: 'Có lỗi xảy ra khi xem chi tiết chuyến bay',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
-        }
-    };
 
     return (
         <>

@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { getAuthHeader } from '../utils/authFetch';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { BASE_URL } from '../utils/api';
 const MySwal = withReactContent(Swal);
 
 const Flights = () => {
@@ -50,7 +51,7 @@ const Flights = () => {
                 return;
             }
 
-            const url = `https://se104-airport.space/api/chuyenbay/get/${flightId}`;
+            const url = `${BASE_URL}/chuyenbay/get/${flightId}`;
             const res = await fetch(url);
             const data = await res.json();
 
@@ -93,7 +94,7 @@ const Flights = () => {
                 return;
             }
 
-            const url = `https://se104-airport.space/api/chuyenbay/search?start_time=${startDate}T00:00:00&end_time=${arriveDate}T23:59:59&sanbay_di=${from}&sanbay_den=${to}`;
+            const url = `${BASE_URL}/chuyenbay/search?start_time=${startDate}T00:00:00&end_time=${arriveDate}T23:59:59&sanbay_di=${from}&sanbay_den=${to}`;
             const res = await fetch(url);
             const data = await res.json();
 
@@ -143,7 +144,7 @@ const Flights = () => {
     const handleUpdateSubmit = async (e) => {
         e.preventDefault();
         try {
-            const url = `https://se104-airport.space/api/chuyenbay/update/${updateForm.Ma_chuyen_bay}`;
+            const url = `${BASE_URL}/chuyenbay/update/${updateForm.Ma_chuyen_bay}`;
             const res = await fetch(url, {
                 method: 'PUT',
                 headers: {
@@ -195,7 +196,7 @@ const Flights = () => {
         });
         const fetchFlights = async () => {
             try {
-                const res = await fetch(`https://se104-airport.space/api/chuyenbay/get/all`, {
+                const res = await fetch(`${BASE_URL}/chuyenbay/get/all`, {
                     method: 'GET',
                 });
                 const data = await res.json();
@@ -218,7 +219,7 @@ const Flights = () => {
         // Fetch danh sách sân bay
         const fetchAirports = async () => {
             try {
-                const res = await fetch('https://se104-airport.space/api/sanbay/get');
+                const res = await fetch(`${BASE_URL}/sanbay/get`);
                 const data = await res.json();
                 if (data.status === 'success') {
                     setAirports(data.message);

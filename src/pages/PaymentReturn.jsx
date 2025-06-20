@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { BASE_URL, LOCAL_API_URL } from '../utils/api';
 
 const PaymentReturn = () => {
   const [result, setResult] = useState(null);
@@ -31,7 +32,7 @@ const PaymentReturn = () => {
       }
       const info = JSON.parse(booking);
       // Gọi API đặt vé
-      fetch('https://se104-airport.space/api/vechuyenbay/add', {
+      fetch(`${BASE_URL}/vechuyenbay/add`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -51,7 +52,7 @@ const PaymentReturn = () => {
             setBookingStatus('success');
             setBookingMsg('Đặt vé thành công!');
             // Lấy thông tin chuyến bay
-            fetch(`http://localhost:8000/api/chuyenbay/get/${info.flightId}`)
+            fetch(`${LOCAL_API_URL}/chuyenbay/get/${info.flightId}`)
               .then(res => res.json())
               .then(flightData => {
                 if (flightData.data) {

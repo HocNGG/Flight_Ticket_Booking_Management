@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { BASE_URL } from '../utils/api';
 const ROWS = 20;
 const COLS = ['A', 'B', 'C', 'D', 'E', 'F'];
 const allSeats = [];
@@ -46,7 +47,7 @@ const CreateTicket = () => {
         if (!flightId) return;
         setLoading(true);
         try {
-            const flightRes = await fetch(`https://se104-airport.space/api/chuyenbay/get/${flightId}`);
+            const flightRes = await fetch(`${BASE_URL}/chuyenbay/get/${flightId}`);
             const flightData = await flightRes.json();
             if (flightRes.ok && flightData.data) {
                 setBasePrice(flightData.data.gia_ve || 0);
@@ -77,7 +78,7 @@ const CreateTicket = () => {
 
     const fetchBookedSeats = async (flightId) => {
         try {
-            const res = await fetch(`https://se104-airport.space/api/vechuyenbay/search/flight/${flightId}`);
+            const res = await fetch(`${BASE_URL}/vechuyenbay/search/flight/${flightId}`);
             const data = await res.json();
             const seats = Array.isArray(data.tickets)
                 ? data.tickets.filter(v => v.Tinh_trang !== false && v.vi_tri)
@@ -167,7 +168,7 @@ const CreateTicket = () => {
                 allowOutsideClick: false,
                 didOpen: () => { MySwal.showLoading(); }
             });
-            const url = `https://se104-airport.space/api/vechuyenbay/add`
+            const url = `${BASE_URL}/vechuyenbay/add`
             const body = {
                 Ma_chuyen_bay: parseInt(form.flightId),
                 Ma_hang_ve: parseInt(form.classId),

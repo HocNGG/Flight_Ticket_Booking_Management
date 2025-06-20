@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import ToastMessage from '../components/ToastMessage';
 import { getAuthHeader } from '../utils/authFetch';
+import { BASE_URL } from '../utils/api';
+
 const Regulations = () => {
     const [selectedOption, setSelectedOption] = useState("6");
     const [regulations, setRegulations] = useState({
@@ -22,7 +24,7 @@ const Regulations = () => {
     const fetchRegulations = async () => {
         setLoading(true);
         try {
-            const res = await fetch('https://se104-airport.space/api/quydinh/get', {
+            const res = await fetch(`${BASE_URL}/quydinh/get`, {
                 headers: getAuthHeader()
             });
             const data = await res.json();
@@ -44,7 +46,7 @@ const Regulations = () => {
     const handleSave = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch('https://se104-airport.space/api/quydinh/update', {
+            const res = await fetch(`${BASE_URL}/quydinh/update`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
                 body: JSON.stringify({

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import { BASE_URL } from '../utils/api';
 
 const TicketCard = ({ ticket, onUpdateSeat, onCancelTicket }) => {
     const [detail, setDetail] = useState(null);
@@ -9,7 +10,7 @@ const TicketCard = ({ ticket, onUpdateSeat, onCancelTicket }) => {
     useEffect(() => {
         const fetchFlightDetail = async () => {
             try {
-                const res = await fetch(`https://se104-airport.space/api/chuyenbay/get/${ticket.Ma_chuyen_bay}`);
+                const res = await fetch(`${BASE_URL}/chuyenbay/get/${ticket.Ma_chuyen_bay}`);
                 const data = await res.json();
                 setDetail(data.data);
             } catch (error) {

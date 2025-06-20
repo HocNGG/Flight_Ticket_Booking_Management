@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { getAuthHeader } from '../utils/authFetch';
 import Sidebar from "../components/Sidebar";
+import { BASE_URL } from '../utils/api';
+
 const YearRevenue = () => {
     const navigate = useNavigate();
     const [selectedOption, setSelectedOption] = useState("7");
@@ -41,13 +43,10 @@ const YearRevenue = () => {
         if (time.year) {
             const fetchData = async () => {
                 try {
-                    const token = localStorage.getItem('access_token');
                     const res = await fetch(
-                        `https://se104-airport.space/api/ds_doanhthuthang/get?nam=${time.year}`,
+                        `${BASE_URL}/ds_doanhthuthang/get?nam=${time.year}`,
                         {
-                            headers: {
-                                'Authorization': `Bearer ${token}`
-                            }
+                            headers: getAuthHeader()
                         }
                     );
                     const data = await res.json();

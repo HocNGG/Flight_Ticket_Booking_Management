@@ -8,6 +8,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { BASE_URL, LOCAL_API_URL } from '../utils/api';
 
 const MySwal = withReactContent(Swal);
 
@@ -91,6 +92,7 @@ const BookTicket = () => {
   const navigate = useNavigate();
   const [flight, setFlight] = useState(null);
   const [classes, setClasses] = useState([]);
+  const [ticketClassMap, setTicketClassMap] = useState({});
   const [selectedClass, setSelectedClass] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -101,8 +103,23 @@ const BookTicket = () => {
   const [cmnd, setCmnd] = useState('');
   const [phone, setPhone] = useState('');
   const [submitError, setSubmitError] = useState('');
-   const [phoneError, setPhoneError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
   const [cmndError, setCmndError] = useState('');
+
+  // Lấy danh sách tên hạng vé
+  useEffect(() => {
+    fetch(`${LOCAL_API_URL}/hangve/get`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'success') {
+          const map = {};
+          data.message.forEach(item => {
+            map[item.id] = item.Ten_hang_ve;
+          });
+          setTicketClassMap(map);
+        }
+      });
+  }, []);
 
   useEffect(() => {
     // Hiện SweetAlert khi bắt đầu load
@@ -114,13 +131,18 @@ const BookTicket = () => {
     const fetchFlight = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`https://se104-airport.space/api/chuyenbay/get/${flightId}`, {
+        const res = await fetch(`${BASE_URL}/chuyenbay/get/${flightId}`, {
           headers: getAuthHeaders()
         });
         const data = await res.json();
         if (res.ok && data.data) {
           setFlight(data.data);
-          setClasses(data.data.chitiet_hangve || []);
+          // Map thêm Ten_hang_ve vào từng hạng vé
+          const classesWithName = (data.data.chitiet_hangve || []).map(hv => ({
+            ...hv,
+            Ten_hang_ve: ticketClassMap[hv.Ma_hang_ve] || hv.Ten_hang_ve || 'Hạng vé'
+          }));
+          setClasses(classesWithName);
         } else {
           setError('Không tìm thấy chuyến bay hoặc không có hạng vé.');
         }
@@ -131,7 +153,7 @@ const BookTicket = () => {
       }
     };
     fetchFlight();
-  }, [flightId]);
+  }, [flightId, ticketClassMap]);
 
   useEffect(() => {
     if (!loading) {
@@ -260,7 +282,7 @@ const BookTicket = () => {
                 transition: 'border 0.2s',
               }}
             >
-              {ticketClassMap[hv.Ma_hang_ve] || hv.Ten_hang_ve || 'Hạng vé'}
+              {hv.Ten_hang_ve || 'Hạng vé'}
               <div style={{fontSize:15,marginTop:4}}>
                 {hv.So_ve_trong > 0 ? formatCurrency(hv.Gia_ve) : 'Hết chỗ'}
               </div>
@@ -275,7 +297,7 @@ const BookTicket = () => {
           <div style={{background:'#fff',borderRadius:10,padding:24,marginBottom:24,border:`2px solid #218838`, maxWidth: '650px', margin: '0 auto 24px'}}>
             <div style={{display:'flex',alignItems:'center',gap:24,marginBottom:12}}>
               <div style={{background:'#218838',color:'#fff',borderRadius:8,padding:'8px 16px',fontWeight:'bold'}}>
-                {ticketClassMap[selectedClass.Ma_hang_ve] || selectedClass.Ten_hang_ve}
+                {TICKET_CLASS_LABELS[selectedClass.Ma_hang_ve] || selectedClass.Ten_hang_ve}
               </div>
               <div style={{fontSize:18,fontWeight:'bold',color:'#333'}}>
                 {flight.gio_khoi_hanh} - {calculateArrivalTime(flight.gio_khoi_hanh, flight.Thoi_gian_bay)} | {flight.loai_may_bay}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Login.css';
+import { BASE_URL } from '../utils/api';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -20,7 +21,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('https://se104-airport.space/api/auth/login', {
+      const response = await fetch(`${BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -51,7 +52,7 @@ const Login = () => {
       } else {
         setError(data.message);
       }
-    } catch (error) {
+    } catch {
       setError('Có lỗi xảy ra khi đăng nhập');
     }
   };

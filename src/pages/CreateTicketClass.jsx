@@ -5,6 +5,8 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import ToastMessage from '../components/ToastMessage';
 import { getAuthHeader } from '../utils/authFetch';
+import { BASE_URL } from '../utils/api';
+
 const CreateTicketClass = () => {
     const [selectedOption, setSelectedOption] = useState("5");
     const [toast, setToast] = useState({
@@ -22,7 +24,7 @@ const CreateTicketClass = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch('https://se104-airport.space/api/hangve/add', {
+            const res = await fetch(`${BASE_URL}/hangve/add`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -42,7 +44,7 @@ const CreateTicketClass = () => {
             } else {
                 setToast({ show: true, message: data.message, variant: 'danger' });
             }
-        } catch (error) {
+        } catch {
             setToast({ show: true, message: 'Có lỗi xảy ra khi thêm hạng vé', variant: 'danger' });
         }
     };

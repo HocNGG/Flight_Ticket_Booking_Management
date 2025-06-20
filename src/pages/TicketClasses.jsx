@@ -5,6 +5,7 @@ import ToastMessage from '../components/ToastMessage';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { getAuthHeader } from '../utils/authFetch';
+import { BASE_URL } from '../utils/api';
 const MySwal = withReactContent(Swal);
 
 const TicketClasses = () => {
@@ -22,7 +23,7 @@ const TicketClasses = () => {
 
     const fetchTicketClasses = async () => {
         try {
-            const res = await fetch('https://se104-airport.space/api/hangve/get', {
+            const res = await fetch(`${BASE_URL}/hangve/get`, {
                 headers: getAuthHeader()
             });
             const data = await res.json();
@@ -44,7 +45,7 @@ const TicketClasses = () => {
     const handleEditTicketClass = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch(`https://se104-airport.space/api/hangve/update/${editTicketClass.id}`, {
+            const res = await fetch(`${BASE_URL}/hangve/update/${editTicketClass.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
                 body: JSON.stringify({
@@ -84,7 +85,7 @@ const TicketClasses = () => {
                 allowOutsideClick: false,
                 didOpen: () => { MySwal.showLoading(); }
             });
-            const res = await fetch(`https://se104-airport.space/api/hangve/delete/${id}`, {
+            const res = await fetch(`${BASE_URL}/hangve/delete/${id}`, {
                 method: 'DELETE',
                 headers: getAuthHeader()
             });

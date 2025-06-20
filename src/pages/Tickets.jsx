@@ -9,6 +9,7 @@ import ToastMessage from '../components/ToastMessage';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { authFetch } from '../utils/authFetch';
+import { BASE_URL } from '../utils/api';
 
 const MySwal = withReactContent(Swal);
 
@@ -41,20 +42,20 @@ const Tickets = () => {
 
             switch (filterType) {
                 case 'cmnd':
-                    url = `https://se104-airport.space/api/vechuyenbay/get_by_hanhkhach/cmnd/${identity}`;
+                    url = `${BASE_URL}/vechuyenbay/get_by_hanhkhach/cmnd/${identity}`;
                     break;
                 case 'flightId':
-                    url = `https://se104-airport.space/api/vechuyenbay/search/flight/${identity}`;
+                    url = `${BASE_URL}/vechuyenbay/search/flight/${identity}`;
                     useAuth = true;
                     break;
                 case 'passengerId':
-                    url = `https://se104-airport.space/api/hanhkhach/get/${identity}`;
+                    url = `${BASE_URL}/hanhkhach/get/${identity}`;
                     break;
                 case 'date':
-                    url = `https://se104-airport.space/api/vechuyenbay/get/DatHomNay`;
+                    url = `${BASE_URL}/vechuyenbay/get/DatHomNay`;
                     break;
                 default:
-                    url = `https://se104-airport.space/api/vechuyenbay/get_by_hanhkhach/cmnd/${identity}`;
+                    url = `${BASE_URL}/vechuyenbay/get_by_hanhkhach/cmnd/${identity}`;
             }
 
             let res, data;
@@ -110,7 +111,7 @@ const Tickets = () => {
         if (!selectedTicket || !newSeatPosition) return;
 
         try {
-            const url = `https://se104-airport.space/api/vechuyenbay/update/vitriGhe/${selectedTicket.Ma_ve}`;
+            const url = `${BASE_URL}/vechuyenbay/update/vitriGhe/${selectedTicket.Ma_ve}`;
             const res = await fetch(url, {
                 method: 'PUT',
                 headers: {
@@ -186,7 +187,7 @@ const Tickets = () => {
         // Tự động tìm vé hôm nay khi vào trang
         const fetchTodayTickets = async () => {
             try {
-                const url = `https://se104-airport.space/api/vechuyenbay/get/DatHomNay`;
+                const url = `${BASE_URL}/vechuyenbay/get/DatHomNay`;
                 const res = await fetch(url);
                 const data = await res.json();
                 if (res.ok) {
