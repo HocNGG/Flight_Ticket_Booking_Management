@@ -51,7 +51,7 @@ const PaymentReturn = () => {
             setBookingStatus('success');
             setBookingMsg('Đặt vé thành công!');
             // Lấy thông tin chuyến bay
-            fetch(`http://localhost:5000/api/chuyenbay/get/${info.flightId}`)
+            fetch(`http://localhost:8000/api/chuyenbay/get/${info.flightId}`)
               .then(res => res.json())
               .then(flightData => {
                 if (flightData.data) {

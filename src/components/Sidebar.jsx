@@ -13,8 +13,6 @@ const Sidebar = ({ selectedOption, setSelectedOption }) => {
         { id: "7", label: <><i className="fa-solid fa-chart-line icon-bordered"></i> Doanh Thu</>, path: "/overall-revenue" }
     ];
 
-
-
     return (
         <div style={{fontFamily: 'Inter, sans-serif'}}>
             <div className='container ms-3' style={{ color: '#000', minHeight: '100vh' }}>
@@ -23,7 +21,7 @@ const Sidebar = ({ selectedOption, setSelectedOption }) => {
                     <h2>ADMIN</h2>
                 </div>
 
-                <div className="sidebar rounded-4 mt-3 p-2" style={{ backgroundColor: '#E0EFDE', minHeight: '80vh', height: '80%' }}>
+                <div className="sidebar rounded-4 mt-3 p-2" style={{ backgroundColor: '#fff', minHeight: '80vh', height: '80%', width:'100%' }}>
                     <div className="p-3">
                         <h3 className="text-center mb-4">Menu</h3>
                         <div className="d-flex flex-column gap-2">
@@ -32,7 +30,7 @@ const Sidebar = ({ selectedOption, setSelectedOption }) => {
                                     key={item.id}
                                     className={`btn w-100 text-start px-4 py-3 mb-2 rounded-3 transition-all ${
                                         selectedOption === item.id 
-                                        ? 'bg text-dark shadow-sm font-weight-bold border-light' 
+                                        ? 'bg-primary text-white shadow-sm font-weight-bold border-light' 
                                         : 'bg-white text-dark hover-bg-light'
                                     }`}
                                     style={{

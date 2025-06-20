@@ -63,7 +63,7 @@ const CreateTicketClass = () => {
             </div>
             <div className="mt-5 p-4 w-100">
                 <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h2>THÊM HẠNG VÉ MỚI</h2>
+                    <h2 className='text-white fw-bold'>THÊM HẠNG VÉ MỚI</h2>
                     <Button 
                         variant="secondary"
                         onClick={() => navigate('/class')}

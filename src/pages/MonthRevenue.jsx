@@ -40,6 +40,7 @@ const MonthRevenue = () => {
         if (time.month && time.year) {
             const fetchData = async () => {
                 try {
+                    const token = localStorage.getItem('access_token');
                     const res = await fetch(
                         `https://se104-airport.space/api/chitietdoanhthuthang/get?thang=${time.month}&nam=${time.year}`,
                         {
@@ -106,8 +107,8 @@ const MonthRevenue = () => {
 
             <div className="mt-5 p-4 w-100">
                 <div className="d-flex justify-content-between">
-                    <h2>Doanh Thu</h2>
-                    <button className="btn btn-success fs-5" onClick={() => {
+                    <h2 className="text-white fw-bold">📈 Doanh Thu</h2>
+                    <button className="btn btn-primary fs-5" onClick={() => {
                         navigate(`/overall-revenue`);
                     }}>Tổng Quan</button>
                 </div>
@@ -144,7 +145,7 @@ const MonthRevenue = () => {
                 </div>
                 {monthRevenueData.length > 0 && (
                     <div style={{ width: "100%", height: 450, marginBottom: '100px' }} className="mt-5">
-                        <h3 className="text-center" style={{ color: '#111' }}>Tỉ lệ doanh thu các tháng trong năm {time.year}</h3>
+                        <h3 className="text-center text-danger">Tỉ lệ doanh thu các tháng trong năm {time.year}</h3>
                         <ResponsiveContainer>
                             <PieChart>
                                 <Pie
@@ -171,9 +172,9 @@ const MonthRevenue = () => {
                     </div>
                 )}
                 {data.length > 0 && (
-                    <table className="table table-bordered rounded-1 overflow-hidden table-hover align-middle">
+                    <table className="table table-bordered rounded-3 overflow-hidden table-hover align-middle">
                         <thead className="table-primary">
-                            <tr>
+                            <tr className="text-center" style={{ height: "50px" }}>
                                 <th>Mã chuyến bay</th>
                                 <th>Số ghế đặt</th>
                                 <th>Tỉ lệ</th>
@@ -182,7 +183,7 @@ const MonthRevenue = () => {
                         </thead>
                         <tbody>
                             {data.map((item) => (
-                                <tr key={item.Ma_chuyen_bay} style={{ height: "60px" }}>
+                                <tr key={item.Ma_chuyen_bay} style={{ height: "60px" }} className="text-center">
                                     <td>{item.Ma_chuyen_bay}</td>
                                     <td>{item.So_ghe_dat}</td>
                                     <td>{(item.Ti_le * 100).toFixed(1)}%</td>

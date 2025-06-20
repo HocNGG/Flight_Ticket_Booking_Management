@@ -84,7 +84,7 @@ const Regulations = () => {
             </div>
             <div className="mt-5 p-4 w-100">
                 <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h2 style={{fontWeight: 'bold'}}>⚖️  QUY ĐỊNH</h2>
+                    <h2 style={{fontWeight: 'bold', color: '#fff'}}>⚖️  QUY ĐỊNH</h2>
                     <button className={`btn fs-5 ${editing ? 'btn-danger' : 'btn-success'}`} onClick={() => setEditing(!editing)}>
                         {editing ? 'Hủy' : '+ Chỉnh sửa'}
                     </button>

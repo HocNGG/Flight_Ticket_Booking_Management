@@ -184,7 +184,7 @@ const CreateTicket = () => {
                 />
             </div>
             <div className="p-4 w-100">
-                <h2 className="mb-4">TẠO VÉ CHUYẾN BAY</h2>
+                <h2 className="mt-5 mb-2 fw-bold text-white">TẠO VÉ CHUYẾN BAY</h2>
                 <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '70vh' }}>
                     <div className="card p-4" style={{ width: '100%', minWidth: 700, maxWidth: 1200, background: '#fff', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.07)' }}>
                         <form onSubmit={handleSubmit} className="my-3 p-2">

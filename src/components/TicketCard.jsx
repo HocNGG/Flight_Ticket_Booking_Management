@@ -114,7 +114,7 @@ const TicketCard = ({ ticket, onUpdateSeat, onCancelTicket }) => {
                     className="d-flex align-items-center justify-content-end"
                     style={{ minWidth: '150px' }}
                 >
-                    <div className="d-flex flex-column gap-2">
+                    <div className="d-flex flex-column gap-2 justify-content-center">
                         <button
                             className="btn btn-warning text-dark rounded-3 d-flex flex-column justify-content-center align-items-center p-4"
                             style={{
@@ -128,7 +128,7 @@ const TicketCard = ({ ticket, onUpdateSeat, onCancelTicket }) => {
                             <div className="fw-semibold text-uppercase text-center">Giá Vé</div>
                             <div className="fw-bold fs-5">{ticket.Tien_ve.toLocaleString()} <br /> VND</div>
                         </button>
-                        <div className="d-flex gap-2">
+                        <div className="d-flex gap-1">
                             <Button 
                                 variant="info" 
                                 size="sm"

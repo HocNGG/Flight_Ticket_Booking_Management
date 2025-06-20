@@ -179,7 +179,7 @@ const CreateFlight = () => {
             </div>
             <div className="mt-5 p-4 w-100">
                 <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h2>THÊM CHUYẾN BAY MỚI</h2>
+                    <h2 className='text-white fw-bold'>THÊM CHUYẾN BAY MỚI</h2>
                     <Button 
                         variant="secondary"
                         onClick={() => navigate('/flights')}
@@ -357,6 +357,7 @@ const CreateFlight = () => {
                                         <Button
                                             variant="danger"
                                             size="sm"
+                                            className='mb-1'
                                             onClick={() => {
                                                 const newHangve = form.hangve.filter((_, i) => i !== index);
                                                 setForm({
@@ -365,7 +366,7 @@ const CreateFlight = () => {
                                                 });
                                             }}
                                         >
-                                            <i className="fas fa-times">XÓA</i>
+                                            <i className="fas fa-times"></i>
                                         </Button>
                                     )}
                                 </Col>
@@ -455,6 +456,7 @@ const CreateFlight = () => {
                                     <Button
                                         variant="danger"
                                         size="sm"
+                                        className='mb-1'
                                         onClick={() => {
                                             const newChitiet = form.chitiet.filter((_, i) => i !== index);
                                             setForm({
@@ -463,7 +465,7 @@ const CreateFlight = () => {
                                             });
                                         }}
                                     >
-                                        <i className="fas fa-times">XÓA</i>
+                                        <i className="fas fa-times"></i>
                                     </Button>
                                 </Col>
                             </Row>

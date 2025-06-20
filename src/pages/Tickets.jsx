@@ -225,7 +225,7 @@ const Tickets = () => {
             </div>
             <div className="mt-5 p-4 w-100">
                 <div className='d-flex justify-content-between align-items-center mb-4'>
-                    <h2 style={{fontWeight: 'bold'}}>🎫    QUẢN LÝ VÉ CHUYẾN BAY</h2>
+                    <h2 style={{fontWeight: 'bold', color:'#fff'}}>🎫 VÉ CHUYẾN BAY</h2>
                     <button 
                         className='btn btn-success fs-5' 
                         onClick={() => navigate('/create-ticket', { state: { fromPage: 'tickets' } })}
@@ -265,7 +265,7 @@ const Tickets = () => {
                                         />
                                     </div>
                                 )}
-                                <Button type="submit" variant="primary" className="mb-1">
+                                <Button type="submit" variant="primary" className="">
                                     Tìm kiếm
                                 </Button>
                             </div>
