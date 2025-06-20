@@ -45,7 +45,7 @@ const CreateTicket = () => {
         if (!flightId) return;
         setLoading(true);
         try {
-            const flightRes = await fetch(`http://localhost:5000/api/chuyenbay/get/${flightId}`);
+            const flightRes = await fetch(`http://localhost:8000/api/chuyenbay/get/${flightId}`);
             const flightData = await flightRes.json();
             if (flightRes.ok && flightData.data) {
                 setBasePrice(flightData.data.gia_ve || 0);
@@ -76,7 +76,7 @@ const CreateTicket = () => {
 
     const fetchBookedSeats = async (flightId) => {
         try {
-            const res = await fetch(`http://localhost:5000/api/vechuyenbay/search/flight/${flightId}`);
+            const res = await fetch(`http://localhost:8000/api/vechuyenbay/search/flight/${flightId}`);
             const data = await res.json();
             const seats = Array.isArray(data.tickets)
                 ? data.tickets.filter(v => v.Tinh_trang !== false && v.vi_tri)
@@ -118,7 +118,7 @@ const CreateTicket = () => {
                 allowOutsideClick: false,
                 didOpen: () => { MySwal.showLoading(); }
             });
-            const url = `http://localhost:5000/api/vechuyenbay/add`
+            const url = `http://localhost:8000/api/vechuyenbay/add`
             const body = {
                 Ma_chuyen_bay: parseInt(form.flightId),
                 Ma_hang_ve: parseInt(form.classId),
@@ -184,7 +184,7 @@ const CreateTicket = () => {
                 />
             </div>
             <div className="p-4 w-100">
-                <h2 className="mb-4">TẠO VÉ CHUYẾN BAY</h2>
+                <h2 className="mt-5 mb-2 fw-bold text-white">TẠO VÉ CHUYẾN BAY</h2>
                 <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '70vh' }}>
                     <div className="card p-4" style={{ width: '100%', minWidth: 700, maxWidth: 1200, background: '#fff', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.07)' }}>
                         <form onSubmit={handleSubmit} className="my-3 p-2">

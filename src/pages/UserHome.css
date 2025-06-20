@@ -93,8 +93,7 @@
   width: 300px;
 }
 .form-group select:hover {
-  background: #28a745;
-  color: white;
+  cursor: pointer;
 }
 
 .search-btn {

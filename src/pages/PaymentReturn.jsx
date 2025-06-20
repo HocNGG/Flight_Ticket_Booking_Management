@@ -31,7 +31,7 @@ const PaymentReturn = () => {
       }
       const info = JSON.parse(booking);
       // Gọi API đặt vé
-      fetch('http://localhost:5000/api/vechuyenbay/add', {
+      fetch('http://localhost:8000/api/vechuyenbay/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -51,7 +51,7 @@ const PaymentReturn = () => {
             setBookingStatus('success');
             setBookingMsg('Đặt vé thành công!');
             // Lấy thông tin chuyến bay
-            fetch(`http://localhost:5000/api/chuyenbay/get/${info.flightId}`)
+            fetch(`http://localhost:8000/api/chuyenbay/get/${info.flightId}`)
               .then(res => res.json())
               .then(flightData => {
                 if (flightData.data) {

@@ -47,7 +47,7 @@ const Airports = () => {
 
     const fetchAirports = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/sanbay/get');
+            const res = await fetch('http://localhost:8000/api/sanbay/get');
             const data = await res.json();
             if (data.status === 'success') {
                 setAirports(data.message);
@@ -67,7 +67,7 @@ const Airports = () => {
     const handleEditAirport = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch(`http://localhost:5000/api/sanbay/update/${editAirport.Ma_san_bay}`, {
+            const res = await fetch(`http://localhost:8000/api/sanbay/update/${editAirport.Ma_san_bay}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ten_san_bay: editAirport.Ten_san_bay })
@@ -104,7 +104,7 @@ const Airports = () => {
                 allowOutsideClick: false,
                 didOpen: () => { MySwal.showLoading(); }
             });
-            const res = await fetch(`http://localhost:5000/api/sanbay/delete/${maSanBay}`, {
+            const res = await fetch(`http://localhost:8000/api/sanbay/delete/${maSanBay}`, {
                 method: 'DELETE'
             });
             const data = await res.json();
@@ -154,7 +154,7 @@ const Airports = () => {
             </div>
             <div className="mt-5 p-4 w-100">
                 <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h2 style={{fontWeight: 'bold'}}>🏢  SÂN BAY</h2>
+                    <h2 style={{fontWeight: 'bold', color: '#fff'}}>🏢  SÂN BAY</h2>
                     <button 
                         className="btn btn-success fs-5"
                         onClick={() => navigate('/create-airport')}

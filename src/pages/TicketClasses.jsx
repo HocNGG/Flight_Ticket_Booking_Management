@@ -22,7 +22,7 @@ const TicketClasses = () => {
 
     const fetchTicketClasses = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/hangve/get');
+            const res = await fetch('http://localhost:8000/api/hangve/get');
             const data = await res.json();
             if (data.status === 'success') {
                 setTicketClasses(data.message);
@@ -42,7 +42,7 @@ const TicketClasses = () => {
     const handleEditTicketClass = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch(`http://localhost:5000/api/hangve/update/${editTicketClass.id}`, {
+            const res = await fetch(`http://localhost:8000/api/hangve/update/${editTicketClass.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -131,7 +131,7 @@ const TicketClasses = () => {
             </div>
             <div className="mt-5 p-4 w-100">
                 <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h2 style={{fontWeight: 'bold'}}>💺  HẠNG VÉ</h2>
+                    <h2 style={{fontWeight: 'bold', color: '#fff'}}>💺  HẠNG VÉ</h2>
                     <button 
                         className="btn btn-success fs-5"
                         onClick={() => navigate('/create-ticket-class')}

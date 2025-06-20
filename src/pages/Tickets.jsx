@@ -39,20 +39,20 @@ const Tickets = () => {
 
             switch (filterType) {
                 case 'cmnd':
-                    url = `http://localhost:5000/api/vechuyenbay/get_by_hanhkhach/cmnd/${identity}`;
+                    url = `http://localhost:8000/api/vechuyenbay/get_by_hanhkhach/cmnd/${identity}`;
                     break;
                 case 'flightId':
-                    url = `http://localhost:5000/api/vechuyenbay/search/flight/${identity}`;
+                    url = `http://localhost:8000/api/vechuyenbay/search/flight/${identity}`;
                     useAuth = true;
                     break;
                 case 'passengerId':
-                    url = `http://localhost:5000/api/hanhkhach/get/${identity}`;
+                    url = `http://localhost:8000/api/hanhkhach/get/${identity}`;
                     break;
                 case 'date':
-                    url = `http://localhost:5000/api/vechuyenbay/get/DatHomNay`;
+                    url = `http://localhost:8000/api/vechuyenbay/get/DatHomNay`;
                     break;
                 default:
-                    url = `http://localhost:5000/api/vechuyenbay/get_by_hanhkhach/cmnd/${identity}`;
+                    url = `http://localhost:8000/api/vechuyenbay/get_by_hanhkhach/cmnd/${identity}`;
             }
 
             let res, data;
@@ -108,7 +108,7 @@ const Tickets = () => {
         if (!selectedTicket || !newSeatPosition) return;
 
         try {
-            const url = `http://localhost:5000/api/vechuyenbay/update/vitriGhe/${selectedTicket.Ma_ve}`;
+            const url = `http://localhost:8000/api/vechuyenbay/update/vitriGhe/${selectedTicket.Ma_ve}`;
             const res = await fetch(url, {
                 method: 'PUT',
                 headers: {
@@ -178,7 +178,7 @@ const Tickets = () => {
         // Tự động tìm vé hôm nay khi vào trang
         const fetchTodayTickets = async () => {
             try {
-                const url = `http://localhost:5000/api/vechuyenbay/get/DatHomNay`;
+                const url = `http://localhost:8000/api/vechuyenbay/get/DatHomNay`;
                 const res = await fetch(url);
                 const data = await res.json();
                 if (res.ok) {
@@ -225,7 +225,7 @@ const Tickets = () => {
             </div>
             <div className="mt-5 p-4 w-100">
                 <div className='d-flex justify-content-between align-items-center mb-4'>
-                    <h2 style={{fontWeight: 'bold'}}>🎫    QUẢN LÝ VÉ CHUYẾN BAY</h2>
+                    <h2 style={{fontWeight: 'bold', color:'#fff'}}>🎫 VÉ CHUYẾN BAY</h2>
                     <button 
                         className='btn btn-success fs-5' 
                         onClick={() => navigate('/create-ticket', { state: { fromPage: 'tickets' } })}
@@ -265,7 +265,7 @@ const Tickets = () => {
                                         />
                                     </div>
                                 )}
-                                <Button type="submit" variant="primary" className="mb-1">
+                                <Button type="submit" variant="primary" className="">
                                     Tìm kiếm
                                 </Button>
                             </div>

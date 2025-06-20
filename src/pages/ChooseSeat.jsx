@@ -19,7 +19,7 @@ const ChooseSeat = () => {
   useEffect(() => {
     const fetchBookedSeats = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/vechuyenbay/search/flight/${flightId}`);
+        const res = await fetch(`http://localhost:8000/api/vechuyenbay/search/flight/${flightId}`);
         const data = await res.json();
         const seats = Array.isArray(data.tickets)
           ? data.tickets.filter(v => v.Tinh_trang !== false && v.vi_tri)
@@ -77,7 +77,7 @@ const ChooseSeat = () => {
     }));
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:5000/api/vnpay/create_payment', {
+      const res = await fetch('http://localhost:8000/api/vnpay/create_payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ price, order_id: orderId })

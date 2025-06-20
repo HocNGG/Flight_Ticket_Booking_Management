@@ -107,7 +107,7 @@ const BookTicket = () => {
     const fetchFlight = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`http://localhost:5000/api/chuyenbay/get/${flightId}`, {
+        const res = await fetch(`http://localhost:8000/api/chuyenbay/get/${flightId}`, {
           headers: getAuthHeaders()
         });
         const data = await res.json();
@@ -164,11 +164,11 @@ const BookTicket = () => {
   if (error) return <div style={{color:'red',textAlign:'center',marginTop:40}}>{error}</div>;
 
   return (
-    <div style={{display:'flex',gap:32,alignItems:'flex-start',justifyContent:'space-between',backgroundImage: 'url(https://images.pexels.com/photos/1381414/pexels-photo-1381414.jpeg)',backgroundSize: 'cover',backgroundPosition: 'center',backgroundRepeat: 'no-repeat',minHeight: '100vh', fontFamily: 'Inter, sans-serif'}}>
+    <div style={{display:'flex',gap:32,alignItems:'flex-start',justifyContent:'space-between',backgroundImage: 'url(https://images.pexels.com/photos/1115358/pexels-photo-1115358.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2)',backgroundSize: 'cover',backgroundPosition: 'center',backgroundRepeat: 'no-repeat',minHeight: '100vh', fontFamily: 'Inter, sans-serif'}}>
       {/* LEFT: Chọn hạng vé và xem chi tiết */}
-      <div style={{flex:1.5, maxWidth: '900px'}}>
+      <div style={{flex:1.5, maxWidth: '900px', padding: '2%'}}>
         <div style={{textAlign:'center',marginBottom:16}}>
-          <h2 style={{margin:0,color:'#fff',fontWeight:'bold'}}>{flight.Ma_san_bay_di} <span style={{fontSize:28}}>✈️ →</span> {flight.Ma_san_bay_den}</h2>
+          <h2 style={{margin:0,color:'#fff',fontWeight:'bold'}}>{flight.Ma_san_bay_di} <span style={{fontSize:28}}> →</span> {flight.Ma_san_bay_den}</h2>
           <div style={{color:'#666',fontWeight:500}}>
             {flight.Ten_san_bay_di} → {flight.Ten_san_bay_den}
           </div>
@@ -201,14 +201,14 @@ const BookTicket = () => {
                 {hv.So_ve_trong > 0 ? formatCurrency(hv.Gia_ve) : 'Hết chỗ'}
               </div>
               {selectedClass && selectedClass.Ma_hang_ve === hv.Ma_hang_ve && (
-                <div style={{position:'absolute',top:-18,right:10,fontSize:12,color:'#2196f3',fontWeight:'bold'}}>Đã chọn</div>
+                <div style={{position:'absolute',top:-20,right:10,fontSize:12,color:'#fff',fontWeight:'bold'}}>Đã chọn</div>
               )}
             </div>
           ))}
         </div>
         {/* Chi tiết hạng vé đã chọn */}
         {selectedClass && (
-          <div style={{background:'#fffbe7',borderRadius:10,padding:24,marginBottom:24,border:`2px solid #218838`, maxWidth: '650px', margin: '0 auto 24px'}}>
+          <div style={{background:'#fff',borderRadius:10,padding:24,marginBottom:24,border:`2px solid #218838`, maxWidth: '650px', margin: '0 auto 24px'}}>
             <div style={{display:'flex',alignItems:'center',gap:24,marginBottom:12}}>
               <div style={{background:'#218838',color:'#fff',borderRadius:8,padding:'8px 16px',fontWeight:'bold'}}>
                 {TICKET_CLASS_LABELS[selectedClass.Ma_hang_ve] || selectedClass.Ma_hang_ve}
@@ -343,11 +343,11 @@ const BookTicket = () => {
               <div style={{display:'flex',gap:16,marginBottom:16}}>
                 <div style={{flex:1}}>
                   <label><b>Họ tên:</b></label>
-                  <input type="text" value={name} onChange={e => setName(e.target.value)} style={{width:'100%',padding:8,marginTop:4}} />
+                  <input type="text" value={name} onChange={e => setName(e.target.value)} style={{width:'100%',padding:8,marginTop:4,backgroundColor: '#fff', borderRadius:10,color: 'black'}} required/>
                 </div>
                 <div style={{flex:1}}>
                   <label><b>Giới tính:</b></label>
-                  <select value={gender} onChange={e => setGender(e.target.value)} style={{width:'100%',padding:8,marginTop:4}}>
+                  <select value={gender} onChange={e => setGender(e.target.value)} style={{width:'100%',padding:8,marginTop:4,backgroundColor: '#fff', borderRadius:10,color: 'black'}}>
                     <option value="Nam">Nam</option>
                     <option value="Nữ">Nữ</option>
                     <option value="Khác">Khác</option>
@@ -357,11 +357,11 @@ const BookTicket = () => {
               <div style={{display:'flex',gap:16,marginBottom:16}}>
                 <div style={{flex:1}}>
                   <label><b>Số điện thoại:</b></label>
-                  <input type="text" value={phone} onChange={e => setPhone(e.target.value)} style={{width:'100%',padding:8,marginTop:4}} />
+                  <input type="text" value={phone} onChange={e => setPhone(e.target.value)} pattern="0[2-9][0-9]{8}" title="Số điện thoại phải có 10 chữ số, bắt đầu bằng 0 và chữ số thứ hai từ 2-9" style={{width:'100%',padding:8,marginTop:4,backgroundColor: '#fff', borderRadius:10,color: 'black'}} required/>
                 </div>
                 <div style={{flex:1}}>
-                  <label><b>CCCD/CMND:</b></label>
-                  <input type="text" value={cmnd} onChange={e => setCmnd(e.target.value)} style={{width:'100%',padding:8,marginTop:4}} />
+                  <label><b>CCCD:</b></label>
+                  <input type="text" value={cmnd} onChange={e => setCmnd(e.target.value)} pattern="\d{12}" style={{width:'100%',padding:8,marginTop:4,backgroundColor: '#fff', borderRadius:10,color: 'black'}} required/>
                 </div>
               </div>
               {submitError && <div style={{color:'red',marginBottom:12}}>{submitError}</div>}
@@ -388,8 +388,8 @@ const BookTicket = () => {
         )}
       </div>
       {/* RIGHT: Bảng tổng hợp đặt chỗ */}
-      <div style={{flex:1,minWidth:320,maxWidth:400,background:'#fff',borderRadius:10,boxShadow:'0 2px 8px rgba(0,0,0,0.12)',padding:24,position:'sticky',top:32,alignSelf:'flex-start',marginLeft:'auto', marginRight:100}}>
-        <div style={{background:'#e53935',color:'#fff',borderRadius:'8px 8px 0 0',padding:'12px 16px',fontWeight:'bold',fontSize:20,letterSpacing:1,marginBottom:16}}>THÔNG TIN ĐẶT CHỖ</div>
+      <div style={{flex:1,minWidth:320,maxWidth:400,background:'#fff',borderRadius:10,boxShadow:'0 2px 8px rgba(0,0,0,0.12)',padding:'2%',position:'sticky',top:75,alignSelf:'flex-start',marginLeft:'auto', marginRight:100}}>
+        <div style={{background:'#e53935',color:'#fff',borderRadius:'8px 8px 0 0',padding:'12px 16px',fontWeight:'bold',fontSize:20,letterSpacing:1,marginBottom:16}}><span className='d-flex justify-content-center'>THÔNG TIN ĐẶT CHỖ</span></div>
         <div style={{background:'#e0f7fa',padding:'8px 12px',borderRadius:6,marginBottom:16}}>
           <div style={{fontWeight:'bold',color:'#e53935',fontSize:18,textAlign:'right'}}>{formatCurrency(summary.total)}</div>
         </div>
@@ -430,7 +430,7 @@ const BookTicket = () => {
             <span>{formatCurrency(summary.service)}</span>
           </div>
         </div>
-        <div style={{background:'#e53935',color:'#fff',borderRadius:6,padding:'10px 0',fontWeight:'bold',fontSize:20,display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:12}}>
+        <div style={{background:'#e53935',color:'#fff',borderRadius:6,padding:'10px 0',fontWeight:'bold',fontSize:20,display:'flex',justifyContent:'space-around',alignItems:'center',marginTop:12}}>
           <span>Tổng tiền</span>
           <span>{formatCurrency(summary.total)}</span>
         </div>

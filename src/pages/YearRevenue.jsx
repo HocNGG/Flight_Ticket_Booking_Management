@@ -43,7 +43,7 @@ const YearRevenue = () => {
                 try {
                     const token = localStorage.getItem('access_token');
                     const res = await fetch(
-                        `http://localhost:5000/api/ds_doanhthuthang/get?nam=${time.year}`,
+                        `http://localhost:8000/api/ds_doanhthuthang/get?nam=${time.year}`,
                         {
                             headers: {
                                 'Authorization': `Bearer ${token}`
@@ -95,8 +95,8 @@ const YearRevenue = () => {
 
             <div className="mt-5 p-4 w-100">
                 <div className="d-flex justify-content-between">
-                    <h2 style={{fontWeight: 'bold'}}>📈  Doanh Thu</h2>
-                    <button className="btn btn-success fs-5" onClick={() => {
+                    <h2 style={{fontWeight: 'bold', color: '#fff'}}>📈  Doanh Thu</h2>
+                    <button className="btn btn-primary fs-5" onClick={() => {
                         navigate(`/detail-revenue`);
                     }}>Xem Chi Tiết</button>
                 </div>
@@ -118,7 +118,7 @@ const YearRevenue = () => {
                     </div>
                 </div>
                 {yearRevenueData.length > 0 && (
-                    <div style={{ width: "100%", height: 420 }} className="mt-5">
+                    <div style={{ width: "100%", height: 420 }} className="mt-5 mb-4">
                         <h3 className="text-center" style={{ color: '#111' }}>Tỉ lệ doanh thu theo tháng trong năm {time.year}</h3>
                         <div style={{ borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.07)' }}>
                             <ResponsiveContainer width="100%" height={320}>
@@ -134,9 +134,9 @@ const YearRevenue = () => {
                     </div>
                 )}
                 {data.length > 0 && (
-                    <table className="table table-bordered rounded-1 overflow-hidden table-hover align-middle">
+                    <table className="table table-bordered rounded-1 overflow-hidden table-hover align-middle rounded-3">
                         <thead className="table-primary">
-                            <tr>
+                            <tr className="text-center"  style={{ height: "50px" }}>
                                 <th>Tháng</th>
                                 <th>Số Chuyến Bay</th>
                                 <th>Tỉ lệ</th>
@@ -145,7 +145,7 @@ const YearRevenue = () => {
                         </thead>
                         <tbody>
                             {data.map((item) => (
-                                <tr key={item.month} style={{ height: "60px" }}>
+                                <tr key={item.month} style={{ height: "60px" }} className="text-center">
                                     <td>{item.month}</td>
                                     <td>{item.so_chuyen_bay}</td>
                                     <td> {item.Ti_le !== undefined && item.Ti_le !== null

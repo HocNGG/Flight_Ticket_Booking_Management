@@ -36,7 +36,7 @@ const FlightCard = ({ flight, onDelete, onEdit }) => {
     const handleDetailClick = async (e) => {
         e.preventDefault();
         try {
-            const url = `http://localhost:5000/api/chuyenbay/get/${flight.Ma_chuyen_bay}`
+            const url = `http://localhost:8000/api/chuyenbay/get/${flight.Ma_chuyen_bay}`
             const res = await fetch(url);
             const data = await res.json();
 
@@ -81,7 +81,7 @@ const FlightCard = ({ flight, onDelete, onEdit }) => {
                 }
             });
 
-            const url = `http://localhost:5000/api/chuyenbay/delete/${flight.Ma_chuyen_bay}`;
+            const url = `http://localhost:8000/api/chuyenbay/delete/${flight.Ma_chuyen_bay}`;
             const res = await fetch(url, {
                 method: 'DELETE'
             });
@@ -93,7 +93,7 @@ const FlightCard = ({ flight, onDelete, onEdit }) => {
             if (res.ok && data.status === 'success') {
                 setShow(false);
                 onDelete?.(flight.Ma_chuyen_bay);
-                
+
                 // Hiển thị thông báo thành công
                 await MySwal.fire({
                     title: 'Thành công!',
@@ -193,51 +193,53 @@ const FlightCard = ({ flight, onDelete, onEdit }) => {
                     </div>
 
 
-
-                    <div className='d-flex mt-1 ' style={{ position: 'absolute', top: '7%', right: '1%' }}>
-                        <div className="btn-group">
-                            <button
-                                type="button"
-                                className="btn btn-warning fw-bold me-2"
-                                style={{
-                                    backgroundColor: '#E58507',
-                                }}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onEdit(flight);
-                                }}
-                            >
-                                Cập nhật
-                            </button>
-                            <button 
-                                className='btn btn-danger fs-4 p-0 px-2' 
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteFlight(e);
-                                }}
-                            >
-                                🗑︎
-                            </button>
+                    <div className='mt-5 me-3'>
+                        <div className='d-flex mt-1 ' style={{ position: 'absolute', top: '25%', right: '1%' }}>
+                            <div className="btn-group">
+                                <button
+                                    type="button"
+                                    className="btn btn-warning fw-bold me-2 text-white"
+                                    style={{
+                                        backgroundColor: '#E58507',
+                                    }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onEdit(flight);
+                                    }}
+                                >
+                                    Cập nhật
+                                </button>
+                                <button
+                                    className='btn btn-danger fs-4 p-0 px-2'
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDeleteFlight(e);
+                                    }}
+                                >
+                                    🗑︎
+                                </button>
+                            </div>
                         </div>
+
+                        <button
+                            type="button"
+                            className="btn btn-success px-3 py-2 fw-bold ms-5"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/create-ticket`, {
+                                    state: {
+                                        flightId: flight.Ma_chuyen_bay,
+                                        price: flight.gia_ve,
+                                        fromPage: 'flights'
+                                    }
+                                });
+                            }}
+                            style={{ whiteSpace: 'nowrap' }}
+                        >
+                            Tạo Vé
+                        </button>
                     </div>
 
-                    <button
-                        type="button"
-                        className="btn btn-success px-3 py-2 fw-bold ms-5"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/create-ticket`, {
-                                state: {
-                                    flightId: flight.Ma_chuyen_bay,
-                                    price: flight.gia_ve,
-                                    fromPage: 'flights'
-                                }
-                            });
-                        }}
-                        style={{ whiteSpace: 'nowrap' }}
-                    >
-                        Tạo Vé
-                    </button>
                 </div>
             </div>
             {show && detail && (

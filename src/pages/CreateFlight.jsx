@@ -45,7 +45,7 @@ const CreateFlight = () => {
     useEffect(() => {
         const fetchAirports = async () => {
             try {
-                const res = await fetch('http://localhost:5000/api/sanbay/get');
+                const res = await fetch('http://localhost:8000/api/sanbay/get');
                 const data = await res.json();
                 if (data.status === 'success' && Array.isArray(data.message)) {
                     setAirports(data.message);
@@ -98,9 +98,11 @@ const CreateFlight = () => {
                     })),
                 hangve: form.hangve
             };
-            const res = await fetch('http://localhost:5000/api/chuyenbay/add', {
+            const res = await fetch('http://localhost:8000/api/chuyenbay/add', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem("access_token")}`
+                 },
                 body: JSON.stringify(formData)
             });
             const data = await res.json();
@@ -177,7 +179,7 @@ const CreateFlight = () => {
             </div>
             <div className="mt-5 p-4 w-100">
                 <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h2>THÊM CHUYẾN BAY MỚI</h2>
+                    <h2 className='text-white fw-bold'>THÊM CHUYẾN BAY MỚI</h2>
                     <Button 
                         variant="secondary"
                         onClick={() => navigate('/flights')}
@@ -355,6 +357,7 @@ const CreateFlight = () => {
                                         <Button
                                             variant="danger"
                                             size="sm"
+                                            className='mb-1'
                                             onClick={() => {
                                                 const newHangve = form.hangve.filter((_, i) => i !== index);
                                                 setForm({
@@ -363,7 +366,7 @@ const CreateFlight = () => {
                                                 });
                                             }}
                                         >
-                                            <i className="fas fa-times">XÓA</i>
+                                            <i className="fas fa-times"></i>
                                         </Button>
                                     )}
                                 </Col>
@@ -453,6 +456,7 @@ const CreateFlight = () => {
                                     <Button
                                         variant="danger"
                                         size="sm"
+                                        className='mb-1'
                                         onClick={() => {
                                             const newChitiet = form.chitiet.filter((_, i) => i !== index);
                                             setForm({
@@ -461,7 +465,7 @@ const CreateFlight = () => {
                                             });
                                         }}
                                     >
-                                        <i className="fas fa-times">XÓA</i>
+                                        <i className="fas fa-times"></i>
                                     </Button>
                                 </Col>
                             </Row>

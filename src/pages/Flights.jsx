@@ -46,7 +46,7 @@ const Flights = () => {
                 return;
             }
 
-            const url = `http://localhost:5000/api/chuyenbay/get/${flightId}`;
+            const url = `http://localhost:8000/api/chuyenbay/get/${flightId}`;
             const res = await fetch(url);
             const data = await res.json();
 
@@ -89,7 +89,7 @@ const Flights = () => {
                 return;
             }
 
-            const url = `http://localhost:5000/api/chuyenbay/search?start_time=${startDate}T00:00:00&end_time=${arriveDate}T23:59:59&sanbay_di=${from}&sanbay_den=${to}`;
+            const url = `http://localhost:8000/api/chuyenbay/search?start_time=${startDate}T00:00:00&end_time=${arriveDate}T23:59:59&sanbay_di=${from}&sanbay_den=${to}`;
             const res = await fetch(url);
             const data = await res.json();
 
@@ -139,7 +139,7 @@ const Flights = () => {
     const handleUpdateSubmit = async (e) => {
         e.preventDefault();
         try {
-            const url = `http://localhost:5000/api/chuyenbay/update/${updateForm.Ma_chuyen_bay}`;
+            const url = `http://localhost:8000/api/chuyenbay/update/${updateForm.Ma_chuyen_bay}`;
             const res = await fetch(url, {
                 method: 'PUT',
                 headers: {
@@ -182,7 +182,7 @@ const Flights = () => {
     useEffect(() => {
         const fetchFlights = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/api/chuyenbay/get/all`, {
+                const res = await fetch(`http://localhost:8000/api/chuyenbay/get/all`, {
                     method: 'GET',
                 });
                 const data = await res.json();
@@ -200,7 +200,7 @@ const Flights = () => {
         // Fetch danh sách sân bay
         const fetchAirports = async () => {
             try {
-                const res = await fetch('http://localhost:5000/api/sanbay/get');
+                const res = await fetch('http://localhost:8000/api/sanbay/get');
                 const data = await res.json();
                 if (data.status === 'success') {
                     setAirports(data.message);
@@ -213,7 +213,7 @@ const Flights = () => {
     }, []);
 
     return (
-        <div className='full-container d-flex' style={{ 
+        <div className='full-container d-flex' style={{
             backgroundImage: `url(https://images.unsplash.com/photo-1535557597501-0fee0a500c57?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)`,
             backgroundAttachment: 'fixed',
             backgroundSize: 'cover',
@@ -228,9 +228,9 @@ const Flights = () => {
             </div>
             <div className="mt-5 p-4 w-100">
                 <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h2 style={{fontWeight: 'bold'}}>✈️  CHUYẾN BAY</h2>
+                    <h2 style={{ fontWeight: 'bold', color: '#fff' }}>✈️  CHUYẾN BAY</h2>
                     <div>
-                        <Button 
+                        <Button
                             className='btn btn-success fs-5'
                             onClick={() => navigate('/create-flight')}
                         >
@@ -239,21 +239,21 @@ const Flights = () => {
                     </div>
                 </div>
                 <div className="d-flex flex-column my-3">
-                    <form onSubmit={handleSearchById} className="d-flex justify-content-between align-items-center mb-3">
+                    <form onSubmit={handleSearchById} className="d-flex justify-content-between align-items-center mb-3 text-white">
                         <div className="flex-grow-1 me-3">
                             <label htmlFor="flightId" className='mb-2 fs-5'>Mã chuyến bay</label>
-                            <input 
-                                type="text" 
-                                className="form-control fs-5" 
-                                placeholder="Nhập mã chuyến bay" 
-                                value={form.flightId} 
+                            <input
+                                type="text"
+                                className="form-control fs-5"
+                                placeholder="Nhập mã chuyến bay"
+                                value={form.flightId}
                                 onChange={(e) => setForm({ ...form, flightId: e.target.value })}
                             />
                         </div>
-                        <button type="submit" className="btn btn-primary mt-4 fs-5 px-4">Tìm theo mã</button>
+                        <button type="submit" className="btn btn-primary fs-5 px-4 mt-4">Tìm theo mã</button>
                     </form>
-                    
-                    <form onSubmit={handleSearchByCriteria} className="d-flex justify-content-between align-items-center">
+
+                    <form onSubmit={handleSearchByCriteria} className="d-flex justify-content-between align-items-center text-white">
                         <div>
                             <label htmlFor="from" className='mb-2 fs-5'>Từ</label>
                             <Form.Select
@@ -288,49 +288,49 @@ const Flights = () => {
                         </div>
                         <div>
                             <label htmlFor="startDate" className='mb-2 fs-5'>Ngày khởi hành</label>
-                            <input 
-                                type="date" 
-                                className="form-control fs-5" 
-                                placeholder="Ngày đi" 
-                                value={form.startDate} 
-                                onChange={(e) => setForm({ ...form, startDate: e.target.value })} 
+                            <input
+                                type="date"
+                                className="form-control fs-5"
+                                placeholder="Ngày đi"
+                                value={form.startDate}
+                                onChange={(e) => setForm({ ...form, startDate: e.target.value })}
                             />
                         </div>
                         <div>
                             <label htmlFor="arriveDate" className='mb-2 fs-5'>Ngày đến</label>
-                            <input 
-                                type="date" 
-                                className="form-control fs-5" 
-                                placeholder="Ngày đến" 
-                                value={form.arriveDate} 
-                                onChange={(e) => setForm({ ...form, arriveDate: e.target.value })} 
+                            <input
+                                type="date"
+                                className="form-control fs-5"
+                                placeholder="Ngày đến"
+                                value={form.arriveDate}
+                                onChange={(e) => setForm({ ...form, arriveDate: e.target.value })}
                             />
                         </div>
                         <button type="submit" className="btn btn-primary mt-4 fs-5 px-4">Tìm kiếm</button>
                     </form>
                 </div>
 
-                    <div className='flight-list rounded-3 p-2'>
-                        {flights.length > 0 ? (
-                            flights.map(flight => (
-                                <FlightCard
-                                    key={flight.Ma_chuyen_bay}
-                                    flight={flight}
-                                    detail={detail}
-                                    setDetail={setDetail}
-                                    show={show}
-                                    setShow={setShow}
-                                    onDelete={handleDelete}
-                                    onEdit={handleEditClick}
-                                />
-                            ))
-                        ) : searched ? (
-                            <div className="text-center p-4">
-                                <h4>Không tìm thấy chuyến bay phù hợp</h4>
-                            </div>
-                        ) : null}
-                    </div>
+                <div className='flight-list rounded-3 p-2'>
+                    {flights.length > 0 ? (
+                        flights.map(flight => (
+                            <FlightCard
+                                key={flight.Ma_chuyen_bay}
+                                flight={flight}
+                                detail={detail}
+                                setDetail={setDetail}
+                                show={show}
+                                setShow={setShow}
+                                onDelete={handleDelete}
+                                onEdit={handleEditClick}
+                            />
+                        ))
+                    ) : searched ? (
+                        <div className="text-center p-4">
+                            <h4>Không tìm thấy chuyến bay phù hợp</h4>
+                        </div>
+                    ) : null}
                 </div>
+            </div>
 
             {/* Modal cập nhật chuyến bay */}
             <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)} size="lg">
@@ -346,7 +346,7 @@ const Flights = () => {
                                     <Form.Control
                                         type="date"
                                         value={updateForm.ngay_khoi_hanh}
-                                        onChange={(e) => setUpdateForm({...updateForm, ngay_khoi_hanh: e.target.value})}
+                                        onChange={(e) => setUpdateForm({ ...updateForm, ngay_khoi_hanh: e.target.value })}
                                         required
                                     />
                                 </Form.Group>
@@ -357,7 +357,7 @@ const Flights = () => {
                                     <Form.Control
                                         type="time"
                                         value={updateForm.gio_khoi_hanh}
-                                        onChange={(e) => setUpdateForm({...updateForm, gio_khoi_hanh: e.target.value})}
+                                        onChange={(e) => setUpdateForm({ ...updateForm, gio_khoi_hanh: e.target.value })}
                                         required
                                     />
                                 </Form.Group>
@@ -370,7 +370,7 @@ const Flights = () => {
                                     <Form.Control
                                         type="number"
                                         value={updateForm.Thoi_gian_bay}
-                                        onChange={(e) => setUpdateForm({...updateForm, Thoi_gian_bay: e.target.value})}
+                                        onChange={(e) => setUpdateForm({ ...updateForm, Thoi_gian_bay: e.target.value })}
                                         required
                                     />
                                 </Form.Group>
@@ -381,7 +381,7 @@ const Flights = () => {
                                     <Form.Control
                                         type="number"
                                         value={updateForm.gia_ve}
-                                        onChange={(e) => setUpdateForm({...updateForm, gia_ve: e.target.value})}
+                                        onChange={(e) => setUpdateForm({ ...updateForm, gia_ve: e.target.value })}
                                         required
                                     />
                                 </Form.Group>

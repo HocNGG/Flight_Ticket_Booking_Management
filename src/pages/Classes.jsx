@@ -22,7 +22,7 @@ const Classes = () => {
 
     const fetchClasses = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/hangve/get');
+            const res = await fetch('http://localhost:8000/api/hangve/get');
             const data = await res.json();
             if (data.status === 'success') {
                 setClasses(data.message);
@@ -42,7 +42,7 @@ const Classes = () => {
                 Ten_hang_ve: newClass.Ten_hang_ve,
                 Ti_le_don_gia: parseFloat(newClass.Ti_le_don_gia)
             };
-            const res = await fetch('http://localhost:5000/api/hangve/add', {
+            const res = await fetch('http://localhost:8000/api/hangve/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -71,7 +71,7 @@ const Classes = () => {
             const body = {};
             if (updateClass.Ten_hang_ve) body.Ten_hang_ve = updateClass.Ten_hang_ve;
             if (updateClass.Ti_le_don_gia) body.Ti_le_don_gia = parseFloat(updateClass.Ti_le_don_gia);
-            const res = await fetch(`http://localhost:5000/api/hangve/update/${selectedClassId}`, {
+            const res = await fetch(`http://localhost:8000/api/hangve/update/${selectedClassId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -113,7 +113,7 @@ const Classes = () => {
             </div>
             <div className="mt-5 p-4 w-100">
                 <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h2>HẠNG VÉ</h2>
+                    <h2 className='text-white'>HẠNG VÉ</h2>
                     <button 
                         className="btn btn-primary"
                         onClick={() => setShowCreateModal(true)}

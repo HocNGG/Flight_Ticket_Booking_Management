@@ -45,7 +45,7 @@ const UpdateFlight = () => {
         e.preventDefault();
         const formattedTime = form.time.length === 5 ? form.time + ':00' : form.time;
         try {
-            const url = `http://localhost:5000/api/chuyenbay/update/${form.flightId}`
+            const url = `http://localhost:8000/api/chuyenbay/update/${form.flightId}`
             const body = {
                 gia_ve: parseInt(form.price),
                 ngay_khoi_hanh: form.date,
