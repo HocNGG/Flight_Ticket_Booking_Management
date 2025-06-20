@@ -28,6 +28,8 @@ const Tickets = () => {
         message: '',
         variant: 'success'
     });
+    const [loading, setLoading] = useState(true);
+    const [showUI, setShowUI] = useState(false);
     const navigate = useNavigate();
 
     const handleSearch = async (e) => {
@@ -175,6 +177,12 @@ const Tickets = () => {
 
     // Khi chuyển tab hoặc rời khỏi trang, làm sạch vé
     useEffect(() => {
+        // Hiện SweetAlert khi bắt đầu load
+        MySwal.fire({
+            title: 'Đang tải dữ liệu...',
+            allowOutsideClick: false,
+            didOpen: () => { MySwal.showLoading(); }
+        });
         // Tự động tìm vé hôm nay khi vào trang
         const fetchTodayTickets = async () => {
             try {
@@ -199,6 +207,8 @@ const Tickets = () => {
                     message: 'Có lỗi xảy ra khi tìm kiếm',
                     variant: 'danger'
                 });
+            } finally {
+                setLoading(false);
             }
         };
         if (form.filterType === 'date') {
@@ -209,6 +219,34 @@ const Tickets = () => {
             setSearched(false);
         };
     }, []);
+
+    useEffect(() => {
+        if (!loading) {
+            MySwal.close();
+            setShowUI(true);
+        }
+    }, [loading]);
+
+    if (loading || !showUI) return (
+        <div className='full-container d-flex' style={{ 
+            backgroundImage: `url(https://images.unsplash.com/photo-1535557597501-0fee0a500c57?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)`,
+            backgroundAttachment: 'fixed',
+            backgroundSize: 'cover',
+            backgroundPosition: 'top'
+        }}>
+            <div>
+                <Sidebar
+                    selectedOption={selectedOption}
+                    setSelectedOption={setSelectedOption}
+                />
+            </div>
+            <div className="mt-5 p-4 w-100 d-flex justify-content-center align-items-center" style={{minHeight: '80vh'}}>
+                <div className="spinner-border text-primary" role="status" style={{width: '4rem', height: '4rem'}}>
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+    );
 
     return (
         <div className='full-container d-flex' style={{ 

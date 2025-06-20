@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import { getAuthHeader } from '../utils/authFetch';
 const ROWS = 20;
 const COLS = ['A', 'B', 'C', 'D', 'E', 'F'];
 const allSeats = [];
@@ -24,6 +23,8 @@ const CreateTicket = () => {
     const [availableClasses, setAvailableClasses] = useState([]);
     const [loading, setLoading] = useState(false);
     const [bookedSeats, setBookedSeats] = useState([]);
+    const [phoneError, setPhoneError] = useState('');
+    const [cmndError, setCmndError] = useState('');
 
     const [form, setForm] = useState({
         flightId: fromPage === 'tickets' ? '' : location.state?.flightId || '',
@@ -110,8 +111,56 @@ const CreateTicket = () => {
         }
     };
 
+    const handlePhoneChange = (e) => {
+        const value = e.target.value.replace(/[^\d]/g, '');
+        if (value.length <= 10) {
+            setForm({ ...form, phone: value });
+        }
+    };
+
+    const handleCmndChange = (e) => {
+        const value = e.target.value.replace(/[^\d]/g, '');
+        if (value.length <= 12) {
+            setForm({ ...form, identity: value });
+        }
+    };
+
+    const validatePhone = () => {
+        const phoneRegex = /^0[2-9]\d{8}$/;
+        if (!form.phone.trim() || !phoneRegex.test(form.phone)) {
+            setPhoneError('SĐT không hợp lệ (10 số, bắt đầu bằng 0).');
+            return false;
+        }
+        setPhoneError('');
+        return true;
+    };
+
+    const validateCmnd = () => {
+        const cccdRegex = /^\d{12}$/;
+        if (!form.identity.trim() || !cccdRegex.test(form.identity)) {
+            setCmndError('CCCD không hợp lệ (gồm 12 số).');
+            return false;
+        }
+        setCmndError('');
+        return true;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const isPhoneValid = validatePhone();
+        const isCmndValid = validateCmnd();
+
+        if (!form.flightId || !form.seat || !form.name || !form.gene || !form.classId || !isPhoneValid || !isCmndValid) {
+            MySwal.fire({
+                icon: 'warning',
+                title: 'Thiếu thông tin hoặc thông tin không hợp lệ',
+                text: 'Vui lòng điền đầy đủ và chính xác tất cả các trường!',
+                showConfirmButton: true
+            });
+            return;
+        }
+
         try {
             MySwal.fire({
                 title: 'Đang tạo vé...',
@@ -159,7 +208,7 @@ const CreateTicket = () => {
                     showConfirmButton: true
                 });
             }
-        } catch (err) {
+        } catch {
             await MySwal.close();
             await MySwal.fire({
                 icon: 'error',
@@ -184,7 +233,15 @@ const CreateTicket = () => {
                 />
             </div>
             <div className="p-4 w-100">
-                <h2 className="mt-5 mb-2 fw-bold text-white">TẠO VÉ CHUYẾN BAY</h2>
+                <div className='d-flex justify-content-between align-items-center mb-2'>
+                    <h2 className="mt-5 fw-bold text-white">TẠO VÉ CHUYẾN BAY</h2>
+                    <button 
+                        className='btn btn-secondary mt-5' 
+                        onClick={() => navigate(-1)}
+                    >
+                        Quay lại
+                    </button>
+                </div>
                 <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '70vh' }}>
                     <div className="card p-4" style={{ width: '100%', minWidth: 700, maxWidth: 1200, background: '#fff', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.07)' }}>
                         <form onSubmit={handleSubmit} className="my-3 p-2">
@@ -237,28 +294,33 @@ const CreateTicket = () => {
                                         <div className='col-md-6 mb-3'>
                                             <label htmlFor="identity" className="form-label">Số CCCD:</label>
                                             <input 
-                                                type="text" 
+                                                type="text"
+                                                inputMode="numeric"
                                                 className="form-control" 
                                                 id="identity" 
-                                                placeholder="Nhập số CCCD"
+                                                placeholder="Nhập 12 số CCCD"
                                                 value={form.identity}
-                                                onChange={(e) => setForm({ ...form, identity: e.target.value })} 
+                                                onChange={handleCmndChange} 
+                                                onBlur={validateCmnd}
                                                 required 
                                             />
+                                            {cmndError && <div className="text-danger small mt-1">{cmndError}</div>}
                                         </div>
                                     </div>
                                     <div className='row'>
                                         <div className='col-md-6 mb-3'>
                                             <label htmlFor="phone" className="form-label">Số điện thoại:</label>
                                             <input 
-                                                type="text" 
+                                                type="tel"
                                                 className="form-control" 
                                                 id="phone" 
-                                                placeholder="Nhập số điện thoại"
+                                                placeholder="VD: 0912345678"
                                                 value={form.phone}
-                                                onChange={(e) => setForm({ ...form, phone: e.target.value })} 
+                                                onChange={handlePhoneChange} 
+                                                onBlur={validatePhone}
                                                 required 
                                             />
+                                            {phoneError && <div className="text-danger small mt-1">{phoneError}</div>}
                                         </div>
                                         <div className='col-md-6 mb-3'>
                                             <label htmlFor="gene" className="form-label">Giới tính:</label>

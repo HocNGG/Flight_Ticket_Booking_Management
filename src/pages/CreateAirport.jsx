@@ -10,11 +10,6 @@ const MySwal = withReactContent(Swal);
 
 const CreateAirport = () => {
     const [selectedOption, setSelectedOption] = useState("4");
-    const [toast, setToast] = useState({
-        show: false,
-        message: '',
-        variant: 'success'
-    });
     const navigate = useNavigate();
 
     const [form, setForm] = useState({

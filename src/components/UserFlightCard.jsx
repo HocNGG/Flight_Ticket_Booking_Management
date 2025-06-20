@@ -63,7 +63,6 @@ const UserFlightCard = ({ flight }) => {
     return (
         <>
             <div
-                onClick={handleDetailClick}
                 className="d-flex rounded-4 shadow-sm mb-3 p-4 align-items-center border"
                 style={{
                     minHeight: '150px',
@@ -153,37 +152,6 @@ const UserFlightCard = ({ flight }) => {
                     </button>
                 </div>
             </div>
-
-            {/* Modal chi tiết chuyến bay */}
-            {show && detail && (
-                <div className="modal show fade d-block align-items-center">
-                    <div className="modal-dialog modal-lg">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title">Chi tiết chuyến bay #{flight.Ma_chuyen_bay}</h5>
-                                <button type="button" className="btn-close" onClick={() => setShow(false)}></button>
-                            </div>
-                            <div className="modal-body">
-                                {detail.chitiet_hangve?.map((hv, idx) => (
-                                    <div key={idx}>
-                                        <p><strong>Hạng Vé:</strong> {hv.Ma_hang_ve} &nbsp;&nbsp;&nbsp; <strong>Giá:</strong> {hv.Gia_ve.toLocaleString()} VND</p>
-                                        <p><strong>Số ghế trống:</strong> {hv.So_ve_trong} &nbsp;&nbsp;&nbsp; <strong>Số ghế đã đặt:</strong> {hv.So_ve_da_dat}</p>
-                                        <hr />
-                                    </div>
-                                ))}
-
-                                {detail.chitiet_sanbay_trung_gian?.map((tg, idx) => (
-                                    <div key={idx}>
-                                        <p><strong>Mã sân bay trung gian:</strong> {tg.ma_san_bay_trung_gian || 'Không có'}</p>
-                                        <p><strong>Thời gian dừng:</strong> {tg.thoi_gian_dung || '0'} phút &nbsp;&nbsp;&nbsp; <strong>Ghi chú:</strong> {tg.ghi_chu || 'Không có'}</p>
-                                        <hr />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
         </>
     );
 };

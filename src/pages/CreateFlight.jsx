@@ -13,6 +13,7 @@ const MySwal = withReactContent(Swal);
 const CreateFlight = () => {
     const [selectedOption, setSelectedOption] = useState("2");
     const [airports, setAirports] = useState([]);
+    const [allTicketClasses, setAllTicketClasses] = useState([]);
     const navigate = useNavigate();
 
     const [form, setForm] = useState({
@@ -58,8 +59,65 @@ const CreateFlight = () => {
                 console.error('Error fetching airports:', err);
             }
         };
+        const fetchAllTicketClasses = async () => {
+            try {
+                const res = await fetch(`http://localhost:5000/api/hangve/get`);
+                const data = await res.json();
+                if (res.ok && data.status === 'success') {
+                    setAllTicketClasses(data.message);
+                }
+            } catch (err) {
+                console.error("Failed to fetch ticket classes:", err);
+            }
+        };
         fetchAirports();
+        fetchAllTicketClasses();
     }, []);
+
+    // Effect to auto-calculate seats when number of classes changes
+    useEffect(() => {
+        const numClasses = form.hangve.length;
+        let seatsPerClass = 0;
+
+        switch (numClasses) {
+            case 1:
+                seatsPerClass = 120;
+                break;
+            case 2:
+                seatsPerClass = 60;
+                break;
+            case 3:
+                seatsPerClass = 40;
+                break;
+            case 4:
+                seatsPerClass = 30;
+                break;
+            case 5:
+                seatsPerClass = 24;
+                break;
+            case 6:
+                seatsPerClass = 20;
+                break;
+            default:
+                seatsPerClass = 0;
+        }
+
+        const newHangve = form.hangve.map(item => ({
+            ...item,
+            So_ghe_trong_hang: seatsPerClass
+        }));
+
+        setForm(prevForm => {
+            // Avoid re-rendering if the values are the same
+            if (JSON.stringify(prevForm.hangve) === JSON.stringify(newHangve)) {
+                return prevForm;
+            }
+            return {
+                ...prevForm,
+                hangve: newHangve
+            };
+        });
+    }, [form.hangve.length]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -134,11 +192,11 @@ const CreateFlight = () => {
                     hangve: [
                         {
                             Ma_hang_ve: 1,
-                            So_ghe_trong_hang: 50
+                            So_ghe_trong_hang: 0
                         },
                         {
                             Ma_hang_ve: 2,
-                            So_ghe_trong_hang: 50
+                            So_ghe_trong_hang: 0
                         }
                     ]
                 });
@@ -315,8 +373,7 @@ const CreateFlight = () => {
                                 <Col md={6}>
                                     <Form.Group>
                                         <Form.Label>Hạng Vé</Form.Label>
-                                        <Form.Control
-                                            type="number"
+                                        <Form.Select
                                             value={item.Ma_hang_ve}
                                             onChange={(e) => {
                                                 const newHangve = [...form.hangve];
@@ -327,9 +384,20 @@ const CreateFlight = () => {
                                                 });
                                             }}
                                             required
-                                            min="1"
-                                            placeholder="Nhập mã hạng vé"
-                                        />
+                                        >
+                                            <option value="">Chọn hạng vé</option>
+                                            {allTicketClasses
+                                                .filter(tc => 
+                                                    !form.hangve.some((selected, selectedIdx) => 
+                                                        selected.Ma_hang_ve === tc.id && selectedIdx !== index
+                                                    )
+                                                )
+                                                .map(tc => (
+                                                    <option key={tc.id} value={tc.id}>
+                                                        {tc.Ten_hang_ve}
+                                                    </option>
+                                            ))}
+                                        </Form.Select>
                                     </Form.Group>
                                 </Col>
                                 <Col md={5}>
@@ -381,8 +449,8 @@ const CreateFlight = () => {
                                     hangve: [
                                         ...form.hangve,
                                         {
-                                            Ma_hang_ve: 1,
-                                            So_ghe_trong_hang: 60
+                                            Ma_hang_ve: '',
+                                            So_ghe_trong_hang: 0
                                         }
                                     ]
                                 });

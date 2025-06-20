@@ -18,9 +18,18 @@ const UserHome = () => {
   const [airports, setAirports] = useState([]);
   const [error, setError] = useState('');
   const [searching, setSearching] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
+    let airportsLoaded = false;
+    let flightsLoaded = false;
+    // Hiện SweetAlert khi bắt đầu load
+    MySwal.fire({
+      title: 'Đang tải dữ liệu...',
+      allowOutsideClick: false,
+      didOpen: () => { MySwal.showLoading(); }
+    });
     // Fetch danh sách sân bay
     const fetchAirports = async () => {
       try {
@@ -31,6 +40,11 @@ const UserHome = () => {
         }
       } catch {
         console.error('Lỗi lấy danh sách sân bay');
+      } finally {
+        airportsLoaded = true;
+        if (airportsLoaded && flightsLoaded) {
+          setLoading(false);
+        }
       }
     };
     fetchAirports();
@@ -41,7 +55,16 @@ const UserHome = () => {
         const res = await fetch('https://se104-airport.space/api/chuyenbay/get/all');
         const data = await res.json();
         if (res.ok && Array.isArray(data.message)) {
-          setFlights(data.message);
+          // Lọc các chuyến bay chưa khởi hành (sau ngày hiện tại ít nhất 1 ngày)
+          const today = new Date();
+          today.setHours(0,0,0,0);
+          const tomorrow = new Date(today);
+          tomorrow.setDate(today.getDate() + 1);
+          const filteredFlights = data.message.filter(flight => {
+            const flightDate = new Date(flight.ngay_khoi_hanh);
+            return flightDate >= tomorrow;
+          });
+          setFlights(filteredFlights);
           setError('');
         } else {
           setFlights([]);
@@ -50,10 +73,26 @@ const UserHome = () => {
       } catch {
         setFlights([]);
         setError('Có lỗi xảy ra khi tải chuyến bay');
+      } finally {
+        flightsLoaded = true;
+        if (airportsLoaded && flightsLoaded) {
+          setLoading(false);
+        }
       }
     };
     fetchAllFlights();
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      // Đã load xong cả hai API, hiện thông báo cho người dùng xác nhận
+      MySwal.fire({
+        icon: 'success',
+        confirmButtonText: 'OK',
+        allowOutsideClick: false
+      });
+    }
+  }, [loading]);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -74,7 +113,16 @@ const UserHome = () => {
       const data = await res.json();
       await MySwal.close();
       if (res.ok && Array.isArray(data.data) && data.data.length > 0) {
-        setFlights(data.data);
+        // Lọc các chuyến bay chưa khởi hành (sau ngày hiện tại ít nhất 1 ngày)
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+        const filteredFlights = data.data.filter(flight => {
+          const flightDate = new Date(flight.ngay_khoi_hanh);
+          return flightDate >= tomorrow;
+        });
+        setFlights(filteredFlights);
         setError('');
         MySwal.fire({
           icon: 'success',

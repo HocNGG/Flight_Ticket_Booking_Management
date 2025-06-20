@@ -7,6 +7,10 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { useNavigate } from 'react-router-dom';
 import { getAuthHeader } from '../utils/authFetch';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+const MySwal = withReactContent(Swal);
+
 const Flights = () => {
     const [selectedOption, setSelectedOption] = useState("2");
     const [form, setForm] = useState({ from: '', to: '', startDate: '', arriveDate: '', flightId: '' });
@@ -15,7 +19,6 @@ const Flights = () => {
     const [detail, setDetail] = useState(null);
     const [show, setShow] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
-    const [selectedFlight, setSelectedFlight] = useState(null);
     const [updateForm, setUpdateForm] = useState({
         Ma_chuyen_bay: '',
         Ma_san_bay_di: '',
@@ -31,6 +34,7 @@ const Flights = () => {
         variant: 'success'
     });
     const [airports, setAirports] = useState([]);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     const handleSearchById = async (e) => {
@@ -181,6 +185,14 @@ const Flights = () => {
     };
 
     useEffect(() => {
+        let airportsLoaded = false;
+        let flightsLoaded = false;
+        // Hiện SweetAlert khi bắt đầu load
+        MySwal.fire({
+            title: 'Đang tải dữ liệu...',
+            allowOutsideClick: false,
+            didOpen: () => { MySwal.showLoading(); }
+        });
         const fetchFlights = async () => {
             try {
                 const res = await fetch(`https://se104-airport.space/api/chuyenbay/get/all`, {
@@ -195,6 +207,11 @@ const Flights = () => {
                 }
             } catch (err) {
                 console.error(err);
+            } finally {
+                flightsLoaded = true;
+                if (airportsLoaded && flightsLoaded) {
+                    setLoading(false);
+                }
             }
         };
         fetchFlights();
@@ -208,10 +225,21 @@ const Flights = () => {
                 }
             } catch (err) {
                 console.error('Lỗi lấy danh sách sân bay:', err);
+            } finally {
+                airportsLoaded = true;
+                if (airportsLoaded && flightsLoaded) {
+                    setLoading(false);
+                }
             }
         };
         fetchAirports();
     }, []);
+
+    useEffect(() => {
+        if (!loading) {
+            MySwal.close();
+        }
+    }, [loading]);
 
     return (
         <div className='full-container d-flex' style={{

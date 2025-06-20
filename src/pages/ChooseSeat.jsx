@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 const ROWS = 20;
 const COLS = ['A', 'B', 'C', 'D', 'E', 'F'];
@@ -17,6 +21,12 @@ const ChooseSeat = () => {
 
   // Lấy danh sách ghế đã đặt
   useEffect(() => {
+    setLoading(true);
+    MySwal.fire({
+      title: 'Đang tải dữ liệu...',
+      allowOutsideClick: false,
+      didOpen: () => { MySwal.showLoading(); }
+    });
     const fetchBookedSeats = async () => {
       try {
         const res = await fetch(`https://se104-airport.space/api/vechuyenbay/search/flight/${flightId}`);
@@ -28,10 +38,18 @@ const ChooseSeat = () => {
         setBookedSeats(seats);
       } catch {
         setBookedSeats([]);
+      } finally {
+        setLoading(false);
       }
     };
     fetchBookedSeats();
   }, [flightId]);
+
+  useEffect(() => {
+    if (!loading) {
+      MySwal.close();
+    }
+  }, [loading]);
 
   // Tạo danh sách ghế
   const allSeats = [];
@@ -118,6 +136,18 @@ const ChooseSeat = () => {
     if (selectedSeats.includes(seat.id)) return 'Ghế bạn đang chọn';
     return 'Ghế trống';
   };
+
+  if (loading) return (
+    <div style={{display:'flex',gap:32,alignItems:'flex-start',justifyContent:'space-between',backgroundImage: 'url(https://images.pexels.com/photos/1381414/pexels-photo-1381414.jpeg)',backgroundSize: 'cover',backgroundPosition: 'center',backgroundRepeat: 'no-repeat',minHeight: '100vh', fontFamily: 'Inter, sans-serif'}}>
+      <div style={{flex:1.5, maxWidth: '900px', padding: '2%'}} />
+      <div style={{flex:1,minWidth:320,maxWidth:400,marginLeft:'auto', marginRight:100}} />
+      <div className="d-flex justify-content-center align-items-center w-100" style={{position:'absolute',top:0,left:0,height:'100vh',zIndex:10}}>
+        <div className="spinner-border text-primary" role="status" style={{width: '4rem', height: '4rem'}}>
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div style={{display:'flex',gap:32,alignItems:'flex-start',justifyContent:'space-between',backgroundImage: 'url(https://images.pexels.com/photos/1381414/pexels-photo-1381414.jpeg)',backgroundSize: 'cover',backgroundPosition: 'center',backgroundRepeat: 'no-repeat',minHeight: '100vh', fontFamily: 'Inter, sans-serif'}}>

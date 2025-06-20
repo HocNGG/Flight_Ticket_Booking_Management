@@ -71,7 +71,7 @@ const TICKET_CLASS_DETAILS = {
   '4': {
     baggage: 'Hành lý xách tay: 7kg, ký gửi: 20kg',
     services: [
-      'Chọn chỗ ngồi có phí',
+      'Chọn chỗ ngồi miễn phí',
       'Dịch vụ cơ bản trên chuyến bay',
     ],
   },
@@ -94,16 +94,23 @@ const BookTicket = () => {
   const [selectedClass, setSelectedClass] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showUI, setShowUI] = useState(false);
   // Thông tin hành khách
   const [name, setName] = useState('');
   const [gender, setGender] = useState('Nam');
   const [cmnd, setCmnd] = useState('');
   const [phone, setPhone] = useState('');
   const [submitError, setSubmitError] = useState('');
+   const [phoneError, setPhoneError] = useState('');
+  const [cmndError, setCmndError] = useState('');
 
   useEffect(() => {
-    // Đóng loading khi trang BookTicket đã load xong
-    MySwal.close();
+    // Hiện SweetAlert khi bắt đầu load
+    MySwal.fire({
+      title: 'Đang tải dữ liệu...',
+      allowOutsideClick: false,
+      didOpen: () => { MySwal.showLoading(); }
+    });
     const fetchFlight = async () => {
       try {
         setLoading(true);
@@ -112,9 +119,6 @@ const BookTicket = () => {
         });
         const data = await res.json();
         if (res.ok && data.data) {
-          console.log('Flight data:', data.data);
-          console.log('San bay trung gian:', data.data.chitiet_sanbay_trung_gian);
-          
           setFlight(data.data);
           setClasses(data.data.chitiet_hangve || []);
         } else {
@@ -129,6 +133,14 @@ const BookTicket = () => {
     fetchFlight();
   }, [flightId]);
 
+  useEffect(() => {
+    if (!loading) {
+      // Đã load xong, chỉ cần đóng SweetAlert và hiển thị UI luôn
+      MySwal.close();
+      setShowUI(true);
+    }
+  }, [loading]);
+
   // Tính giá, thuế, tổng tiền
   const getSummary = () => {
     if (!selectedClass) return { price: 0, tax: 0, service: 0, total: 0 };
@@ -139,11 +151,53 @@ const BookTicket = () => {
   };
   const summary = getSummary();
 
+  // --- Validation functions ---
+  const handlePhoneChange = (e) => {
+    const value = e.target.value;
+    // Allow only numbers and limit length
+    const numericValue = value.replace(/[^\d]/g, '');
+    if (numericValue.length <= 10) {
+        setPhone(numericValue);
+    }
+  };
+
+  const handleCmndChange = (e) => {
+      const value = e.target.value;
+      // Allow only numbers and limit length
+      const numericValue = value.replace(/[^\d]/g, '');
+      if (numericValue.length <= 12) {
+          setCmnd(numericValue);
+      }
+  };
+
+  const validatePhone = () => {
+      const phoneRegex = /^0[2-9]\d{8}$/;
+      if (!phone.trim() || !phoneRegex.test(phone)) {
+          setPhoneError('SĐT không hợp lệ (gồm 10 số, bắt đầu bằng 0).');
+          return false;
+      }
+      setPhoneError('');
+      return true;
+  };
+
+  const validateCmnd = () => {
+      const cccdRegex = /^\d{12}$/;
+      if (!cmnd.trim() || !cccdRegex.test(cmnd)) {
+          setCmndError('CCCD không hợp lệ (gồm 12 số).');
+          return false;
+      }
+      setCmndError('');
+      return true;
+  };
+
   // Xử lý submit tạo vé
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!selectedClass || !name.trim() || !cmnd.trim() || !phone.trim() || !gender) {
-      setSubmitError('Vui lòng nhập đầy đủ thông tin!');
+    const isPhoneValid = validatePhone();
+    const isCmndValid = validateCmnd();
+
+    if (!selectedClass || !name.trim() || !gender || !isPhoneValid || !isCmndValid) {
+      setSubmitError('Vui lòng kiểm tra lại thông tin!');
       return;
     }
     setSubmitError('');
@@ -160,11 +214,21 @@ const BookTicket = () => {
     });
   };
 
-  if (loading) return <div style={{textAlign:'center',marginTop:40}}>Đang tải...</div>;
+  if (loading || !showUI) return (
+    <div style={{display:'flex',gap:32,alignItems:'flex-start',justifyContent:'space-between',backgroundImage: 'url(https://images.pexels.com/photos/1381414/pexels-photo-1381414.jpeg)',backgroundSize: 'cover',backgroundPosition: 'center',backgroundRepeat: 'no-repeat',minHeight: '100vh', fontFamily: 'Inter, sans-serif'}}>
+      <div style={{flex:1.5, maxWidth: '900px', padding: '2%'}} />
+      <div style={{flex:1,minWidth:320,maxWidth:400,marginLeft:'auto', marginRight:100}} />
+      <div className="d-flex justify-content-center align-items-center w-100" style={{position:'absolute',top:0,left:0,height:'100vh',zIndex:10}}>
+        <div className="spinner-border text-primary" role="status" style={{width: '4rem', height: '4rem'}}>
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    </div>
+  );
   if (error) return <div style={{color:'red',textAlign:'center',marginTop:40}}>{error}</div>;
 
   return (
-    <div style={{display:'flex',gap:32,alignItems:'flex-start',justifyContent:'space-between',backgroundImage: 'url(https://images.pexels.com/photos/1115358/pexels-photo-1115358.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2)',backgroundSize: 'cover',backgroundPosition: 'center',backgroundRepeat: 'no-repeat',minHeight: '100vh', fontFamily: 'Inter, sans-serif'}}>
+    <div style={{display:'flex',gap:32,alignItems:'flex-start',justifyContent:'space-between',backgroundImage: 'url(https://images.pexels.com/photos/1381414/pexels-photo-1381414.jpeg)',backgroundSize: 'cover',backgroundPosition: 'center',backgroundRepeat: 'no-repeat',minHeight: '100vh', fontFamily: 'Inter, sans-serif'}}>
       {/* LEFT: Chọn hạng vé và xem chi tiết */}
       <div style={{flex:1.5, maxWidth: '900px', padding: '2%'}}>
         <div style={{textAlign:'center',marginBottom:16}}>
@@ -196,7 +260,7 @@ const BookTicket = () => {
                 transition: 'border 0.2s',
               }}
             >
-              {TICKET_CLASS_LABELS[hv.Ma_hang_ve] || hv.Ma_hang_ve}
+              {ticketClassMap[hv.Ma_hang_ve] || hv.Ten_hang_ve || 'Hạng vé'}
               <div style={{fontSize:15,marginTop:4}}>
                 {hv.So_ve_trong > 0 ? formatCurrency(hv.Gia_ve) : 'Hết chỗ'}
               </div>
@@ -211,7 +275,7 @@ const BookTicket = () => {
           <div style={{background:'#fff',borderRadius:10,padding:24,marginBottom:24,border:`2px solid #218838`, maxWidth: '650px', margin: '0 auto 24px'}}>
             <div style={{display:'flex',alignItems:'center',gap:24,marginBottom:12}}>
               <div style={{background:'#218838',color:'#fff',borderRadius:8,padding:'8px 16px',fontWeight:'bold'}}>
-                {TICKET_CLASS_LABELS[selectedClass.Ma_hang_ve] || selectedClass.Ma_hang_ve}
+                {ticketClassMap[selectedClass.Ma_hang_ve] || selectedClass.Ten_hang_ve}
               </div>
               <div style={{fontSize:18,fontWeight:'bold',color:'#333'}}>
                 {flight.gio_khoi_hanh} - {calculateArrivalTime(flight.gio_khoi_hanh, flight.Thoi_gian_bay)} | {flight.loai_may_bay}
@@ -266,17 +330,45 @@ const BookTicket = () => {
               >
                 {selectedClass.Ma_hang_ve === 1 && (
                   <>
-                    <SwiperSlide>
+                  <SwiperSlide>
                       <img 
-                        src="https://images.pexels.com/photos/237211/pexels-photo-237211.jpeg" 
+                        src="https://images.pexels.com/photos/32623054/pexels-photo-32623054.jpeg" 
+                        alt="Business Class" 
+                        style={{width:'100%',height:300,objectFit:'cover'}}
+                      />
+                    </SwiperSlide>
+                  <SwiperSlide>
+                      <img 
+                        src="https://images.pexels.com/photos/936611/pexels-photo-936611.jpeg" 
                         alt="Business Class" 
                         style={{width:'100%',height:300,objectFit:'cover'}}
                       />
                     </SwiperSlide>
                     <SwiperSlide>
                       <img 
-                        src="https://images.pexels.com/photos/237211/pexels-photo-237211.jpeg" 
+                        src="https://images.pexels.com/photos/14212023/pexels-photo-14212023.jpeg" 
+                        alt="Business Class" 
+                        style={{width:'100%',height:300,objectFit:'cover'}}
+                      />
+                    </SwiperSlide>
+                    <SwiperSlide>
+                      <img 
+                        src="https://images.pexels.com/photos/5957553/pexels-photo-5957553.jpeg" 
                         alt="Business Class Service" 
+                        style={{width:'100%',height:300,objectFit:'cover'}}
+                      />
+                    </SwiperSlide>
+                    <SwiperSlide>
+                      <img 
+                        src="https://images.pexels.com/photos/4637961/pexels-photo-4637961.jpeg" 
+                        alt="Eco Class" 
+                        style={{width:'100%',height:300,objectFit:'cover'}}
+                      />
+                    </SwiperSlide>
+                    <SwiperSlide>
+                      <img 
+                        src="https://images.pexels.com/photos/16562837/pexels-photo-16562837.jpeg" 
+                        alt="Eco Class Service" 
                         style={{width:'100%',height:300,objectFit:'cover'}}
                       />
                     </SwiperSlide>
@@ -286,15 +378,29 @@ const BookTicket = () => {
                   <>
                     <SwiperSlide>
                       <img 
-                        src="https://images.pexels.com/photos/237211/pexels-photo-237211.jpeg" 
+                        src="https://images.pexels.com/photos/14212023/pexels-photo-14212023.jpeg" 
                         alt="SkyBOSS Class" 
                         style={{width:'100%',height:300,objectFit:'cover'}}
                       />
                     </SwiperSlide>
                     <SwiperSlide>
                       <img 
-                        src="https://images.pexels.com/photos/237211/pexels-photo-237211.jpeg" 
+                        src="https://images.pexels.com/photos/5957553/pexels-photo-5957553.jpeg" 
                         alt="SkyBOSS Class Service" 
+                        style={{width:'100%',height:300,objectFit:'cover'}}
+                      />
+                    </SwiperSlide>
+                    <SwiperSlide>
+                      <img 
+                        src="https://images.pexels.com/photos/4637961/pexels-photo-4637961.jpeg" 
+                        alt="Eco Class" 
+                        style={{width:'100%',height:300,objectFit:'cover'}}
+                      />
+                    </SwiperSlide>
+                    <SwiperSlide>
+                      <img 
+                        src="https://images.pexels.com/photos/16562837/pexels-photo-16562837.jpeg" 
+                        alt="Eco Class Service" 
                         style={{width:'100%',height:300,objectFit:'cover'}}
                       />
                     </SwiperSlide>
@@ -304,15 +410,22 @@ const BookTicket = () => {
                   <>
                     <SwiperSlide>
                       <img 
-                        src="https://images.pexels.com/photos/237211/pexels-photo-237211.jpeg" 
-                        alt="Deluxe Class" 
+                        src="https://images.pexels.com/photos/5957553/pexels-photo-5957553.jpeg" 
+                        alt="Deluxe Class Service" 
                         style={{width:'100%',height:300,objectFit:'cover'}}
                       />
                     </SwiperSlide>
                     <SwiperSlide>
                       <img 
-                        src="https://images.pexels.com/photos/237211/pexels-photo-237211.jpeg" 
-                        alt="Deluxe Class Service" 
+                        src="https://images.pexels.com/photos/4637961/pexels-photo-4637961.jpeg" 
+                        alt="Eco Class" 
+                        style={{width:'100%',height:300,objectFit:'cover'}}
+                      />
+                    </SwiperSlide>
+                    <SwiperSlide>
+                      <img 
+                        src="https://images.pexels.com/photos/16562837/pexels-photo-16562837.jpeg" 
+                        alt="Eco Class Service" 
                         style={{width:'100%',height:300,objectFit:'cover'}}
                       />
                     </SwiperSlide>
@@ -322,14 +435,14 @@ const BookTicket = () => {
                   <>
                     <SwiperSlide>
                       <img 
-                        src="https://images.pexels.com/photos/237211/pexels-photo-237211.jpeg" 
+                        src="https://images.pexels.com/photos/4637961/pexels-photo-4637961.jpeg" 
                         alt="Eco Class" 
                         style={{width:'100%',height:300,objectFit:'cover'}}
                       />
                     </SwiperSlide>
                     <SwiperSlide>
                       <img 
-                        src="https://images.pexels.com/photos/237211/pexels-photo-237211.jpeg" 
+                        src="https://images.pexels.com/photos/16562837/pexels-photo-16562837.jpeg" 
                         alt="Eco Class Service" 
                         style={{width:'100%',height:300,objectFit:'cover'}}
                       />
@@ -357,11 +470,13 @@ const BookTicket = () => {
               <div style={{display:'flex',gap:16,marginBottom:16}}>
                 <div style={{flex:1}}>
                   <label><b>Số điện thoại:</b></label>
-                  <input type="text" value={phone} onChange={e => setPhone(e.target.value)} pattern="0[2-9][0-9]{8}" title="Số điện thoại phải có 10 chữ số, bắt đầu bằng 0 và chữ số thứ hai từ 2-9" style={{width:'100%',padding:8,marginTop:4,backgroundColor: '#fff', borderRadius:10,color: 'black'}} required/>
+                  <input type="tel" value={phone} onChange={handlePhoneChange} onBlur={validatePhone} placeholder="VD: 0912345678" style={{width:'100%',padding:8,marginTop:4,backgroundColor: '#fff', borderRadius:10,color: 'black'}} required/>
+                  {phoneError && <div style={{color:'#e53935', fontSize: 13, marginTop: 4, fontWeight:'bold'}}>{phoneError}</div>}
                 </div>
                 <div style={{flex:1}}>
                   <label><b>CCCD:</b></label>
-                  <input type="text" value={cmnd} onChange={e => setCmnd(e.target.value)} pattern="\d{12}" style={{width:'100%',padding:8,marginTop:4,backgroundColor: '#fff', borderRadius:10,color: 'black'}} required/>
+                  <input type="text" inputMode="numeric" value={cmnd} onChange={handleCmndChange} onBlur={validateCmnd} placeholder="Nhập 12 số CCCD" style={{width:'100%',padding:8,marginTop:4,backgroundColor: '#fff', borderRadius:10,color: 'black'}} required/>
+                  {cmndError && <div style={{color:'#e53935', fontSize: 13, marginTop: 4, fontWeight:'bold'}}>{cmndError}</div>}
                 </div>
               </div>
               {submitError && <div style={{color:'red',marginBottom:12}}>{submitError}</div>}
