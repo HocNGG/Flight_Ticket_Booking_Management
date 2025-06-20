@@ -9,7 +9,7 @@ const TicketCard = ({ ticket, onUpdateSeat, onCancelTicket }) => {
     useEffect(() => {
         const fetchFlightDetail = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/api/chuyenbay/get/${ticket.Ma_chuyen_bay}`);
+                const res = await fetch(`https://se104-airport.space/api/chuyenbay/get/${ticket.Ma_chuyen_bay}`);
                 const data = await res.json();
                 setDetail(data.data);
             } catch (error) {

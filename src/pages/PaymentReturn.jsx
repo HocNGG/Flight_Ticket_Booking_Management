@@ -31,7 +31,7 @@ const PaymentReturn = () => {
       }
       const info = JSON.parse(booking);
       // Gọi API đặt vé
-      fetch('http://localhost:5000/api/vechuyenbay/add', {
+      fetch('https://se104-airport.space/api/vechuyenbay/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

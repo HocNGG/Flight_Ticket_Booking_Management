@@ -34,7 +34,7 @@ const UserFlightCard = ({ flight }) => {
     const handleDetailClick = async (e) => {
         e.preventDefault();
         try {
-            const url = `http://localhost:5000/api/chuyenbay/get/${flight.Ma_chuyen_bay}`
+            const url = `https://se104-airport.space/api/chuyenbay/get/${flight.Ma_chuyen_bay}`
             const res = await fetch(url);
             const data = await res.json();
 

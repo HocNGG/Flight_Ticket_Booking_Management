@@ -19,7 +19,7 @@ const ChooseSeat = () => {
   useEffect(() => {
     const fetchBookedSeats = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/vechuyenbay/search/flight/${flightId}`);
+        const res = await fetch(`https://se104-airport.space/api/vechuyenbay/search/flight/${flightId}`);
         const data = await res.json();
         const seats = Array.isArray(data.tickets)
           ? data.tickets.filter(v => v.Tinh_trang !== false && v.vi_tri)
@@ -77,7 +77,7 @@ const ChooseSeat = () => {
     }));
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:5000/api/vnpay/create_payment', {
+      const res = await fetch('https://se104-airport.space/api/vnpay/create_payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ price, order_id: orderId })
@@ -120,7 +120,7 @@ const ChooseSeat = () => {
   };
 
   return (
-    <div style={{display:'flex',gap:32,alignItems:'flex-start',justifyContent:'space-between',backgroundImage: 'url(https://images.pexels.com/photos/115491/pexels-photo-115491.jpeg)',backgroundSize: 'cover',backgroundPosition: 'center',backgroundRepeat: 'no-repeat',minHeight: '100vh', fontFamily: 'Inter, sans-serif'}}>
+    <div style={{display:'flex',gap:32,alignItems:'flex-start',justifyContent:'space-between',backgroundImage: 'url(https://images.pexels.com/photos/1381414/pexels-photo-1381414.jpeg)',backgroundSize: 'cover',backgroundPosition: 'center',backgroundRepeat: 'no-repeat',minHeight: '100vh', fontFamily: 'Inter, sans-serif'}}>
     <div style={{
       display:'flex',
       maxWidth:1000,

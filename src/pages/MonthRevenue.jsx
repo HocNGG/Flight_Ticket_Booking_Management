@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import Sidebar from "../components/Sidebar";
+import { getAuthHeader } from '../utils/authFetch';
 const MonthRevenue = () => {
     const navigate = useNavigate();
     const [selectedOption, setSelectedOption] = useState("7");
@@ -40,7 +41,10 @@ const MonthRevenue = () => {
             const fetchData = async () => {
                 try {
                     const res = await fetch(
-                        `http://localhost:5000/api/chitietdoanhthuthang/get?thang=${time.month}&nam=${time.year}`
+                        `https://se104-airport.space/api/chitietdoanhthuthang/get?thang=${time.month}&nam=${time.year}`,
+                        {
+                            headers: getAuthHeader()
+                        }
                     );
                     const data = await res.json();
                     if (data.status === "success") {
@@ -64,11 +68,8 @@ const MonthRevenue = () => {
     useEffect(() => {
         const fetchMonthRevenueData = async () => {
             try {
-                const token = localStorage.getItem('access_token');
-                const res = await fetch(`http://localhost:5000/api/ds_doanhthuthang/get?nam=${time.year}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                const res = await fetch(`https://se104-airport.space/api/ds_doanhthuthang/get?nam=${time.year}`, {
+                    headers: getAuthHeader()
                 });
                 const result = await res.json();
                 if (result.status === "success") {

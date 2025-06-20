@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import ToastMessage from '../components/ToastMessage';
-
+import { getAuthHeader } from '../utils/authFetch';
 const Regulations = () => {
     const [selectedOption, setSelectedOption] = useState("6");
     const [regulations, setRegulations] = useState({
@@ -22,11 +22,8 @@ const Regulations = () => {
     const fetchRegulations = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('access_token');
-            const res = await fetch('http://localhost:5000/api/quydinh/get', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+            const res = await fetch('https://se104-airport.space/api/quydinh/get', {
+                headers: getAuthHeader()
             });
             const data = await res.json();
             if (data.status === 'success') {
@@ -47,9 +44,9 @@ const Regulations = () => {
     const handleSave = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch('http://localhost:5000/api/quydinh/update', {
+            const res = await fetch('https://se104-airport.space/api/quydinh/update', {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
                 body: JSON.stringify({
                     ...regulations,
                     soluongsanbaytrunggian: Number(regulations.soluongsanbaytrunggian),

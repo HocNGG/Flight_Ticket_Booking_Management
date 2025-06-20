@@ -7,7 +7,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-
+import { getAuthHeader } from '../utils/authFetch';
 const MySwal = withReactContent(Swal);
 
 const CreateFlight = () => {
@@ -33,11 +33,11 @@ const CreateFlight = () => {
         hangve: [
             {
                 Ma_hang_ve: 1,
-                So_ghe_trong_hang: 50
+                So_ghe_trong_hang: 60
             },
             {
                 Ma_hang_ve: 2,
-                So_ghe_trong_hang: 50
+                So_ghe_trong_hang: 60
             }
         ]
     });
@@ -45,7 +45,9 @@ const CreateFlight = () => {
     useEffect(() => {
         const fetchAirports = async () => {
             try {
-                const res = await fetch('http://localhost:5000/api/sanbay/get');
+                const res = await fetch('https://se104-airport.space/api/sanbay/get', {
+                    headers: getAuthHeader()
+                });
                 const data = await res.json();
                 if (data.status === 'success' && Array.isArray(data.message)) {
                     setAirports(data.message);
@@ -98,9 +100,9 @@ const CreateFlight = () => {
                     })),
                 hangve: form.hangve
             };
-            const res = await fetch('http://localhost:5000/api/chuyenbay/add', {
+            const res = await fetch('https://se104-airport.space/api/chuyenbay/add', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
                 body: JSON.stringify(formData)
             });
             const data = await res.json();

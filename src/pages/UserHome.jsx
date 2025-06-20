@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UserFlightCard from '../components/UserFlightCard';
-import './UserHome.css';
+import '../UserHome.css';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
@@ -24,7 +24,7 @@ const UserHome = () => {
     // Fetch danh sách sân bay
     const fetchAirports = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/sanbay/get');
+        const res = await fetch('https://se104-airport.space/api/sanbay/get');
         const data = await res.json();
         if (data.status === 'success') {
           setAirports(data.message);
@@ -38,7 +38,7 @@ const UserHome = () => {
     // Fetch tất cả chuyến bay khi vào trang
     const fetchAllFlights = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/chuyenbay/get/all');
+        const res = await fetch('https://se104-airport.space/api/chuyenbay/get/all');
         const data = await res.json();
         if (res.ok && Array.isArray(data.message)) {
           setFlights(data.message);
@@ -69,7 +69,7 @@ const UserHome = () => {
         allowOutsideClick: false,
         didOpen: () => { MySwal.showLoading(); }
       });
-      const url = `http://localhost:5000/api/chuyenbay/search?start_time=${startDate}T00:00:00&end_time=${arriveDate}T23:59:59&sanbay_di=${from}&sanbay_den=${to}`;
+      const url = `https://se104-airport.space/api/chuyenbay/search?start_time=${startDate}T00:00:00&end_time=${arriveDate}T23:59:59&sanbay_di=${from}&sanbay_den=${to}`;
       const res = await fetch(url);
       const data = await res.json();
       await MySwal.close();

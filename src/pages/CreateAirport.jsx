@@ -5,7 +5,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-
+import { getAuthHeader } from '../utils/authFetch';
 const MySwal = withReactContent(Swal);
 
 const CreateAirport = () => {
@@ -30,9 +30,9 @@ const CreateAirport = () => {
                 allowOutsideClick: false,
                 didOpen: () => { MySwal.showLoading(); }
             });
-            const res = await fetch('http://localhost:5000/api/sanbay/add', {
+            const res = await fetch('https://se104-airport.space/api/sanbay/add', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', ...getAuthHeader()  },
                 body: JSON.stringify(form)
             });
             const data = await res.json();

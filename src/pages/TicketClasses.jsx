@@ -4,7 +4,7 @@ import Sidebar from '../components/Sidebar';
 import ToastMessage from '../components/ToastMessage';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-
+import { getAuthHeader } from '../utils/authFetch';
 const MySwal = withReactContent(Swal);
 
 const TicketClasses = () => {
@@ -22,7 +22,9 @@ const TicketClasses = () => {
 
     const fetchTicketClasses = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/hangve/get');
+            const res = await fetch('https://se104-airport.space/api/hangve/get', {
+                headers: getAuthHeader()
+            });
             const data = await res.json();
             if (data.status === 'success') {
                 setTicketClasses(data.message);
@@ -42,9 +44,9 @@ const TicketClasses = () => {
     const handleEditTicketClass = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch(`http://localhost:5000/api/hangve/update/${editTicketClass.id}`, {
+            const res = await fetch(`https://se104-airport.space/api/hangve/update/${editTicketClass.id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
                 body: JSON.stringify({
                     Ten_hang_ve: editTicketClass.Ten_hang_ve,
                     Ti_le_don_gia: editTicketClass.Ti_le_don_gia
@@ -82,8 +84,9 @@ const TicketClasses = () => {
                 allowOutsideClick: false,
                 didOpen: () => { MySwal.showLoading(); }
             });
-            const res = await fetch(`http://localhost:5000/api/hangve/delete/${id}`, {
-                method: 'DELETE'
+            const res = await fetch(`https://se104-airport.space/api/hangve/delete/${id}`, {
+                method: 'DELETE',
+                headers: getAuthHeader()
             });
             const data = await res.json();
             await MySwal.close();

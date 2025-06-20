@@ -6,7 +6,6 @@ import Flights from './pages/Flights';
 import CreateTicket from './pages/CreateTicket';
 import Tickets from './pages/Tickets';
 import CreateFlight from './pages/CreateFlight';
-import UpdateFlight from './pages/UpdateFlight';
 import MonthRevenue from './pages/MonthRevenue';
 import YearRevenue from './pages/YearRevenue';
 import Airports from './pages/Airports';
@@ -68,11 +67,6 @@ function App() {
         <Route path="/create-flight" element={
           <ProtectedRoute>
             <CreateFlight />
-          </ProtectedRoute>
-        } />
-        <Route path="/update-flight" element={
-          <ProtectedRoute>
-            <UpdateFlight />
           </ProtectedRoute>
         } />
         <Route path="/detail-revenue" element={

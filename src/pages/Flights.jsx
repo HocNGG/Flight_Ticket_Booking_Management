@@ -6,7 +6,7 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { useNavigate } from 'react-router-dom';
-
+import { getAuthHeader } from '../utils/authFetch';
 const Flights = () => {
     const [selectedOption, setSelectedOption] = useState("2");
     const [form, setForm] = useState({ from: '', to: '', startDate: '', arriveDate: '', flightId: '' });
@@ -46,7 +46,7 @@ const Flights = () => {
                 return;
             }
 
-            const url = `http://localhost:5000/api/chuyenbay/get/${flightId}`;
+            const url = `https://se104-airport.space/api/chuyenbay/get/${flightId}`;
             const res = await fetch(url);
             const data = await res.json();
 
@@ -89,7 +89,7 @@ const Flights = () => {
                 return;
             }
 
-            const url = `http://localhost:5000/api/chuyenbay/search?start_time=${startDate}T00:00:00&end_time=${arriveDate}T23:59:59&sanbay_di=${from}&sanbay_den=${to}`;
+            const url = `https://se104-airport.space/api/chuyenbay/search?start_time=${startDate}T00:00:00&end_time=${arriveDate}T23:59:59&sanbay_di=${from}&sanbay_den=${to}`;
             const res = await fetch(url);
             const data = await res.json();
 
@@ -139,11 +139,12 @@ const Flights = () => {
     const handleUpdateSubmit = async (e) => {
         e.preventDefault();
         try {
-            const url = `http://localhost:5000/api/chuyenbay/update/${updateForm.Ma_chuyen_bay}`;
+            const url = `https://se104-airport.space/api/chuyenbay/update/${updateForm.Ma_chuyen_bay}`;
             const res = await fetch(url, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    ...getAuthHeader()
                 },
                 body: JSON.stringify(updateForm)
             });
@@ -182,7 +183,7 @@ const Flights = () => {
     useEffect(() => {
         const fetchFlights = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/api/chuyenbay/get/all`, {
+                const res = await fetch(`https://se104-airport.space/api/chuyenbay/get/all`, {
                     method: 'GET',
                 });
                 const data = await res.json();
@@ -200,7 +201,7 @@ const Flights = () => {
         // Fetch danh sách sân bay
         const fetchAirports = async () => {
             try {
-                const res = await fetch('http://localhost:5000/api/sanbay/get');
+                const res = await fetch('https://se104-airport.space/api/sanbay/get');
                 const data = await res.json();
                 if (data.status === 'success') {
                     setAirports(data.message);
@@ -381,7 +382,7 @@ const Flights = () => {
                                     <Form.Control
                                         type="number"
                                         value={updateForm.gia_ve}
-                                        onChange={(e) => setUpdateForm({...updateForm, gia_ve: e.target.value})}
+                                        onChange={(e) => setUpdateForm({...updateForm, gia_ve: parseInt(e.target.value) || 0})}
                                         required
                                     />
                                 </Form.Group>

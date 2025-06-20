@@ -4,7 +4,7 @@ import Sidebar from '../components/Sidebar';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import ToastMessage from '../components/ToastMessage';
-
+import { getAuthHeader } from '../utils/authFetch';
 const CreateTicketClass = () => {
     const [selectedOption, setSelectedOption] = useState("5");
     const [toast, setToast] = useState({
@@ -22,10 +22,11 @@ const CreateTicketClass = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch('http://localhost:5000/api/hangve/add', {
+            const res = await fetch('https://se104-airport.space/api/hangve/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    ...getAuthHeader()
                 },
                 body: JSON.stringify({
                     Ten_hang_ve: form.Ten_hang_ve,

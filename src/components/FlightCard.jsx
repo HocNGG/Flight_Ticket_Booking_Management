@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 // import ToastMessage from './ToastMessage';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { getAuthHeader } from '../utils/authFetch';
 
 const MySwal = withReactContent(Swal);
 
@@ -36,7 +37,7 @@ const FlightCard = ({ flight, onDelete, onEdit }) => {
     const handleDetailClick = async (e) => {
         e.preventDefault();
         try {
-            const url = `http://localhost:5000/api/chuyenbay/get/${flight.Ma_chuyen_bay}`
+            const url = `https://se104-airport.space/api/chuyenbay/get/${flight.Ma_chuyen_bay}`
             const res = await fetch(url);
             const data = await res.json();
 
@@ -81,9 +82,10 @@ const FlightCard = ({ flight, onDelete, onEdit }) => {
                 }
             });
 
-            const url = `http://localhost:5000/api/chuyenbay/delete/${flight.Ma_chuyen_bay}`;
+            const url = `https://se104-airport.space/api/chuyenbay/delete/${flight.Ma_chuyen_bay}`;
             const res = await fetch(url, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: getAuthHeader()
             });
             const data = await res.json();
 

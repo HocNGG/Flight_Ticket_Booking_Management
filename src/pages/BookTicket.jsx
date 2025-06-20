@@ -107,7 +107,7 @@ const BookTicket = () => {
     const fetchFlight = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`http://localhost:5000/api/chuyenbay/get/${flightId}`, {
+        const res = await fetch(`https://se104-airport.space/api/chuyenbay/get/${flightId}`, {
           headers: getAuthHeaders()
         });
         const data = await res.json();

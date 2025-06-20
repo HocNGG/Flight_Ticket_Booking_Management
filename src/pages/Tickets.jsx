@@ -39,20 +39,20 @@ const Tickets = () => {
 
             switch (filterType) {
                 case 'cmnd':
-                    url = `http://localhost:5000/api/vechuyenbay/get_by_hanhkhach/cmnd/${identity}`;
+                    url = `https://se104-airport.space/api/vechuyenbay/get_by_hanhkhach/cmnd/${identity}`;
                     break;
                 case 'flightId':
-                    url = `http://localhost:5000/api/vechuyenbay/search/flight/${identity}`;
+                    url = `https://se104-airport.space/api/vechuyenbay/search/flight/${identity}`;
                     useAuth = true;
                     break;
                 case 'passengerId':
-                    url = `http://localhost:5000/api/hanhkhach/get/${identity}`;
+                    url = `https://se104-airport.space/api/hanhkhach/get/${identity}`;
                     break;
                 case 'date':
-                    url = `http://localhost:5000/api/vechuyenbay/get/DatHomNay`;
+                    url = `https://se104-airport.space/api/vechuyenbay/get/DatHomNay`;
                     break;
                 default:
-                    url = `http://localhost:5000/api/vechuyenbay/get_by_hanhkhach/cmnd/${identity}`;
+                    url = `https://se104-airport.space/api/vechuyenbay/get_by_hanhkhach/cmnd/${identity}`;
             }
 
             let res, data;
@@ -108,7 +108,7 @@ const Tickets = () => {
         if (!selectedTicket || !newSeatPosition) return;
 
         try {
-            const url = `http://localhost:5000/api/vechuyenbay/update/vitriGhe/${selectedTicket.Ma_ve}`;
+            const url = `https://se104-airport.space/api/vechuyenbay/update/vitriGhe/${selectedTicket.Ma_ve}`;
             const res = await fetch(url, {
                 method: 'PUT',
                 headers: {
@@ -178,7 +178,7 @@ const Tickets = () => {
         // Tự động tìm vé hôm nay khi vào trang
         const fetchTodayTickets = async () => {
             try {
-                const url = `http://localhost:5000/api/vechuyenbay/get/DatHomNay`;
+                const url = `https://se104-airport.space/api/vechuyenbay/get/DatHomNay`;
                 const res = await fetch(url);
                 const data = await res.json();
                 if (res.ok) {
