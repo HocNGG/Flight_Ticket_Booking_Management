@@ -27,17 +27,17 @@ const calculateArrivalTime = (departure, durationMinutes) => {
 };
 
 const TICKET_CLASS_LABELS = {
-  'BUSINESS': 'BUSINESS',
-  'SKYBOSS': 'skyBOSS',
-  'DELUXE': 'Deluxe',
-  'ECO': 'Eco',
+  '1': 'BUSINESS',
+  '2': 'SKYBOSS',
+  '3': 'DELUXE',
+  '4': 'ECO',
 };
 
 const TICKET_CLASS_COLORS = {
-  'BUSINESS': '#bfa13a',
-  'SKYBOSS': '#e53935',
-  'DELUXE': '#ffb300',
-  'ECO': '#4caf50',
+  '1': '#bfa13a',
+  '2': '#e53935',
+  '3': '#ffb300',
+  '4': '#4caf50',
 };
 
 // Mô tả chi tiết từng hạng vé (có thể lấy từ backend nếu có)
@@ -79,13 +79,7 @@ const TICKET_CLASS_DETAILS = {
 };
 
 // Hàm tiện ích lấy headers có Bearer token
-function getAuthHeaders(extraHeaders = {}) {
-  const token = localStorage.getItem('access_token');
-  return {
-    ...extraHeaders,
-    Authorization: token ? `Bearer ${token}` : '',
-  };
-}
+
 
 const BookTicket = () => {
   const { flightId } = useParams();
@@ -108,7 +102,7 @@ const BookTicket = () => {
 
   // Lấy danh sách tên hạng vé
   useEffect(() => {
-    fetch(`${LOCAL_API_URL}/hangve/get`)
+    fetch(`${BASE_URL}/hangve/get`)
       .then(res => res.json())
       .then(data => {
         if (data.status === 'success') {
@@ -131,9 +125,7 @@ const BookTicket = () => {
     const fetchFlight = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${BASE_URL}/chuyenbay/get/${flightId}`, {
-          headers: getAuthHeaders()
-        });
+        const res = await fetch(`${BASE_URL}/chuyenbay/get/${flightId}`);
         const data = await res.json();
         if (res.ok && data.data) {
           setFlight(data.data);

@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { BASE_URL } from '../utils/api';
 
-const TicketCard = ({ ticket, onUpdateSeat, onCancelTicket }) => {
+const TicketCard = ({ ticket, onUpdateSeat }) => {
     const [detail, setDetail] = useState(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
 
@@ -144,13 +144,7 @@ const TicketCard = ({ ticket, onUpdateSeat, onCancelTicket }) => {
                             >
                                 Sửa ghế
                             </Button>
-                            <Button 
-                                variant="danger" 
-                                size="sm"
-                                onClick={() => onCancelTicket(ticket.Ma_ve)}
-                            >
-                                Hủy vé
-                            </Button>
+    
                         </div>
                     </div>
                 </div>

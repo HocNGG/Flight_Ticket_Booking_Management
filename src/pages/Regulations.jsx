@@ -11,7 +11,8 @@ const Regulations = () => {
         thoigianbaytoithieu: '',
         thoigiandungtoida: '',
         thoigiandungtoithieu: '',
-        thoigianvechuyenbay: ''
+        thoigianvechuyenbay: '',
+        thoigiandatvetoithieu: ''
     });
     const [loading, setLoading] = useState(true);
     const [toast, setToast] = useState({ show: false, message: '', variant: 'success' });
@@ -29,7 +30,12 @@ const Regulations = () => {
             });
             const data = await res.json();
             if (data.status === 'success') {
-                setRegulations(data.data);
+                console.log('Regulations data from API:', data.data);
+                const mappedData = {
+                    ...data.data,
+                    thoigianvechuyenbay: data.data.thoigiandatvetoithieu || ''
+                };
+                setRegulations(mappedData);
             } else {
                 setToast({ show: true, message: data.message, variant: 'danger' });
             }
@@ -133,12 +139,12 @@ const Regulations = () => {
                                 />
                             </div>
                             <div className="mb-3">
-                                <label className="form-label">Thời gian đặt vé tối thiểu (giờ)</label>
+                                <label className="form-label">Thời gian đặt vé tối thiểu (Ngày)</label>
                                 <input
                                     type="number"
                                     className="form-control"
                                     name="thoigianvechuyenbay"
-                                    value={regulations.thoigiandatvetoithieu}
+                                    value={regulations.thoigianvechuyenbay}
                                     onChange={handleChange}
                                     disabled={!editing}
                                     required

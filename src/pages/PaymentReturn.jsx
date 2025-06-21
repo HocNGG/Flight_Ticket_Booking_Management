@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { BASE_URL, LOCAL_API_URL } from '../utils/api';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 const PaymentReturn = () => {
   const [result, setResult] = useState(null);
@@ -8,6 +12,13 @@ const PaymentReturn = () => {
   const [ticketInfo, setTicketInfo] = useState(null);
 
   useEffect(() => {
+    // Hiển thị SweetAlert khi bắt đầu xử lý
+    MySwal.fire({
+      title: 'Đang xử lý kết quả thanh toán...',
+      allowOutsideClick: false,
+      didOpen: () => { MySwal.showLoading(); }
+    });
+
     // Lấy query params từ URL
     const params = new URLSearchParams(window.location.search);
     const vnp_ResponseCode = params.get('vnp_ResponseCode');
@@ -26,6 +37,7 @@ const PaymentReturn = () => {
       // Thanh toán thành công, gọi API đặt vé
       const booking = localStorage.getItem('pending_booking');
       if (!booking) {
+        MySwal.close();
         setBookingStatus('fail');
         setBookingMsg('Không tìm thấy thông tin đặt vé. Vui lòng liên hệ hỗ trợ.');
         return;
@@ -69,24 +81,42 @@ const PaymentReturn = () => {
                     flight: flightData.data
                   });
                 }
+                // Đóng SweetAlert sau khi hoàn thành tất cả API calls
+                MySwal.close();
+              })
+              .catch(() => {
+                MySwal.close();
               });
             localStorage.removeItem('pending_booking');
           } else {
+            MySwal.close();
             setBookingStatus('fail');
             setBookingMsg(data.message || 'Đặt vé thất bại!');
           }
         })
         .catch(() => {
+          MySwal.close();
           setBookingStatus('fail');
           setBookingMsg('Có lỗi xảy ra khi đặt vé!');
         });
     } else {
+      MySwal.close();
       setBookingStatus('fail');
       setBookingMsg('Thanh toán thất bại hoặc bị hủy. Vui lòng thử lại.');
     }
   }, []);
 
-  if (!result || bookingStatus === 'processing') return <div style={{textAlign:'center',marginTop:60}}>Đang xử lý kết quả thanh toán...</div>;
+  if (!result || bookingStatus === 'processing') return (
+    <div style={{display:'flex',gap:32,alignItems:'flex-start',justifyContent:'space-between',backgroundImage: 'url(https://images.pexels.com/photos/949587/pexels-photo-949587.jpeg)',backgroundSize: 'cover',backgroundPosition: 'center',backgroundRepeat: 'no-repeat',minHeight: '100vh', fontFamily: 'Inter, sans-serif'}}>
+      <div style={{flex:1}} />
+      <div style={{flex:1,minWidth:320,maxWidth:400,marginLeft:'auto', marginRight:100}} />
+      <div className="d-flex justify-content-center align-items-center w-100" style={{position:'absolute',top:0,left:0,height:'100vh',zIndex:10}}>
+        <div className="spinner-border text-primary" role="status" style={{width: '4rem', height: '4rem'}}>
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div style={{display:'flex',gap:32,alignItems:'flex-start',justifyContent:'space-between',backgroundImage: 'url(https://images.pexels.com/photos/949587/pexels-photo-949587.jpeg)',backgroundSize: 'cover',backgroundPosition: 'center',backgroundRepeat: 'no-repeat',minHeight: '100vh', fontFamily: 'Inter, sans-serif'}}>

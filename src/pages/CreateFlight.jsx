@@ -62,7 +62,7 @@ const CreateFlight = () => {
         };
         const fetchAllTicketClasses = async () => {
             try {
-                const res = await fetch(`${LOCAL_API_URL}/hangve/get`);
+                const res = await fetch(`${BASE_URL}/hangve/get`);
                 const data = await res.json();
                 if (res.ok && data.status === 'success') {
                     setAllTicketClasses(data.message);

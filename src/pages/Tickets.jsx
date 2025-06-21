@@ -13,6 +13,16 @@ import { BASE_URL } from '../utils/api';
 
 const MySwal = withReactContent(Swal);
 
+// Constants for seat generation
+const ROWS = 20;
+const COLS = ['A', 'B', 'C', 'D', 'E', 'F'];
+const allSeats = [];
+for (let i = 1; i <= ROWS; i++) {
+  for (let c of COLS) {
+    allSeats.push(`${i}${c}`);
+  }
+}
+
 const Tickets = () => {
     const [selectedOption, setSelectedOption] = useState("3");
     const [form, setForm] = useState({ 
@@ -24,6 +34,8 @@ const Tickets = () => {
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [selectedTicket, setSelectedTicket] = useState(null);
     const [newSeatPosition, setNewSeatPosition] = useState('');
+    const [bookedSeats, setBookedSeats] = useState([]);
+    const [loadingSeats, setLoadingSeats] = useState(false);
     const [toast, setToast] = useState({
         show: false,
         message: '',
@@ -32,6 +44,25 @@ const Tickets = () => {
     const [loading, setLoading] = useState(true);
     const [showUI, setShowUI] = useState(false);
     const navigate = useNavigate();
+
+    // Fetch booked seats for a specific flight
+    const fetchBookedSeats = async (flightId) => {
+        if (!flightId) return;
+        setLoadingSeats(true);
+        try {
+            const res = await fetch(`${BASE_URL}/vechuyenbay/search/flight/${flightId}`);
+            const data = await res.json();
+            const seats = Array.isArray(data.tickets)
+                ? data.tickets.filter(v => v.Tinh_trang !== false && v.vi_tri)
+                    .map(v => String(v.vi_tri).trim().toUpperCase())
+                : [];
+            setBookedSeats(seats);
+        } catch {
+            setBookedSeats([]);
+        } finally {
+            setLoadingSeats(false);
+        }
+    };
 
     const handleSearch = async (e) => {
         e.preventDefault();
@@ -322,6 +353,8 @@ const Tickets = () => {
                                     setSelectedTicket(ticket);
                                     setNewSeatPosition(ticket.vi_tri);
                                     setShowUpdateModal(true);
+                                    // Fetch booked seats when opening modal
+                                    fetchBookedSeats(ticket.Ma_chuyen_bay);
                                 }}
                                 onCancelTicket={handleCancelTicket}
                             />
@@ -343,12 +376,26 @@ const Tickets = () => {
                     <Form>
                         <Form.Group className="mb-3">
                             <Form.Label>Vị trí ghế mới</Form.Label>
-                            <Form.Control
-                                type="text"
+                            <Form.Select
                                 value={newSeatPosition}
                                 onChange={(e) => setNewSeatPosition(e.target.value)}
-                                placeholder="Nhập vị trí ghế mới"
-                            />
+                                disabled={loadingSeats}
+                            >
+                                <option value="">Chọn vị trí ghế</option>
+                                {allSeats.filter(seat => !bookedSeats.includes(seat) || seat === selectedTicket?.vi_tri).map(seat => (
+                                    <option key={seat} value={seat}>
+                                        {seat} {seat === selectedTicket?.vi_tri ? '(Ghế hiện tại)' : ''}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                            {loadingSeats && (
+                                <div className="text-muted small mt-1">Đang tải danh sách ghế...</div>
+                            )}
+                            {!loadingSeats && bookedSeats.length > 0 && (
+                                <div className="text-info small mt-1">
+                                    Đã loại bỏ {bookedSeats.length} ghế đã được đặt
+                                </div>
+                            )}
                         </Form.Group>
                     </Form>
                 </Modal.Body>
@@ -356,7 +403,7 @@ const Tickets = () => {
                     <Button variant="secondary" onClick={() => setShowUpdateModal(false)}>
                         Hủy
                     </Button>
-                    <Button variant="primary" onClick={handleUpdateSeat}>
+                    <Button variant="primary" onClick={handleUpdateSeat} disabled={!newSeatPosition}>
                         Cập nhật
                     </Button>
                 </Modal.Footer>
