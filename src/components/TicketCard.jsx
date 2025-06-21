@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import { BASE_URL } from '../utils/api';
+import { BASE_URL, LOCAL_API_URL } from '../utils/api';
+import { getAuthHeader } from '../utils/authFetch';
 
 const TicketCard = ({ ticket, onUpdateSeat }) => {
     const [detail, setDetail] = useState(null);
+    const [passengerInfo, setPassengerInfo] = useState(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
 
     useEffect(() => {
@@ -18,10 +20,31 @@ const TicketCard = ({ ticket, onUpdateSeat }) => {
             }
         };
 
+        const fetchPassengerInfo = async () => {
+            try {
+                if (ticket.Ma_hanh_khach) {
+                    const res = await fetch(`${LOCAL_API_URL}/hanhkhach/get/${ticket.Ma_hanh_khach}`, {
+                        headers: getAuthHeader()
+                    });
+                    const data = await res.json();
+                    if (data.status === 'success') {
+                        setPassengerInfo(data.data);
+                    } else {
+                        console.error("Lỗi khi tải thông tin hành khách:", data.message);
+                    }
+                }
+            } catch (error) {
+                console.error("Lỗi khi tải thông tin hành khách:", error);
+            }
+        };
+
         if (ticket.Ma_chuyen_bay) {
             fetchFlightDetail();
         }
-    }, [ticket.Ma_chuyen_bay]);
+        if (ticket.Ma_hanh_khach) {
+            fetchPassengerInfo();
+        }
+    }, [ticket.Ma_chuyen_bay, ticket.Ma_hanh_khach]);
 
     const formatHHMM = (timeString) => {
         const [hh, mm] = timeString.split(':');
@@ -103,7 +126,7 @@ const TicketCard = ({ ticket, onUpdateSeat }) => {
                         <div className="text-muted small">{detail.ngay_khoi_hanh}</div>
                     </div>
                     {/* Mã vé */}
-                    <div className="text-nowrap">
+                    <div className="text-nowrap me-4">
                         <div>Mã Vé: {ticket.Ma_ve}</div>
                         <div>Hạng vé: {ticket.Ma_hang_ve}</div>
                         <div>Vị trí ghế: {ticket.vi_tri}</div>
@@ -174,6 +197,27 @@ const TicketCard = ({ ticket, onUpdateSeat }) => {
                             <p><strong>Thời gian bay:</strong> {Math.floor(detail.Thoi_gian_bay / 60)}h {detail.Thoi_gian_bay % 60} phút</p>
                         </div>
                     </div>
+                    <hr />
+                    <div className="row">
+                        <div className="col-12">
+                            <h5>Thông tin hành khách</h5>
+                            <div className="row">
+                                <div className="col-md-6">
+                                    <p><strong>Họ tên:</strong> {passengerInfo ? passengerInfo.Hoten : (ticket.Ho_ten || 'Đang tải...')}</p>
+                                    <p><strong>Số điện thoại:</strong> {passengerInfo ? passengerInfo.sdt : (ticket.sdt || 'Đang tải...')}</p>
+                                </div>
+                                <div className="col-md-6">
+                                    <p><strong>CCCD/CMND:</strong> {passengerInfo ? passengerInfo.cmnd : (ticket.cmnd || 'Đang tải...')}</p>
+                                    <p><strong>Giới tính:</strong> {passengerInfo ? passengerInfo.gioi_tinh : (ticket.gioi_tinh || 'Đang tải...')}</p>
+                                </div>
+                            </div>
+                            {passengerInfo && (
+                                <div className="mt-2">
+                                    <small className="text-muted">Mã hành khách: {passengerInfo.id}</small>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setShowDetailModal(false)}>
@@ -186,3 +230,4 @@ const TicketCard = ({ ticket, onUpdateSeat }) => {
 };
 
 export default TicketCard;
+
