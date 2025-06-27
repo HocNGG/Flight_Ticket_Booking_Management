@@ -22,6 +22,7 @@ const Airports = () => {
     const [toast, setToast] = useState({ show: false, message: '', variant: 'success' });
     const [selectedAirport, setSelectedAirport] = useState(null);
     const [showImageModal, setShowImageModal] = useState(false);
+    const [deletedAirports, setDeletedAirports] = useState([]);
     const navigate = useNavigate();
 
     // Map mã sân bay -> mảng ảnh
@@ -44,6 +45,7 @@ const Airports = () => {
     // Fetch danh sách sân bay khi component mount
     useEffect(() => {
         fetchAirports();
+        fetchDeletedAirports();
     }, []);
 
     const fetchAirports = async () => {
@@ -59,6 +61,23 @@ const Airports = () => {
             }
         } catch {
             console.error('Có lỗi xảy ra khi lấy danh sách sân bay');
+        }
+    };
+
+    const fetchDeletedAirports = async () => {
+        try {
+            const res = await fetch(`${BASE_URL}/sanbay/get_all_dahuy`, {
+                headers: getAuthHeader()
+            });
+            const data = await res.json();
+            if (data.status === 'success') {
+                setDeletedAirports(data.message);
+            } else {
+                setDeletedAirports([]);
+            }
+        } catch {
+            setDeletedAirports([]);
+            console.error('Có lỗi xảy ra khi lấy danh sách sân bay đã xóa');
         }
     };
 
@@ -142,6 +161,55 @@ const Airports = () => {
         }
     };
 
+    const handleActivateAirport = async (maSanBay) => {
+        const result = await MySwal.fire({
+            title: 'Bạn có chắc chắn muốn kích hoạt lại sân bay này?',
+            text: `Mã sân bay: #${maSanBay}`,
+            icon: 'warning',
+        });
+        if (!result.isConfirmed) return;
+        try {
+            MySwal.fire({
+                title: 'Đang kích hoạt...',
+                allowOutsideClick: false,
+                didOpen: () => { MySwal.showLoading(); }
+            });
+            const res = await fetch(`${BASE_URL}/sanbay/restore/${maSanBay}`, {
+            method: 'PUT',
+            headers: getAuthHeader()
+        });
+        const data = await res.json();
+        await MySwal.close();
+        if (data.status === 'success') {
+            setToast({ show: true, message: data.message, variant: 'success' });
+            fetchAirports();
+            fetchDeletedAirports();
+            await MySwal.fire({
+                title: 'Thành công!',
+                text: 'Sân bay đã được kích hoạt lại!',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        } else {
+            setToast({ show: true, message: data.message, variant: 'danger' });
+            await MySwal.fire({
+                title: 'Lỗi!',
+                text: data.message || 'Không thể kích hoạt lại sân bay!',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    } catch (error) {   
+        console.error('Có lỗi xảy ra khi kích hoạt lại sân bay:', error);
+        setToast({ show: true, message: 'Có lỗi xảy ra khi kích hoạt lại sân bay', variant: 'danger' });
+        await MySwal.fire({
+            title: 'Lỗi!',
+            text: 'Có lỗi xảy ra khi kích hoạt lại sân bay!',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    }
+    };
     return (
         <div className='full-container d-flex' style={{ 
             backgroundImage: `url(https://images.unsplash.com/photo-1535557597501-0fee0a500c57?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)`,
@@ -199,6 +267,42 @@ const Airports = () => {
                                     </td>
                                 </tr>
                             ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div className="d-flex justify-content-between align-items-center mb-4 mt-5 ">
+                    <h2 style={{fontWeight: 'bold', color: '#fff'}}>🏢  SÂN BAY ĐÃ XÓA</h2>
+
+                </div>
+                <div className="table-responsive bg-white p-4 shadow-sm text-center rounded-2">
+                    <table className="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên Sân Bay</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {deletedAirports.length === 0 ? (
+                                <tr><td colSpan="4">Không có sân bay đã hủy</td></tr>
+                            ) : (
+                                deletedAirports.map((airport) => (
+                                    <tr key={airport.Ma_san_bay}>
+                                        <td>{airport.Ma_san_bay}</td>
+                                        <td>{airport.Ten_san_bay}</td>
+                                        <td>
+                                            <button
+                                                className="btn btn-success fw-bold"
+                                                onClick={() => handleActivateAirport(airport.Ma_san_bay)}
+                                            >
+                                                Kích hoạt lại
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>

@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { BASE_URL, LOCAL_API_URL } from '../utils/api';
-import { getAuthHeader } from '../utils/authFetch';
+import { authFetch } from '../utils/authFetch';
 
-const TicketCard = ({ ticket, onUpdateSeat }) => {
+const TicketCard = ({ ticket, onUpdateSeat, onCancel }) => {
     const [detail, setDetail] = useState(null);
     const [passengerInfo, setPassengerInfo] = useState(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
@@ -23,14 +23,12 @@ const TicketCard = ({ ticket, onUpdateSeat }) => {
         const fetchPassengerInfo = async () => {
             try {
                 if (ticket.Ma_hanh_khach) {
-                    const res = await fetch(`${LOCAL_API_URL}/hanhkhach/get/${ticket.Ma_hanh_khach}`, {
-                        headers: getAuthHeader()
-                    });
-                    const data = await res.json();
-                    if (data.status === 'success') {
-                        setPassengerInfo(data.data);
+                    const passengerRes = await authFetch(`${BASE_URL}/hanhkhach/get/${ticket.Ma_hanh_khach}`, { method: 'GET' });
+                    const passengerData = await passengerRes.json();
+                    if (passengerData.status === 'success') {
+                        setPassengerInfo(passengerData.data);
                     } else {
-                        console.error("Lỗi khi tải thông tin hành khách:", data.message);
+                        console.error("Lỗi khi tải thông tin hành khách:", passengerData.message);
                     }
                 }
             } catch (error) {
@@ -160,14 +158,23 @@ const TicketCard = ({ ticket, onUpdateSeat }) => {
                             >
                                 Chi tiết
                             </Button>
-                            <Button 
-                                variant="warning" 
-                                size="sm"
-                                onClick={() => onUpdateSeat(ticket)}
-                            >
-                                Sửa ghế
-                            </Button>
-    
+                            {onCancel ? (
+                                <Button 
+                                    variant="danger" 
+                                    size="sm"
+                                    onClick={() => onCancel(ticket.Ma_ve)}
+                                >
+                                    Hủy vé
+                                </Button>
+                            ) : (
+                                <Button 
+                                    variant="warning" 
+                                    size="sm"
+                                    onClick={() => onUpdateSeat(ticket)}
+                                >
+                                    Sửa ghế
+                                </Button>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -211,11 +218,7 @@ const TicketCard = ({ ticket, onUpdateSeat }) => {
                                     <p><strong>Giới tính:</strong> {passengerInfo ? passengerInfo.gioi_tinh : (ticket.gioi_tinh || 'Đang tải...')}</p>
                                 </div>
                             </div>
-                            {passengerInfo && (
-                                <div className="mt-2">
-                                    <small className="text-muted">Mã hành khách: {passengerInfo.id}</small>
-                                </div>
-                            )}
+                           
                         </div>
                     </div>
                 </Modal.Body>

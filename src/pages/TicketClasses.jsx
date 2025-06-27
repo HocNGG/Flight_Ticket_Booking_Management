@@ -14,11 +14,13 @@ const TicketClasses = () => {
     const [showEditModal, setShowEditModal] = useState(false);
     const [editTicketClass, setEditTicketClass] = useState({ id: '', Ten_hang_ve: '', Ti_le_don_gia: '' });
     const [toast, setToast] = useState({ show: false, message: '', variant: 'success' });
+    const [deletedTicketClasses, setDeletedTicketClasses] = useState([]);
     const navigate = useNavigate();
 
     // Fetch danh sách hạng vé khi component mount
     useEffect(() => {
         fetchTicketClasses();
+        fetchDeletedTicketClasses();
     }, []);
 
     const fetchTicketClasses = async () => {
@@ -34,6 +36,23 @@ const TicketClasses = () => {
             }
         } catch {
             console.error('Có lỗi xảy ra khi lấy danh sách hạng vé');
+        }
+    };
+
+    const fetchDeletedTicketClasses = async () => {
+        try {
+            const res = await fetch(`${BASE_URL}/hangve/get_all_dahuy`, {
+                headers: getAuthHeader()
+            });
+            const data = await res.json();
+            if (data.status === 'success') {
+                setDeletedTicketClasses(data.message);
+            } else {
+                setDeletedTicketClasses([]);
+            }
+        } catch {
+            setDeletedTicketClasses([]);
+            console.error('Có lỗi xảy ra khi lấy danh sách hạng vé đã hủy');
         }
     };
 
@@ -120,6 +139,49 @@ const TicketClasses = () => {
         }
     };
 
+    const handleActivateTicketClass = async (id) => {
+        try {
+            MySwal.fire({
+                title: 'Đang kích hoạt lại...',
+                allowOutsideClick: false,
+                didOpen: () => { MySwal.showLoading(); }
+            });
+            const res = await fetch(`${BASE_URL}/hangve/activate/${id}`, {
+                method: 'PUT',
+                headers: getAuthHeader()
+            });
+            const data = await res.json();
+            await MySwal.close();
+            if (data.status === 'success') {
+                setToast({ show: true, message: data.message, variant: 'success' });
+                fetchTicketClasses();
+                fetchDeletedTicketClasses();
+                await MySwal.fire({
+                    title: 'Thành công!',
+                    text: 'Hạng vé đã được kích hoạt lại!',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+            } else {
+                setToast({ show: true, message: data.message, variant: 'danger' });
+                await MySwal.fire({
+                    title: 'Lỗi!',
+                    text: data.message || 'Không thể kích hoạt lại hạng vé!',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        } catch {
+            setToast({ show: true, message: 'Có lỗi xảy ra khi kích hoạt lại hạng vé', variant: 'danger' });
+            await MySwal.fire({
+                title: 'Lỗi!',
+                text: 'Có lỗi xảy ra khi kích hoạt lại hạng vé!',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    };
+
     return (
         <div className='full-container d-flex' style={{ 
             backgroundImage: `url(https://images.unsplash.com/photo-1535557597501-0fee0a500c57?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)`,
@@ -178,6 +240,44 @@ const TicketClasses = () => {
                                     </td>
                                 </tr>
                             ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div className="d-flex justify-content-between align-items-center mb-4 mt-5 ">
+                    <h2 style={{fontWeight: 'bold', color: '#fff'}}>💺  HẠNG VÉ ĐÃ XÓA</h2>
+                </div>
+                {/* Danh sách hạng vé đã hủy */}
+                <div className="table-responsive bg-white p-4 shadow-sm text-center rounded-2">
+                    <table className="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên Hạng Vé</th>
+                                <th>Tỷ Lệ Đơn Giá</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {deletedTicketClasses.length === 0 ? (
+                                <tr><td colSpan="4">Không có hạng vé đã hủy</td></tr>
+                            ) : (
+                                deletedTicketClasses.map((ticketClass) => (
+                                    <tr key={ticketClass.id}>
+                                        <td>{ticketClass.id}</td>
+                                        <td>{ticketClass.Ten_hang_ve}</td>
+                                        <td>{ticketClass.Ti_le_don_gia}</td>
+                                        <td>
+                                            <button
+                                                className="btn btn-success fw-bold"
+                                                onClick={() => handleActivateTicketClass(ticketClass.id)}
+                                            >
+                                                Kích hoạt lại
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>

@@ -74,6 +74,7 @@ const Tickets = () => {
             switch (filterType) {
                 case 'cmnd':
                     url = `${BASE_URL}/vechuyenbay/get_by_hanhkhach/cmnd/${identity}`;
+                    useAuth = true;
                     break;
                 case 'flightId':
                     url = `${BASE_URL}/vechuyenbay/search/flight/${identity}`;
@@ -87,6 +88,7 @@ const Tickets = () => {
                     break;
                 default:
                     url = `${BASE_URL}/vechuyenbay/get_by_hanhkhach/cmnd/${identity}`;
+                    useAuth = true;
             }
 
             let res, data;
@@ -94,11 +96,39 @@ const Tickets = () => {
                 res = await authFetch(url, { method: 'GET' });
                 data = await res.json();
                 if (res.ok && data.status === 'success') {
-                    setTickets((data.tickets || []).map(ticket => ({
-                        ...ticket,
-                        Ma_ve: ticket.id,
-                        Ma_chuyen_bay: identity
-                    })));
+                    if (filterType === 'cmnd') {
+                        // Lấy danh sách vé từ CMND
+                        const ticketList = data.data || [];
+                        
+                        // Lấy chi tiết từng vé để có Ma_hanh_khach
+                        const detailedTickets = await Promise.all(
+                            ticketList.map(async (ticket) => {
+                                try {
+                                    const detailRes = await authFetch(`${BASE_URL}/vechuyenbay/get/${ticket.Ma_ve}`, { method: 'GET' });
+                                    const detailData = await detailRes.json();
+                                    if (detailRes.ok && detailData.status === 'success') {
+                                        return {
+                                            ...ticket,
+                                            Ma_hanh_khach: detailData.data.Ma_hanh_khach,
+                                            vi_tri: detailData.data.vi_tri || ticket.vi_tri
+                                        };
+                                    }
+                                    return ticket;
+                                } catch (error) {
+                                    console.error(`Error fetching ticket detail for ${ticket.Ma_ve}:`, error);
+                                    return ticket;
+                                }
+                            })
+                        );
+                        
+                        setTickets(detailedTickets);
+                    } else if (filterType === 'flightId') {
+                        setTickets((data.tickets || []).map(ticket => ({
+                            ...ticket,
+                            Ma_ve: ticket.id,
+                            Ma_chuyen_bay: identity
+                        })));
+                    }
                 } else {
                     setTickets([]);
                     setToast({
@@ -180,29 +210,6 @@ const Tickets = () => {
                 show: true,
                 message: 'Có lỗi xảy ra khi cập nhật vị trí ghế',
                 variant: 'danger'
-            });
-        }
-    };
-
-    const handleCancelTicket = async (ticketId) => {
-        const result = await MySwal.fire({
-            title: 'Bạn có chắc chắn muốn hủy vé này?',
-            text: `Mã vé: #${ticketId}`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Hủy vé',
-            cancelButtonText: 'Đóng',
-            reverseButtons: true
-        });
-
-        if (result.isConfirmed) {
-            // TODO: Implement cancel ticket API call
-            setToast({
-                show: true,
-                message: 'Chức năng hủy vé đang được phát triển',
-                variant: 'info'
             });
         }
     };
@@ -356,7 +363,7 @@ const Tickets = () => {
                                     // Fetch booked seats when opening modal
                                     fetchBookedSeats(ticket.Ma_chuyen_bay);
                                 }}
-                                onCancelTicket={handleCancelTicket}
+                                onCancelTicket={() => {}}
                             />
                         ))
                     ) : searched ? (

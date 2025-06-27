@@ -178,6 +178,73 @@
   font-size: 18px;
   padding: 20px;
 }
+
+/* CSS cho form tra cứu vé */
+.ticket-search-section {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+}
+
+.ticket-search-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 20px;
+  align-items: end;
+}
+
+.ticket-search-form .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.ticket-search-form .form-group label {
+  margin-bottom: 5px;
+  color: #333;
+  font-weight: bold;
+}
+
+.ticket-search-form .form-group input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  width: 100%;
+}
+
+.ticket-search-form .btn-88 {
+  margin-left: auto;
+}
+
+/* CSS cho kết quả tra cứu vé */
+.ticket-results-section {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.ticket-results-section p {
+  color: #333;
+  opacity: 1;
+  z-index: 1;
+  text-shadow: none;
+}
+
+.ticket-results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.no-tickets {
+  text-align: center;
+  color: #666;
+  font-size: 18px;
+  padding: 20px;
+}
+
 .btn-95,
 .btn-95 *,
 .btn-95 :after,

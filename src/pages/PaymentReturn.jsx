@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { BASE_URL, LOCAL_API_URL } from '../utils/api';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -10,8 +10,15 @@ const PaymentReturn = () => {
   const [bookingStatus, setBookingStatus] = useState('processing'); // 'processing', 'success', 'fail'
   const [bookingMsg, setBookingMsg] = useState('');
   const [ticketInfo, setTicketInfo] = useState(null);
+  const hasProcessed = useRef(false);
 
   useEffect(() => {
+    // Tránh gọi API nhiều lần bằng useRef
+    if (hasProcessed.current) return;
+    hasProcessed.current = true;
+
+    console.log('PaymentReturn useEffect called - processing payment result');
+
     // Hiển thị SweetAlert khi bắt đầu xử lý
     MySwal.fire({
       title: 'Đang xử lý kết quả thanh toán...',
@@ -25,6 +32,8 @@ const PaymentReturn = () => {
     const amount = params.get('vnp_Amount')?.slice(0, -2); // Bỏ 2 số 0 ở cuối
     const orderId = params.get('vnp_TxnRef') || params.get('vnp_OrderInfo');
     const vnp_TransactionNo = params.get('vnp_TransactionNo');
+
+    console.log('Payment params:', { vnp_ResponseCode, amount, orderId, vnp_TransactionNo });
 
     setResult({
       amount,
@@ -43,7 +52,10 @@ const PaymentReturn = () => {
         return;
       }
       const info = JSON.parse(booking);
+      console.log('Booking info from localStorage:', info);
+      
       // Gọi API đặt vé
+      console.log('Calling API to add ticket...');
       fetch(`${BASE_URL}/vechuyenbay/add`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -60,6 +72,7 @@ const PaymentReturn = () => {
       })
         .then(res => res.json())
         .then(data => {
+          console.log('API response:', data);
           if (data.status === 'success') {
             setBookingStatus('success');
             setBookingMsg('Đặt vé thành công!');
@@ -69,15 +82,17 @@ const PaymentReturn = () => {
               .then(flightData => {
                 if (flightData.data) {
                   // Kết hợp thông tin vé từ API đặt vé, localStorage và thông tin chuyến bay
-                  const ticket = data.ticket || {};
+                  const ve = data.ve || {};
                   setTicketInfo({
-                    Ma_ve: ticket.Ma_ve,
-                    Ho_ten: ticket.Ho_ten || info.name,
-                    cmnd: ticket.cmnd || info.cmnd,
-                    sdt: ticket.sdt || info.phone,
-                    gioi_tinh: ticket.gioi_tinh || info.gender,
-                    vi_tri: ticket.vi_tri || ticket.vitri || info.seat,
-                    Ma_hang_ve: ticket.Ma_hang_ve || info.classId,
+                    Ma_ve: ve.Ma_ve,
+                    Ho_ten: info.name,
+                    cmnd: info.cmnd,
+                    sdt: info.phone,
+                    gioi_tinh: info.gender,
+                    vi_tri: ve.vi_tri || info.seat,
+                    Ma_hang_ve: ve.hang_ve || info.classId,
+                    Tien_ve: ve.Tien_ve,
+                    Ma_hanh_khach: ve.Ma_hanh_khach,
                     flight: flightData.data
                   });
                 }
@@ -94,7 +109,8 @@ const PaymentReturn = () => {
             setBookingMsg(data.message || 'Đặt vé thất bại!');
           }
         })
-        .catch(() => {
+        .catch((error) => {
+          console.error('Error adding ticket:', error);
           MySwal.close();
           setBookingStatus('fail');
           setBookingMsg('Có lỗi xảy ra khi đặt vé!');
@@ -104,7 +120,65 @@ const PaymentReturn = () => {
       setBookingStatus('fail');
       setBookingMsg('Thanh toán thất bại hoặc bị hủy. Vui lòng thử lại.');
     }
-  }, []);
+  }, []); // Empty dependency array để chỉ chạy một lần
+
+  const handleCancelTicket = async () => {
+    if (!ticketInfo?.Ma_ve) return;
+
+    const result = await MySwal.fire({
+      title: 'Bạn có chắc chắn muốn hủy vé này?',
+      text: `Mã vé: #${ticketInfo.Ma_ve}`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Hủy vé',
+      cancelButtonText: 'Không'
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      MySwal.fire({
+        title: 'Đang hủy vé...',
+        allowOutsideClick: false,
+        didOpen: () => { MySwal.showLoading(); }
+      });
+
+      const res = await fetch(`${BASE_URL}/vechuyenbay/delete/ticket/${ticketInfo.Ma_ve}`, {
+        method: 'DELETE'
+      });
+      const data = await res.json();
+
+      await MySwal.close();
+
+      if (res.ok && data.status === 'success') {
+        setBookingStatus('cancelled');
+        setBookingMsg('Vé đã được hủy thành công!');
+        MySwal.fire({
+          title: 'Thành công!',
+          text: 'Vé đã được hủy thành công, chúng tôi sẽ liên lạc với bạn sau để hoàn trả tiền!',
+          icon: 'success',
+          confirmButtonText: 'OK'
+        });
+      } else {
+        MySwal.fire({
+          title: 'Lỗi!',
+          text: data.message || 'Không thể hủy vé!',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
+    } catch (error) {
+      console.error('Error canceling ticket:', error);
+      MySwal.fire({
+        title: 'Lỗi!',
+        text: 'Có lỗi xảy ra khi hủy vé!',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
+    }
+  };
 
   if (!result || bookingStatus === 'processing') return (
     <div style={{display:'flex',gap:32,alignItems:'flex-start',justifyContent:'space-between',backgroundImage: 'url(https://images.pexels.com/photos/949587/pexels-photo-949587.jpeg)',backgroundSize: 'cover',backgroundPosition: 'center',backgroundRepeat: 'no-repeat',minHeight: '100vh', fontFamily: 'Inter, sans-serif'}}>
@@ -130,7 +204,7 @@ const PaymentReturn = () => {
       textAlign: 'center',
       color: '#fff',
     }}>
-      <h2 style={{color: bookingStatus === 'success' ? '#22c55e' : '#e53935', marginBottom: 16}}>
+      <h2 style={{color: bookingStatus === 'success' ? '#22c55e' : bookingStatus === 'cancelled' ? '#ff9800' : '#e53935', marginBottom: 16}}>
         Kết quả thanh toán
       </h2>
       <div style={{fontSize: 20, fontWeight: 'bold', marginBottom: 16}}>
@@ -152,11 +226,13 @@ const PaymentReturn = () => {
           <h3 style={{color: '#0f172a', marginBottom: 16, textAlign: 'center'}}>Thông tin vé đã đặt</h3>
           <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, color: '#000' }}>
             <div>
-              <p><b>Mã vé:</b> {ticketInfo.Ma_ve}</p>
+              <p style={{color: 'red'}}><b>Mã vé:</b> {ticketInfo.Ma_ve}</p>
+              <p style={{color: 'red'}}><b>Mã hành khách:</b> {ticketInfo.Ma_hanh_khach}</p>
               <p><b>Họ tên:</b> {ticketInfo.Ho_ten}</p>
-              <p><b>CMND/CCCD:</b> {ticketInfo.cmnd}</p>
-              <p><b>Số điện thoại:</b> {ticketInfo.sdt}</p>
+              <p style={{color: 'red'}}><b>CMND/CCCD:</b> {ticketInfo.cmnd}</p>
+              <p style={{color: 'red'}}><b>Số điện thoại:</b> {ticketInfo.sdt}</p>
               <p><b>Giới tính:</b> {ticketInfo.gioi_tinh}</p>
+              <p><b>Tiền vé:</b> {ticketInfo.Tien_ve ? Number(ticketInfo.Tien_ve).toLocaleString() + ' VND' : 'N/A'}</p>
             </div>
             <div>
               <p><b>Chuyến bay:</b> {ticketInfo.flight.Ma_chuyen_bay}</p>
@@ -170,6 +246,9 @@ const PaymentReturn = () => {
           </div>
         </div>
       )}
+      <div style={{color: 'red', fontSize: 16, fontWeight: 'bold'}}>
+        Quý khách ghi nhớ mã vé, cccd, số điện thoại, đặc biệt là mã hành khách để hủy vé!
+      </div>
 
       <div style={{marginTop: 24}}>
         <a href='/' style={{
@@ -180,6 +259,24 @@ const PaymentReturn = () => {
           textDecoration: 'none',
           fontWeight: 'bold'
         }}>Về trang chủ</a>
+
+        {bookingStatus === 'success' && ticketInfo && (
+          <button
+            onClick={handleCancelTicket}
+            style={{
+              background: '#e53935',
+              color: '#fff',
+              padding: '10px 28px',
+              borderRadius: 8,
+              border: 'none',
+              fontWeight: 'bold',
+              marginLeft: 16,
+              cursor: 'pointer'
+            }}
+          >
+            Hủy vé
+          </button>
+        )}
       </div>
     </div>
     </div>

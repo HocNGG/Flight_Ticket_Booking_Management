@@ -12,7 +12,8 @@ const Regulations = () => {
         thoigiandungtoida: '',
         thoigiandungtoithieu: '',
         thoigianvechuyenbay: '',
-        thoigiandatvetoithieu: ''
+        thoigiandatvetoithieu: '',
+        thoigianhuyvetoida: ''
     });
     const [loading, setLoading] = useState(true);
     const [toast, setToast] = useState({ show: false, message: '', variant: 'success' });
@@ -61,7 +62,8 @@ const Regulations = () => {
                     thoigianbaytoithieu: Number(regulations.thoigianbaytoithieu),
                     thoigiandungtoida: Number(regulations.thoigiandungtoida),
                     thoigiandungtoithieu: Number(regulations.thoigiandungtoithieu),
-                    thoigianvechuyenbay: Number(regulations.thoigianvechuyenbay)
+                    thoigianvechuyenbay: Number(regulations.thoigianvechuyenbay),
+                    thoigianhuyvetoida: Number(regulations.thoigianhuyvetoida)
                 })
             });
             const data = await res.json();
@@ -157,6 +159,18 @@ const Regulations = () => {
                                     className="form-control"
                                     name="thoigiandungtoithieu"
                                     value={regulations.thoigiandungtoithieu}
+                                    onChange={handleChange}
+                                    disabled={!editing}
+                                    required
+                                />
+                            </div>
+                            <div className="mb-3">
+                                <label className="form-label">Thời gian hủy vé tối đa (phút)</label>
+                                <input
+                                    type="number"
+                                    className="form-control"
+                                    name="thoigianhuyvetoida"
+                                    value={regulations.thoigianhuyvetoida}
                                     onChange={handleChange}
                                     disabled={!editing}
                                     required
