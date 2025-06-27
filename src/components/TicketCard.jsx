@@ -3,6 +3,9 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { BASE_URL, LOCAL_API_URL } from '../utils/api';
 import { authFetch } from '../utils/authFetch';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+const MySwal = withReactContent(Swal);
 
 const TicketCard = ({ ticket, onUpdateSeat, onCancel }) => {
     const [detail, setDetail] = useState(null);
@@ -48,6 +51,60 @@ const TicketCard = ({ ticket, onUpdateSeat, onCancel }) => {
         const [hh, mm] = timeString.split(':');
         return `${hh}:${mm}`;
     };
+    const handleCancel = async (ticketInfo) => {if (!ticketInfo?.Ma_ve) return;
+
+        const result = await MySwal.fire({
+          title: 'Bạn có chắc chắn muốn hủy vé này?',
+          text: `Mã vé: #${ticketInfo.Ma_ve}`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Hủy vé',
+          cancelButtonText: 'Không'
+        });
+    
+        if (!result.isConfirmed) return;
+    
+        try {
+          MySwal.fire({
+            title: 'Đang hủy vé...',
+            allowOutsideClick: false,
+            didOpen: () => { MySwal.showLoading(); }
+          });
+    
+          const res = await fetch(`${BASE_URL}/vechuyenbay/delete/ticket/${ticketInfo.Ma_ve}`, {
+            method: 'DELETE'
+          });
+          const data = await res.json();
+    
+          await MySwal.close();
+    
+          if (res.ok && data.status === 'success') {
+           
+            MySwal.fire({
+              title: 'Thành công!',
+              text: 'Vé đã được hủy thành công, chúng tôi sẽ liên lạc với bạn sau để hoàn trả tiền!',
+              icon: 'success',
+              confirmButtonText: 'OK'
+            });
+          } else {
+            MySwal.fire({
+              title: 'Lỗi!',
+              text: data.message || 'Không thể hủy vé!',
+              icon: 'error',
+              confirmButtonText: 'OK'
+            });
+          }
+        } catch (error) {
+          console.error('Error canceling ticket:', error);
+          MySwal.fire({
+            title: 'Lỗi!',
+            text: 'Có lỗi xảy ra khi hủy vé!',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }}
 
     const calculateArrivalTime = (departure, durationMinutes) => {
         const [hours, minutes] = departure.split(':').map(Number);
@@ -158,6 +215,7 @@ const TicketCard = ({ ticket, onUpdateSeat, onCancel }) => {
                             >
                                 Chi tiết
                             </Button>
+                            
                             {onCancel ? (
                                 <Button 
                                     variant="danger" 
@@ -166,6 +224,7 @@ const TicketCard = ({ ticket, onUpdateSeat, onCancel }) => {
                                 >
                                     Hủy vé
                                 </Button>
+
                             ) : (
                                 <Button 
                                     variant="warning" 
@@ -175,6 +234,16 @@ const TicketCard = ({ ticket, onUpdateSeat, onCancel }) => {
                                     Sửa ghế
                                 </Button>
                             )}
+                        {!onCancel && (
+                            <Button 
+                                variant="danger" 
+                                size="sm"
+                                onClick={() => handleCancel(ticket)}
+                            >
+                                Hủy vé
+                            </Button>
+                        )}
+                       
                         </div>
                     </div>
                 </div>

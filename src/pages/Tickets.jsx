@@ -63,6 +63,7 @@ const Tickets = () => {
             setLoadingSeats(false);
         }
     };
+    
 
     const handleSearch = async (e) => {
         e.preventDefault();
